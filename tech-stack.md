@@ -89,12 +89,34 @@ Fedigree employs a modular, client-first modern web architecture designed for lo
     3. Stratified risk scores (IDRS, CVD, Environmental).
     4. Suggested clinical actions (e.g., Fasting Blood Glucose, HbA1c, Lipid Profile).
 
-### F. Backend & Data Persistence
-* **Database & Auth (BaaS)**: **Supabase (PostgreSQL)**
-  * *Authentication*: Phone OTP (standard in India) or Email/Password.
-  * *Row Level Security (RLS)*: Critical for clinical consent enforcement; family members can query family graph edges without having `SELECT` permission on other members' encrypted health records.
-* **Offline-First Fallback**: **IndexedDB (via Dexie.js)**
-  * Allows community workers or rural users to build pedigrees and compute risk scores completely offline without active internet connectivity.
+
+### F. Backend, AI Services & Data Persistence
+
+* **Backend API: FastAPI (Python)**
+  * Serves as the custom backend for machine learning inference, risk-assessment services, RAG pipelines, and application-specific business logic.
+  * **ML Inference:** Integrates the Diabetes and CVD/CAD classifier pipelines through validated REST API endpoints.
+  * **Request Validation:** Uses Pydantic schemas to validate incoming requests and standardize prediction responses.
+  * **API Server:** Uvicorn runs the FastAPI application.
+  * **Security:** Authenticates requests, validates user permissions, and protects sensitive health data.
+
+* **Database & Authentication (BaaS): Supabase (PostgreSQL)**
+  * **Authentication:** Phone OTP or Email/Password authentication for users.
+  * **Data Persistence:** Stores user profiles, family relationships, pedigrees, and authorized medical-history records.
+  * **Row Level Security (RLS):** Enforces record-level access policies so users can access only the data they are authorized to view.
+  * **Backend Integration:** FastAPI can access Supabase data according to the application's authentication and authorization rules.
+
+* **RAG & AI Integration**
+  * FastAPI orchestrates retrieval and response-generation workflows for relevant health information.
+  * The specific embedding model, vector store, and LLM provider will be finalized separately.
+  * Retrieved information should be grounded in reliable sources and must not replace professional medical advice.
+
+* **Offline-First Fallback: IndexedDB (via Dexie.js)**
+  * Stores locally available pedigree information and permitted data for offline use.
+  * Supports offline pedigree creation and synchronization when internet connectivity returns.
+  * Deterministic screening calculations, such as an appropriately implemented IDRS score, can run in the frontend while offline.
+  * **ML Limitation:** The Python `.joblib` models require a running Python inference environment. Offline ML predictions require a separately implemented local inference solution; otherwise, predictions must wait until connectivity is restored.
+  * Sensitive locally stored health data must be protected, and synchronization must respect consent, authentication, and conflict-resolution rules.
+
 
 ### G. External Integrations & APIs
 * **Environmental API**: **Central Pollution Control Board (CPCB) / Data.gov.in Real-Time AQI API**

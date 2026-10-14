@@ -78,8 +78,3 @@ Logistic Regression: accuracy 73.23%, balanced accuracy 69.32%, sensitivity 57.5
 ## Data handling
 
 Keep the authorized Individual-level XLSX local and out of public GitHub. Follow IIPS access and data-use conditions. Only share code, documentation, and permitted aggregate metrics.
-
-## Legacy Reference — Prototype Synthetic Pipeline Contract
-
-For the initial software integration testing prototype using synthetic data (`diabetes_inference.py`, `train_diabetes.py`), the legacy 9-feature contract (`age_years`, `bmi_kg_m2`, `waist_circumference_cm`, `family_history_diabetes`, `hypertension_history`, `tobacco_use`, `sex`, `physical_activity_level`, `diet_pattern`) remains preserved in `diabetes_inference.py` for backward reference and testing. Note that this synthetic contract is **not compatible** with the LASI-trained pipelines.
-

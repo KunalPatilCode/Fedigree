@@ -1,4 +1,4 @@
-﻿# Fedigree — LASI Daman & Diu Experimental ML Models
+# Fedigree — LASI Daman & Diu Experimental ML Models
 
 ## Current selected model artifacts
 
@@ -70,12 +70,3 @@ After retraining/tuning, review the reports and update this README and the model
 - There is no independent external validation. The 80/20 hold-out was consulted during previous model selection, so a prespecified new test set or external validation is needed before stronger performance claims.
 - Model scores/probabilities are not calibrated individual medical-risk percentages.
 - Do not use these artifacts for diagnosis, triage, or medical decisions. Use only as an experimental engineering/demo prototype pending appropriate validation and clinical oversight.
-
-## Legacy Reference — Synthetic Prototype Pipeline
-
-For initial software testing prior to authorized survey data availability, a 500-record synthetic pipeline was maintained:
-- Training: `python train_diabetes.py`
-- Comparison: `python compare_model.py`
-- Inference: `python predict_diabetes.py` or `python predict_both_models.py`
-- Dataset: `data/fedigree_diabetes_synthetic_500.csv`
-- Artifacts: `models/diabetes_logistic_synthetic.joblib`, `models/diabetes_random_forest_synthetic.joblib`

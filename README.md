@@ -1,204 +1,81 @@
-# Fedigree Model 1 — Diabetes Classifier (Synthetic ML Pipeline)
+﻿# Fedigree — LASI Daman & Diu Experimental ML Models
 
-> **Experimental prototype only.** This project currently uses 500 artificially generated profiles and artificial target labels. It is **not real Daman & Diu data**, and the evaluation metrics below are **not clinical performance results**. Do not use these models to diagnose a person or estimate a real person's diabetes risk.
+## Current selected model artifacts
 
-## 1. Overview
+This repository package contains two exploratory classification tasks built from an authorized LASI Wave 1 Daman & Diu individual-level extract. The selected artifacts for the current prototype are:
 
-This project implements the initial machine-learning pipeline for Fedigree Model 1. It is intended to test data preprocessing, model training and comparison, saving/loading fitted pipelines, and generating predictions for backend integration.
+- **Model 1 — Diabetes reported-diagnosis classifier:** tuned Random Forest, `models/diabetes_random_forest_tuned_lasi_dd.joblib`.
+- **Model 2 — LASI-defined CVD composite classifier:** baseline Logistic Regression, `models/cvd_composite_logistic_regression_lasi_dd.joblib`.
 
-Two supervised binary-classification algorithms are included:
+Keep the baseline Diabetes models and CVD Random Forest as comparison artifacts if they are present, but do not load them as the default selected model. The selected model mapping is also specified in `MODEL_CONTRACT.md`.
 
-- **Logistic Regression** — baseline classifier.
-- **Random Forest** — comparison classifier.
+## Scope and target definitions
 
-Both models were trained and evaluated on the same train/test split from the synthetic dataset. No clinical validation has been performed.
+- **Diabetes target:** `HT003`, self-reported diagnosis of diabetes/high blood sugar by a health professional (`1=Yes`, `2=No`). This classifies reported diagnosis; it does not predict future diabetes onset.
+- **CVD composite target:** positive if any of `HT002` (hypertension), `HT006` (chronic heart disease), or `HT007` (stroke) is reported. This is not CAD-specific and is not a future/10-year cardiovascular-risk model.
 
-## 2. Dataset details
+## Dataset audit
 
-| Property | Current setup |
-|---|---|
-| Dataset file | `data/fedigree_diabetes_synthetic_500.csv` |
-| Data type | Synthetic structured/tabular data |
-| Total records | 500 |
-| Total CSV columns | 15 |
-| Synthetic class 0 | 344 records |
-| Synthetic class 1 | 156 records |
-| Model input features | 9 |
-| Target column | `diabetes_status_synthetic` (artificial binary label: 0/1) |
-| Training split | 80% (400 records) |
-| Test split | 20% (100 records) |
-| Split method | Stratified split |
-| Split random state | `42` |
+- Source rows: 991, all coded as Daman and Diu.
+- Diabetes target: 171 Yes, 815 No, 5 missing (986 usable target records).
+- CVD composite: 327 positive, 659 negative, 5 unknown (986 usable target records).
+- Chronic heart disease (`HT006`) alone: 27 positive reports.
 
-The dataset exists to test the engineering pipeline while access requests for an approved Indian individual-level dataset are pending. Its labels are artificial, not confirmed clinical diagnoses, and its records do not represent an actual patient population.
+Raw Individual-level health data is **not** included in this documentation bundle. Keep the authorized `Individual_Daman_and_Diu.xlsx` local. Do not commit respondent-level records or identifiers to public GitHub; follow IIPS access and data-use conditions.
 
-## 3. Input features
+## Current hold-out comparison
 
-The current ML pipelines expect these nine feature names. Keep the names and supported category values consistent across the dataset, inference module, and backend request schema.
+Metrics are from a single stratified 80/20 split (`random_state=42`) and are unweighted exploratory results. The hold-out set was inspected during prior experimentation and model selection; therefore these should not be treated as independent final validation.
 
-| Feature | Type | Current values / range |
-|---|---|---|
-| `age_years` | Integer | 18–120 (prototype validation) |
-| `bmi_kg_m2` | Number | 10–80 (prototype validation) |
-| `waist_circumference_cm` | Number | 30–250 (prototype validation) |
-| `family_history_diabetes` | Integer | `0` or `1` |
-| `hypertension_history` | Integer | `0` or `1` |
-| `tobacco_use` | Integer | `0` or `1` |
-| `sex` | Category | `Male`, `Female` |
-| `physical_activity_level` | Category | `Low`, `Moderate`, `High` |
-| `diet_pattern` | Category | `Balanced`, `Mixed`, `High_sugar_processed` |
+| Task | Model | Accuracy | Balanced accuracy | Sensitivity | Specificity | Precision | F1-score | ROC-AUC | TN | FP | FN | TP |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Diabetes | Logistic Regression baseline | 69.70% | 64.22% | 55.88% | 72.56% | 29.69% | 38.78% | 0.7626 | 119 | 45 | 15 | 19 |
+| Diabetes | Random Forest baseline | 77.27% | 66.46% | 50.00% | 82.93% | 37.78% | 43.04% | 0.7165 | 136 | 28 | 17 | 17 |
+| Diabetes | **Random Forest tuned — selected candidate** | 71.72% | 74.77% | 79.41% | 70.12% | 35.53% | 49.09% | 0.7593 | 115 | 49 | 7 | 27 |
+| CVD composite | **Logistic Regression baseline — selected** | 73.23% | 69.32% | 57.58% | 81.06% | 60.32% | 58.91% | 0.7586 | 107 | 25 | 28 | 38 |
+| CVD composite | Random Forest baseline | 69.70% | 65.91% | 54.55% | 77.27% | 54.55% | 54.55% | 0.7316 | 102 | 30 | 30 | 36 |
 
-The numeric ranges are basic prototype input-validation limits, not clinical cut-offs. Binary values are encodings in this schema. If frontend fields or categories change, update and test the training/inference contract as well.
+### Model 1 tuning decision
 
-## 4. Model comparison results
+The tuned Diabetes Random Forest was selected as a **sensitivity-focused experimental candidate**. Compared with the baseline Random Forest on this hold-out set, sensitivity increased from 50.00% to 79.41%, false negatives decreased from 17 to 7, and F1/ROC-AUC improved. Accuracy fell from 77.27% to 71.72%, specificity fell from 82.93% to 70.12%, and false positives increased from 28 to 49. This is an explicit trade-off, not an across-the-board improvement.
 
-Both models were evaluated on the same 100-record synthetic test split. Metrics are copied from the current `compare_model.py` output.
+The tuning search used 3-fold stratified CV within the training split and selected by mean CV ROC-AUC. Best CV results: mean ROC-AUC 0.8082 (SD 0.0096), mean balanced accuracy 0.7375, mean F1 0.4895. See `TUNING_SUMMARY.md` for parameters and limitations.
 
-| Metric | Logistic Regression | Random Forest |
-|---|---:|---:|
-| Accuracy | **76.00%** | 75.00% |
-| Sensitivity / Recall (class 1) | 32.26% | **35.48%** |
-| Specificity | **95.65%** | 92.75% |
-| Precision | **76.92%** | 68.75% |
-| F1-score | 45.45% | **46.81%** |
-| ROC-AUC | **0.7391** | 0.7179 |
-| True negatives (TN) | 66 | 64 |
-| False positives (FP) | 3 | 5 |
-| False negatives (FN) | 21 | 20 |
-| True positives (TP) | 10 | 11 |
+### Model 2 selection
 
-### Interpretation
+No further tuning is being applied to Model 2 for the current handover. Keep the baseline Logistic Regression artifact selected. An older exploratory tuned CVD candidate may exist in prior packages; it is **not selected** and should not overwrite the baseline artifact.
 
-- Logistic Regression has slightly higher accuracy, specificity, precision, and ROC-AUC on this synthetic test split.
-- Random Forest has slightly higher sensitivity and F1-score on this synthetic test split.
-- Both models missed a number of synthetic positive labels; sensitivity is low in this experiment.
-- These results do **not** establish clinical usefulness, real-world accuracy, or performance on Indian patients. Do not choose a model for medical use based on this synthetic comparison.
+## Feature contracts and preprocessing
 
-## 5. Algorithm configuration and preprocessing
+See `MODEL_CONTRACT.md` for exact API field names (Diabetes: 11 features; CVD composite: 13 features), target coding, output schema, and selected artifact paths. Model inputs in the frontend/backend must exactly match these contracts. The previous synthetic 9-feature contract is not compatible with the LASI-trained models.
 
-| Configuration | Logistic Regression | Random Forest |
-|---|---|---|
-| Scikit-learn estimator | `LogisticRegression` | `RandomForestClassifier` |
-| Explicitly configured parameters | `max_iter=2000` | `n_estimators=300`, `random_state=42` |
-| Data split | Stratified 80/20, `random_state=42` | Same split |
-| Preprocessing | Same pipeline | Same pipeline |
+Each fitted pipeline includes preprocessing: numerical imputation/scaling and categorical imputation/one-hot encoding. Do not independently refit preprocessing in the API.
 
-Preprocessing in `compare_model.py`:
+## Reproduce locally
 
-- **Numerical features:** median imputation followed by `StandardScaler`.
-- **Categorical features:** most-frequent imputation followed by `OneHotEncoder(handle_unknown="ignore")`.
-- Preprocessing and the estimator are combined in a scikit-learn `Pipeline`, fitted using the training data only.
+1. Keep the authorized XLSX at `data/Individual_Daman_and_Diu.xlsx` or pass the local path explicitly.
+2. Activate your virtual environment.
+3. Install requirements: `python -m pip install -r requirements.txt`.
+4. Train baseline artifacts: `python train_lasi_models.py --input "E:\\path\\to\\Individual_Daman_and_Diu.xlsx"`.
+5. Run Diabetes Random Forest tuning: `python tune_selected_models.py` (the local script's current configuration should tune only the `diabetes` task, as in the documented latest run).
+6. Run smoke tests: `python predict_lasi_models.py`.
 
-## 6. Model artifacts and reports
+After retraining/tuning, review the reports and update this README and the model-specific documents if outputs differ. Do not silently assume previous metrics remain current.
 
-The model-comparison script saves these outputs:
+## Limitations / safe use
 
-| File | Purpose |
-|---|---|
-| `models/diabetes_logistic_synthetic.joblib` | Fitted preprocessing + Logistic Regression pipeline |
-| `models/diabetes_random_forest_synthetic.joblib` | Fitted preprocessing + Random Forest pipeline |
-| `reports/synthetic_model_comparison.csv` | Side-by-side model evaluation metrics |
-| `reports/synthetic_model_comparison.json` | Metrics, feature order, data status, split counts, and training metadata |
+- The subset contains 991 respondents, with 986 usable target labels per task; it is a small regional survey subset.
+- Outcomes are self-reported diagnoses, not necessarily lab-confirmed disease.
+- Metrics are unweighted and do not account for LASI's survey weights, strata, or clusters.
+- There is no independent external validation. The 80/20 hold-out was consulted during previous model selection, so a prespecified new test set or external validation is needed before stronger performance claims.
+- Model scores/probabilities are not calibrated individual medical-risk percentages.
+- Do not use these artifacts for diagnosis, triage, or medical decisions. Use only as an experimental engineering/demo prototype pending appropriate validation and clinical oversight.
 
-The `synthetic` suffix is intentionally included in artifact names to make their current limitation clear. The baseline script `train_diabetes.py` may also save its standalone baseline artifact and report as documented by that script; for the two-model comparison, use the artifacts above.
+## Legacy Reference — Synthetic Prototype Pipeline
 
-## 7. Project structure
-
-```text
-project/
-├── .venv/                         # Local virtual environment; do not commit
-├── data/
-│   ├── fedigree_diabetes_synthetic_500.csv
-│   └── README_DATASET.md
-├── models/
-│   ├── diabetes_logistic_synthetic.joblib
-│   └── diabetes_random_forest_synthetic.joblib
-├── reports/
-│   ├── synthetic_model_comparison.csv
-│   └── synthetic_model_comparison.json
-├── compare_model.py
-├── diabetes_inference.py
-├── MODEL_CONTRACT.md
-├── predict_both_models.py
-├── predict_diabetes.py
-├── README.md
-├── requirements.txt
-└── train_diabetes.py
-```
-
-Some generated files appear only after the corresponding script runs. Keep `.venv/` out of GitHub; dependencies should be installed from `requirements.txt`.
-
-## 8. Setup and run (Windows PowerShell)
-
-Create and activate a virtual environment, then install dependencies:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-If PowerShell blocks activation, use Command Prompt with `.venv\Scripts\activate.bat`, or run commands through `.venv\Scripts\python.exe` directly.
-
-### Train and compare both models
-
-```powershell
-python compare_model.py
-```
-
-This validates the CSV schema, makes a stratified 80/20 train/test split, fits the preprocessing and model pipelines, calculates metrics, saves both model artifacts, and writes the comparison reports.
-
-### Test predictions from both models
-
-```powershell
-python predict_both_models.py
-```
-
-### Test the reusable inference module
-
-```powershell
-python diabetes_inference.py
-```
-
-The scripts are for engineering and synthetic-pipeline testing. Their predictions must not be interpreted as medical advice or real diabetes risk.
-
-## 9. Backend integration contract
-
-The backend should call the reusable function in `diabetes_inference.py` rather than reimplementing preprocessing or model logic. Requests must include all nine fields listed in **Input features**, using the exact keys and valid category values.
-
-Example input:
-
-```json
-{
-  "age_years": 45,
-  "bmi_kg_m2": 27.0,
-  "waist_circumference_cm": 90.0,
-  "family_history_diabetes": 1,
-  "hypertension_history": 0,
-  "tobacco_use": 0,
-  "sex": "Male",
-  "physical_activity_level": "Low",
-  "diet_pattern": "Mixed"
-}
-```
-
-Current inference output includes:
-
-- `model_name` — `logistic_regression` or `random_forest`.
-- `predicted_synthetic_label` — predicted artificial class label (`0` or `1`).
-- `synthetic_positive_label_probability` — score for synthetic class 1; **not** a real clinical risk percentage.
-- `model_status` — `experimental_synthetic_data_only`.
-- `notice` — warning explaining the model limitation.
-
-The frontend must not display the probability as a patient's true diabetes risk or present the class label as a diagnosis. Restrict this functionality to internal engineering/demo use until suitable clinical data, validation, and governance review are completed.
-
-## 10. When approved Indian clinical data becomes available
-
-1. Review the dataset source, codebook, access terms, and target-label definitions.
-2. Confirm the intended target and eligible population before training.
-3. Map available real-data columns to the feature contract; do not assume all current features exist.
-4. Retrain and evaluate the pipeline with appropriate validation, threshold analysis, and probability-calibration checks where suitable.
-5. Document limitations and seek appropriate clinical review before claiming medical utility.
-
-The current synthetic dataset is a temporary engineering resource, not a substitute for Indian clinical data.
+For initial software testing prior to authorized survey data availability, a 500-record synthetic pipeline was maintained:
+- Training: `python train_diabetes.py`
+- Comparison: `python compare_model.py`
+- Inference: `python predict_diabetes.py` or `python predict_both_models.py`
+- Dataset: `data/fedigree_diabetes_synthetic_500.csv`
+- Artifacts: `models/diabetes_logistic_synthetic.joblib`, `models/diabetes_random_forest_synthetic.joblib`

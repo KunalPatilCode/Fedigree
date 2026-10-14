@@ -1,0 +1,15 @@
+=== FEDIGREE LASI MODEL INFERENCE SMOKE TEST ===
+WARNING: Fictional profiles; not clinical advice.
+
+diabetes_logistic_regression
+{'model_name': 'logistic_regression', 'task_name': 'diabetes', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_diagnosed_diabetes', 'model_positive_class_probability': 0.341903, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'Predicts LASI self-reported diagnosis classification, not future diabetes risk or clinical diagnosis. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+----------------------------------------------------------------------
+diabetes_random_forest
+{'model_name': 'random_forest', 'task_name': 'diabetes', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_diagnosed_diabetes', 'model_positive_class_probability': 0.23153, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'Predicts LASI self-reported diagnosis classification, not future diabetes risk or clinical diagnosis. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+----------------------------------------------------------------------
+cvd_composite_logistic_regression
+{'model_name': 'logistic_regression', 'task_name': 'cvd_composite', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_cvd_composite', 'model_positive_class_probability': 0.24531, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'CVD composite = reported hypertension OR chronic heart disease OR stroke; not CAD-specific and not future 10-year risk. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+----------------------------------------------------------------------
+cvd_composite_random_forest
+{'model_name': 'random_forest', 'task_name': 'cvd_composite', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_cvd_composite', 'model_positive_class_probability': 0.340463, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'CVD composite = reported hypertension OR chronic heart disease OR stroke; not CAD-specific and not future 10-year risk. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+----------------------------------------------------------------------

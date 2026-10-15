@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 
 class PredictionResponse(BaseModel):
+    model_config = {"protected_namespaces": ()}
+    
     model_name: str
     task_name: str
     predicted_class: int

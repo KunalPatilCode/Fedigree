@@ -1,3 +1,7 @@
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings

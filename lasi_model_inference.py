@@ -94,6 +94,9 @@ def predict(model_key: str, input_features: dict) -> dict:
 
     artifact = joblib.load(path)
     pipeline = artifact["pipeline"]
+    final_estimator = pipeline.steps[-1][1] if hasattr(pipeline, "steps") else pipeline
+    if hasattr(final_estimator, "predict_proba") and not hasattr(final_estimator, "multi_class"):
+        setattr(final_estimator, "multi_class", "auto")
     expected = list(artifact["feature_names"])
 
     missing = sorted(set(expected) - set(input_features))

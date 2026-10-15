@@ -34,6 +34,9 @@ for model_name, model_path in MODEL_FILES.items():
         raise FileNotFoundError(f"Model file not found: {model_path}")
 
     model = joblib.load(model_path)
+    final_estimator = model.steps[-1][1] if hasattr(model, "steps") else model
+    if hasattr(final_estimator, "predict_proba") and not hasattr(final_estimator, "multi_class"):
+        setattr(final_estimator, "multi_class", "auto")
 
     expected_features = list(model.feature_names_in_)
     missing = set(expected_features) - set(input_df.columns)

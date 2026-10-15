@@ -29,19 +29,28 @@ Fedigree is a web-based digital health platform engineered to curb the epidemic 
 
 ### Foundational Project Documentation
 - [x] **`project-scope.md`**: Detailed scope, functional modules, and KPIs.
-- [x] **`tech-stack.md`**: Full architectural stack (Next.js, Tailwind, Zustand, @xyflow/react, i18next, @react-pdf).
+- [x] **`tech-stack.md`**: Enhanced with FastAPI (Python) backend for ML inference, Supabase RLS, and Dexie.js offline-first fallback.
 - [x] **`implementation-plan.md`**: 5-phase execution plan from foundation to final pitch.
 - [x] **`end-users.md`**: Granular profile of all primary, secondary, and tertiary user personas.
 - [x] **`project-memory.md`**: Living record of project state and next immediate milestones.
+- [x] **`project-flow.md`**: End-to-end user flow diagrams and sequence architecture.
+- [x] **`team-roles.md`**: 5-member team delegation matrix.
+
+### Machine Learning Models Integrated (from `feat/diabetes-ml-model`)
+- [x] **Model 1 (Diabetes Classifier)**: `models/diabetes_random_forest_tuned_lasi_dd.joblib` (Tuned sensitivity-focused model on LASI Wave 1 Daman & Diu dataset; 11 input features).
+- [x] **Model 2 (CVD Composite Classifier)**: `models/cvd_composite_logistic_regression_lasi_dd.joblib` (Baseline Logistic Regression for reported hypertension/heart disease/stroke; 13 input features).
+- [x] **Inference Infrastructure**: Reusable prediction helpers (`lasi_model_inference.py`), smoke test scripts, and strict `MODEL_CONTRACT.md` schemas.
+- [x] **Runtime Compatibility**: Verified and patched for cross-version scikit-learn unpickling compatibility.
 
 ---
 
 ## 3. What Is Currently Being Built (Active Phase)
-* **Phase 1 & 2 Execution**:
-  * Setting up the web application codebase on branch `md`.
-  * Implementing the deterministic **IDRS Risk Calculator** with clinical test fixtures.
-  * Setting up the **Trilingual Translation Dictionaries** (`en.json`, `mr.json`, `hi.json`) for seamless Marathi, Hindi, and English switching.
-  * Preparing the interactive pedigree chart canvas component.
+* **Backend & API Layer**:
+  * FastAPI endpoints (`/predict/diabetes`, `/predict/cvd-composite`) conforming to `MODEL_CONTRACT.md`.
+  * Deterministic client-side fallback for IDRS (MDRF/ICMR score) in the frontend for 100% offline capability.
+* **Frontend Web Application**:
+  * Next.js 14 interactive family pedigree canvas.
+  * Trilingual intake forms (Marathi, Hindi, English).
 
 ---
 

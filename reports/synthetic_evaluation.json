@@ -1,0 +1,64 @@
+{
+  "dataset_notice": "SYNTHETIC DATA ONLY; not clinical validation or real Daman/Diu data",
+  "rows_used": 500,
+  "train_rows": 400,
+  "test_rows": 100,
+  "target_counts_full_dataset": {
+    "0": 344,
+    "1": 156
+  },
+  "features": [
+    "age_years",
+    "bmi_kg_m2",
+    "waist_circumference_cm",
+    "family_history_diabetes",
+    "hypertension_history",
+    "tobacco_use",
+    "sex",
+    "physical_activity_level",
+    "diet_pattern"
+  ],
+  "target": "diabetes_status_synthetic",
+  "model": "LogisticRegression in a preprocessing Pipeline",
+  "test_metrics_synthetic_only": {
+    "accuracy": 0.76,
+    "sensitivity_recall_positive": 0.3225806451612903,
+    "specificity_recall_negative": 0.9565217391304348,
+    "precision": 0.7692307692307693,
+    "f1_score": 0.45454545454545453,
+    "roc_auc": 0.7391304347826088,
+    "confusion_matrix_tn_fp_fn_tp": {
+      "tn": 66,
+      "fp": 3,
+      "fn": 21,
+      "tp": 10
+    }
+  },
+  "classification_report_synthetic_only": {
+    "0": {
+      "precision": 0.7586206896551724,
+      "recall": 0.9565217391304348,
+      "f1-score": 0.8461538461538461,
+      "support": 69.0
+    },
+    "1": {
+      "precision": 0.7692307692307693,
+      "recall": 0.3225806451612903,
+      "f1-score": 0.45454545454545453,
+      "support": 31.0
+    },
+    "accuracy": 0.76,
+    "macro avg": {
+      "precision": 0.7639257294429709,
+      "recall": 0.6395511921458625,
+      "f1-score": 0.6503496503496503,
+      "support": 100.0
+    },
+    "weighted avg": {
+      "precision": 0.7619098143236074,
+      "recall": 0.76,
+      "f1-score": 0.7247552447552448,
+      "support": 100.0
+    }
+  }
+}

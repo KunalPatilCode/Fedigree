@@ -1,0 +1,139 @@
+{
+  "project": "Fedigree Model 1 and Model 2 exploratory training",
+  "source": "LASI Wave 1 Daman and Diu Individual records",
+  "training_config": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratify": true,
+    "numeric_preprocessing": [
+      "median imputation",
+      "StandardScaler"
+    ],
+    "categorical_preprocessing": [
+      "most_frequent imputation",
+      "OneHotEncoder(handle_unknown='ignore')"
+    ],
+    "logistic_regression": {
+      "max_iter": 2000,
+      "class_weight": "balanced",
+      "random_state": 42
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "class_weight": "balanced_subsample",
+      "min_samples_leaf": 3,
+      "random_state": 42
+    }
+  },
+  "task_summaries": {
+    "diabetes": {
+      "n_usable": 986,
+      "positive": 171,
+      "negative": 815,
+      "train_n": 788,
+      "test_n": 198
+    },
+    "cvd_composite": {
+      "n_usable": 986,
+      "positive": 327,
+      "negative": 659,
+      "train_n": 788,
+      "test_n": 198
+    }
+  },
+  "results": [
+    {
+      "task": "diabetes",
+      "model": "logistic_regression",
+      "n_usable": 986,
+      "positive": 171,
+      "negative": 815,
+      "train_n": 788,
+      "test_n": 198,
+      "accuracy": 0.69697,
+      "balanced_accuracy": 0.642217,
+      "sensitivity_recall_positive": 0.558824,
+      "specificity_recall_negative": 0.72561,
+      "precision": 0.296875,
+      "f1_score": 0.387755,
+      "roc_auc": 0.762554,
+      "confusion_matrix": {
+        "tn": 119,
+        "fp": 45,
+        "fn": 15,
+        "tp": 19
+      },
+      "artifact": "models\\diabetes_logistic_regression_lasi_dd.joblib"
+    },
+    {
+      "task": "diabetes",
+      "model": "random_forest",
+      "n_usable": 986,
+      "positive": 171,
+      "negative": 815,
+      "train_n": 788,
+      "test_n": 198,
+      "accuracy": 0.772727,
+      "balanced_accuracy": 0.664634,
+      "sensitivity_recall_positive": 0.5,
+      "specificity_recall_negative": 0.829268,
+      "precision": 0.377778,
+      "f1_score": 0.43038,
+      "roc_auc": 0.716463,
+      "confusion_matrix": {
+        "tn": 136,
+        "fp": 28,
+        "fn": 17,
+        "tp": 17
+      },
+      "artifact": "models\\diabetes_random_forest_lasi_dd.joblib"
+    },
+    {
+      "task": "cvd_composite",
+      "model": "logistic_regression",
+      "n_usable": 986,
+      "positive": 327,
+      "negative": 659,
+      "train_n": 788,
+      "test_n": 198,
+      "accuracy": 0.732323,
+      "balanced_accuracy": 0.693182,
+      "sensitivity_recall_positive": 0.575758,
+      "specificity_recall_negative": 0.810606,
+      "precision": 0.603175,
+      "f1_score": 0.589147,
+      "roc_auc": 0.758551,
+      "confusion_matrix": {
+        "tn": 107,
+        "fp": 25,
+        "fn": 28,
+        "tp": 38
+      },
+      "artifact": "models\\cvd_composite_logistic_regression_lasi_dd.joblib"
+    },
+    {
+      "task": "cvd_composite",
+      "model": "random_forest",
+      "n_usable": 986,
+      "positive": 327,
+      "negative": 659,
+      "train_n": 788,
+      "test_n": 198,
+      "accuracy": 0.69697,
+      "balanced_accuracy": 0.659091,
+      "sensitivity_recall_positive": 0.545455,
+      "specificity_recall_negative": 0.772727,
+      "precision": 0.545455,
+      "f1_score": 0.545455,
+      "roc_auc": 0.731577,
+      "confusion_matrix": {
+        "tn": 102,
+        "fp": 30,
+        "fn": 30,
+        "tp": 36
+      },
+      "artifact": "models\\cvd_composite_random_forest_lasi_dd.joblib"
+    }
+  ],
+  "clinical_disclaimer": "Exploratory model evaluation on a single small regional LASI subset. Not a clinical validation, diagnosis, or prospective risk tool. Do not deploy for medical decisions."
+}

@@ -1,0 +1,38 @@
+{
+  "source_workbook": "Individual_Daman_and_Diu.xlsx",
+  "source_rows": 991,
+  "source_columns": 2623,
+  "state_counts": {
+    "Daman and Diu": 991
+  },
+  "target_definitions": {
+    "diabetes": "HT003 self-reported professional diagnosis; 1=Yes, 2=No",
+    "cvd_composite": "Any of HT002 hypertension, HT006 chronic heart disease, or HT007 stroke; 1=Yes, 2=No in each source field",
+    "not_cad_specific": true
+  },
+  "diabetes_target": {
+    "usable": 986,
+    "positive": 171,
+    "negative": 815,
+    "missing": 5
+  },
+  "cvd_composite_target": {
+    "usable": 986,
+    "positive": 327,
+    "negative": 659,
+    "missing": 5
+  },
+  "heart_disease_ht006_only": {
+    "usable": 986,
+    "positive": 27,
+    "negative": 959,
+    "warning": "Only 27 positive records in this Daman and Diu sample; not enough for a robust CAD-specific model evaluation."
+  },
+  "limitations": [
+    "LASI target labels are self-reported diagnoses, not all lab-confirmed outcomes.",
+    "Daman and Diu subsample is small and from a survey designed for population inference; these models are exploratory.",
+    "Metrics are from an unweighted 80/20 stratified split; survey weights and cluster design were not applied.",
+    "CVD composite is prevalent diagnosis classification, not future/10-year CVD risk and not CAD-specific.",
+    "No raw respondent-level data or IDs are written into the reports."
+  ]
+}

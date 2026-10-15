@@ -1,0 +1,5 @@
+task,model,n_usable,positive,negative,train_n,test_n,accuracy,balanced_accuracy,sensitivity_recall_positive,specificity_recall_negative,precision,f1_score,roc_auc,confusion_matrix,artifact
+diabetes,logistic_regression,986,171,815,788,198,0.69697,0.642217,0.558824,0.72561,0.296875,0.387755,0.762554,"{'tn': 119, 'fp': 45, 'fn': 15, 'tp': 19}",models\diabetes_logistic_regression_lasi_dd.joblib
+diabetes,random_forest,986,171,815,788,198,0.772727,0.664634,0.5,0.829268,0.377778,0.43038,0.716463,"{'tn': 136, 'fp': 28, 'fn': 17, 'tp': 17}",models\diabetes_random_forest_lasi_dd.joblib
+cvd_composite,logistic_regression,986,327,659,788,198,0.732323,0.693182,0.575758,0.810606,0.603175,0.589147,0.758551,"{'tn': 107, 'fp': 25, 'fn': 28, 'tp': 38}",models\cvd_composite_logistic_regression_lasi_dd.joblib
+cvd_composite,random_forest,986,327,659,788,198,0.69697,0.659091,0.545455,0.772727,0.545455,0.545455,0.731577,"{'tn': 102, 'fp': 30, 'fn': 30, 'tp': 36}",models\cvd_composite_random_forest_lasi_dd.joblib

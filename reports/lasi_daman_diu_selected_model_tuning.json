@@ -1,0 +1,64 @@
+{
+  "project": "Fedigree selected-model tuning on LASI Daman & Diu",
+  "input_file_name": "Individual_Daman_and_Diu.xlsx",
+  "method": {
+    "outer_split": "stratified 80/20, random_state=42; consistent with previous baseline split",
+    "tuning_cv": "StratifiedKFold(n_splits=3, shuffle=True, random_state=2026) on the training split only",
+    "refit_metric": "ROC-AUC",
+    "operating_threshold": 0.5,
+    "preprocessing": "median imputation + scaling for age; most-frequent imputation + one-hot encoding for categorical inputs; fitted inside the pipeline",
+    "survey_weights": "not applied"
+  },
+  "warning": "Exploratory unweighted model development on a small regional survey subset. Tuning does not establish clinical validity, causality, calibrated individual risk, or generalizability. The hold-out split has been examined previously, so this should not be treated as independent external validation.",
+  "results": [
+    {
+      "task": "diabetes",
+      "algorithm": "random_forest",
+      "n_usable": 986,
+      "train_n": 788,
+      "test_n": 198,
+      "baseline_test_metrics": {
+        "accuracy": 0.7727272727272727,
+        "balanced_accuracy": 0.6646341463414633,
+        "sensitivity": 0.5,
+        "specificity": 0.8292682926829268,
+        "precision": 0.37777777777777777,
+        "f1_score": 0.43037974683544306,
+        "roc_auc": 0.7164634146341464,
+        "tn": 136,
+        "fp": 28,
+        "fn": 17,
+        "tp": 17
+      },
+      "tuned_test_metrics": {
+        "accuracy": 0.7171717171717171,
+        "balanced_accuracy": 0.7476685796269726,
+        "sensitivity": 0.7941176470588235,
+        "specificity": 0.7012195121951219,
+        "precision": 0.35526315789473684,
+        "f1_score": 0.4909090909090909,
+        "roc_auc": 0.759325681492109,
+        "tn": 115,
+        "fp": 49,
+        "fn": 7,
+        "tp": 27
+      },
+      "best_cv_metrics_on_training_split": {
+        "roc_auc_mean": 0.8082325964513902,
+        "roc_auc_std": 0.009605644722670332,
+        "balanced_accuracy_mean": 0.7375405359276327,
+        "f1_mean": 0.48945095942727007
+      },
+      "best_params": {
+        "model__n_estimators": 200,
+        "model__min_samples_split": 15,
+        "model__min_samples_leaf": 8,
+        "model__max_features": "sqrt",
+        "model__max_depth": 4,
+        "model__class_weight": "balanced"
+      },
+      "artifact": "models\\diabetes_random_forest_tuned_lasi_dd.joblib",
+      "selection_note": "Hyperparameters selected by 3-fold CV ROC-AUC on the training split. Test metrics are one exploratory hold-out evaluation and not clinical validation."
+    }
+  ]
+}

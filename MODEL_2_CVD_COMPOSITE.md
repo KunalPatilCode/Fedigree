@@ -1,79 +1,87 @@
-# Fedigree Model 2 — LASI-Defined CVD Composite Classifier
+# Fedigree Model 2 — LASI-Defined CVD Composite Classifier (Combined Maharashtra + Daman & Diu)
 
-## Current selection
+## Candidate Models
 
-**Selected experimental model:** baseline Logistic Regression, artifact `models/cvd_composite_logistic_regression_lasi_dd.joblib`.
+- **Active Fine-Tuned Candidate:** `models/cvd_composite_logistic_regression_combined_tuned.joblib`
+  - Hyperparameters: `C=0.01`, `penalty="l2"`, `class_weight={0: 1.0, 1: 1.5}`, `solver="lbfgs"`, `max_iter=4000`
+  - Calibrated Decision Threshold: `0.390`
+  - Performance: Hold-out Sensitivity **65.26%** | Hold-out ROC-AUC **0.7362** | 5-Fold CV ROC-AUC **0.7474** | F1-Score **56.38%**
+- **Baseline Comparison Candidate:** `models/cvd_composite_logistic_regression_combined_baseline.joblib`
+  - Hyperparameters: standard baseline (`max_iter=2000`, `class_weight="balanced"`)
+  - Threshold: 0.50 | Hold-out Sensitivity 61.69% | Hold-out ROC-AUC 0.7386
+- **Historical Daman & Diu-only artifacts:** Preserved in `models/` for provenance.
 
-No fine-tuning is selected for Model 2 in the current handover. If an older tuned CVD artifact exists in a previous package, it is not the selected model and must not overwrite this baseline.
+This model classifies a broad LASI-defined **self-reported condition composite (hypertension OR chronic heart disease OR stroke)**. It is **NOT** a CAD-specific model and is **NOT** a future or 10-year cardiovascular-risk prediction tool.
 
-This model classifies a broad LASI-defined **self-reported condition composite**. It is not a CAD-specific model and is not a future or 10-year cardiovascular-risk model.
+---
 
-## Dataset and target
+## Dataset Scope and Target Definition
 
-The composite target is positive if any of these LASI diagnosis items is Yes:
-- `HT002`: hypertension / high blood pressure
-- `HT006`: chronic heart disease
-- `HT007`: stroke
+The composite target is positive (`1`) if any of these three LASI diagnosis items is reported as Yes (`1`):
+- `HT002`: Hypertension / high blood pressure
+- `HT006`: Chronic heart disease
+- `HT007`: Stroke
 
-The composite is negative only when all three source items are explicitly No. Rows with unknown target status are excluded.
+The composite is negative (`0`) only when all three source items are explicitly No (`2`). Rows with unknown/missing target status in any component without a positive diagnosis are excluded.
 
-- Source rows: 991.
-- Usable target labels: 986 (327 positive, 659 negative, 5 unknown).
-- `HT006` chronic heart-disease-only positive reports: 27.
-- Stratified 80/20 split: 788 train and 198 test rows; `random_state=42`.
+- **Source files:** Authorized LASI Wave 1 Individual-level extracts for **Maharashtra** (3,973 respondents) and **Daman & Diu** (991 respondents).
+- **Total respondents:** 4,964.
+- **Usable target labels:** 4,948 (1,538 Positive / 31.08% prevalence, 3,410 Negative, 16 missing/unresolved excluded).
+- **Standalone `HT006` chronic heart disease:** 209 positive reports across both states (182 in Maharashtra, 27 in Daman & Diu).
+- **Train/test split:** Stratified 80/20 (`random_state=42`):
+  - Training set: 3,958 records (1,230 Positive, 2,728 Negative)
+  - Hold-out test set: 990 records (308 Positive, 682 Negative)
+  - Zero duplicate respondent IDs across train and test partitions.
 
-## Input feature contract (13 fields)
+---
 
-| API field | Source / construction | Representation |
-|---|---|---|
-| `age_years` | `DM005` | Numeric |
-| `sex_code` | `DM003` | Source category code |
-| `residence_code` | `residence` | Source category code (`1` urban, `2` rural, per codebook) |
-| `mpce_quintile` | `mpce_quintile` | Category `1`–`5` |
-| `education_level` | Derived from `DM006`, `DM008` | `0_never_attended` or `level_<DM008 code>` |
-| `family_history_hypertension` | `FM303` family-member indicators | Category `0` / `1` |
-| `family_history_heart_disease` | `FM305` family-member indicators | Category `0` / `1` |
-| `family_history_stroke` | `FM306` family-member indicators | Category `0` / `1` |
-| `diabetes_reported` | `HT003`, yes/no mapped to `1` / `0` | Category `0` / `1` |
-| `high_cholesterol_history` | `HT010`, yes/no mapped to `1` / `0` | Category `0` / `1` |
-| `tobacco_ever` | `HB001` | Category `0` / `1` |
-| `vigorous_activity_frequency` | `HB211` | Source category code |
-| `moderate_activity_frequency` | `HB213` | Source category code |
+## Input Feature Contract (13 Fields)
 
-The three outcome-defining fields (`HT002`, `HT006`, `HT007`) are excluded from input features to avoid direct target leakage. Verify code mappings against the authorized LASI codebook.
+| API field | Source / construction | Representation | Accepted values / encodings |
+|---|---|---|---|
+| `age_years` | `DM005` | Numeric | Plausible integer / float (> 0) |
+| `sex_code` | `DM003` | Category code | `'1'` (Male), `'2'` (Female) |
+| `residence_code` | `residence` | Category code | `'1'` (Urban), `'2'` (Rural) |
+| `mpce_quintile` | `mpce_quintile` | Category code | `'1'`, `'2'`, `'3'`, `'4'`, `'5'` |
+| `education_level` | Derived from `DM006` and `DM008` | Categorical string | `'0_never_attended'`, `'level_1'` through `'level_9'` |
+| `family_history_hypertension` | `FM303` family-member indicators | Binary string | `'1'` (any family member positive), `'0'` (no / none flag) |
+| `family_history_heart_disease` | `FM305` family-member indicators | Binary string | `'1'` (any family member positive), `'0'` (no / none flag) |
+| `family_history_stroke` | `FM306` family-member indicators | Binary string | `'1'` (any family member positive), `'0'` (no / none flag) |
+| `diabetes_reported` | `HT003`; `1=Yes`, `2=No` mapped to `'1'` / `'0'` | Binary string | `'1'` (reported diabetes), `'0'` (no) |
+| `high_cholesterol_history` | `HT010`; `1=Yes`, `2=No` mapped to `'1'` / `'0'` | Binary string | `'1'` (reported high cholesterol), `'0'` (no) |
+| `tobacco_ever` | `HB001` | Binary string | `'1'` (ever used), `'0'` (never used) |
+| `vigorous_activity_frequency` | `HB211` | Category code | `'1'`, `'2'`, `'3'`, `'4'`, `'5'` |
+| `moderate_activity_frequency` | `HB213` | Category code | `'1'`, `'2'`, `'3'`, `'4'`, `'5'` |
 
-## Hold-out metrics
+### Mandatory Target Leakage Prevention
+The three outcome-defining fields (`HT002`, `HT006`, `HT007`) and all their downstream interview questions (`HT002a-d`, `HT006a-h`, `HT007a-k`) are strictly excluded from the feature matrix. `diabetes_reported` (`HT003`) is retained as a comorbidity, as diabetes is distinct from the cardiovascular outcome composite.
 
-Single unweighted stratified 80/20 hold-out split; metrics have not been survey-weighted or externally validated.
+---
 
-| Metric | Logistic Regression — selected baseline | Random Forest baseline comparison |
-|---|---:|---:|
-| Accuracy | 73.23% | 69.70% |
-| Balanced accuracy | 69.32% | 65.91% |
-| Sensitivity / recall-positive | 57.58% | 54.55% |
-| Specificity / recall-negative | 81.06% | 77.27% |
-| Precision | 60.32% | 54.55% |
-| F1-score | 58.91% | 54.55% |
-| ROC-AUC | 0.7586 | 0.7316 |
-| TN | 107 | 102 |
-| FP | 25 | 30 |
-| FN | 28 | 30 |
-| TP | 38 | 36 |
+## Evaluation Metrics (Hold-Out Test Split N=990)
 
-Logistic Regression remains the baseline selection because it performed better on the listed metrics in this split. This is only an engineering prototype choice; it is not evidence of clinical suitability.
+| Metric | LR Baseline | RF Baseline | **LR Tuned (Calibrated Thresh 0.39)** |
+|---|---:|---:|---:|
+| **Accuracy** | 69.70% | 73.23% | **68.59%** |
+| **Balanced accuracy** | 67.50% | 67.93% | **67.67%** |
+| **Sensitivity (Recall)** | 61.69% | 53.90% | **65.26%** |
+| **Specificity** | 73.31% | 81.96% | **70.09%** |
+| **Precision** | 51.08% | 57.44% | **49.63%** |
+| **F1-score** | 55.88% | 55.61% | **56.38%** |
+| **ROC-AUC** | 0.7386 | 0.7277 | **0.7362** |
+| **5-Fold CV ROC-AUC** | 0.7439 (±0.0210) | 0.7391 (±0.0245) | **0.7474 (±0.0208)** |
+| **True Negatives (TN)** | 500 | 559 | **478** |
+| **False Positives (FP)** | 182 | 123 | **204** |
+| **False Negatives (FN)** | 118 | 142 | **107 (11 fewer missed cases)** |
+| **True Positives (TP)** | 190 | 166 | **201** |
 
-## Selected artifact and related files
+---
 
-- Selected: `models/cvd_composite_logistic_regression_lasi_dd.joblib`
-- Comparison baseline: `models/cvd_composite_random_forest_lasi_dd.joblib`
-- Inference helper: `lasi_model_inference.py`
-- Metrics: `reports/lasi_daman_diu_model_metrics.csv`, `reports/lasi_daman_diu_model_metrics.json`
+## Artifact Files
 
-## Limitations
-
-- Not CAD-specific, not a future/10-year risk model, and not a medical diagnostic tool.
-- It predicts a composite based on self-reported hypertension, chronic heart disease or stroke; these are not necessarily lab-confirmed outcomes.
-- Only 27 respondents reported chronic heart disease alone, making CAD-only modelling particularly limited for this regional subset.
-- Metrics are unweighted and use a single hold-out split that informed earlier model selection. Independent validation and survey-design-aware evaluation are required.
-- Positive-class probabilities are model scores, not validated individual cardiovascular-risk percentages.
-- Do not use for diagnosis, triage, or medical decisions. Do not publish raw respondent-level LASI data or identifiers.
+- **Active Tuned Candidate:** `models/cvd_composite_logistic_regression_combined_tuned.joblib`
+- **Active Combined Baseline:** `models/cvd_composite_logistic_regression_combined_baseline.joblib`
+- **Comparison Baseline:** `models/cvd_composite_random_forest_combined_baseline.joblib`
+- **Historical Daman & Diu-only models:** `models/cvd_composite_logistic_regression_lasi_dd.joblib`, `models/cvd_composite_random_forest_lasi_dd.joblib`
+- **Inference helper:** `lasi_model_inference.py` (key: `cvd_composite_logistic_regression_tuned`)
+- **Tuning reports:** `reports/combined_model_tuning.md`, `reports/combined_model_tuning.json`, `reports/combined_model_tuning.csv`

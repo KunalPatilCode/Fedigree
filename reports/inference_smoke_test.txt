@@ -1,15 +1,155 @@
 === FEDIGREE LASI MODEL INFERENCE SMOKE TEST ===
-WARNING: Fictional profiles; not clinical advice.
+WARNING: Fictional profiles; strictly for software testing. Not clinical advice.
 
-diabetes_logistic_regression
-{'model_name': 'logistic_regression', 'task_name': 'diabetes', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_diagnosed_diabetes', 'model_positive_class_probability': 0.341903, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'Predicts LASI self-reported diagnosis classification, not future diabetes risk or clinical diagnosis. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+--- 1. ACTIVE COMBINED-DATASET FINE-TUNED MODELS ---
+
+Tuned Model Key: diabetes_random_forest_tuned
+  model_key: diabetes_random_forest_tuned
+  model_name: random_forest
+  task_name: diabetes
+  predicted_class: 0
+  predicted_class_meaning: no_reported_diagnosed_diabetes
+  model_positive_class_probability: 0.303168
+  classification_threshold: 0.528
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4948; target complete labels n=4948
+  model_status: combined_lasi_survey_data_tuned_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
 ----------------------------------------------------------------------
-diabetes_random_forest
-{'model_name': 'random_forest', 'task_name': 'diabetes', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_diagnosed_diabetes', 'model_positive_class_probability': 0.23153, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'Predicts LASI self-reported diagnosis classification, not future diabetes risk or clinical diagnosis. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+
+Tuned Model Key: cvd_composite_logistic_regression_tuned
+  model_key: cvd_composite_logistic_regression_tuned
+  model_name: logistic_regression
+  task_name: cvd_composite
+  predicted_class: 0
+  predicted_class_meaning: no_reported_cvd_composite
+  model_positive_class_probability: 0.297007
+  classification_threshold: 0.39
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4948; target complete labels n=4948
+  model_status: combined_lasi_survey_data_tuned_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI-defined CVD condition composite (hypertension OR chronic heart disease OR stroke). It is NOT CAD-specific and NOT a future 10-year cardiovascular risk score. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
 ----------------------------------------------------------------------
-cvd_composite_logistic_regression
-{'model_name': 'logistic_regression', 'task_name': 'cvd_composite', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_cvd_composite', 'model_positive_class_probability': 0.24531, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'CVD composite = reported hypertension OR chronic heart disease OR stroke; not CAD-specific and not future 10-year risk. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+
+--- 2. ACTIVE COMBINED-DATASET BASELINE MODELS ---
+
+Model Key: diabetes_logistic_regression
+  model_key: diabetes_logistic_regression
+  model_name: logistic_regression
+  task_name: diabetes
+  predicted_class: 0
+  predicted_class_meaning: no_reported_diagnosed_diabetes
+  model_positive_class_probability: 0.242353
+  classification_threshold: 0.5
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4964; target complete labels n=4948
+  model_status: baseline_combined_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
 ----------------------------------------------------------------------
-cvd_composite_random_forest
-{'model_name': 'random_forest', 'task_name': 'cvd_composite', 'predicted_class': 0, 'predicted_class_meaning': 'no_reported_cvd_composite', 'model_positive_class_probability': 0.340463, 'model_status': 'exploratory_lasi_survey_data_not_clinically_validated', 'notice': 'CVD composite = reported hypertension OR chronic heart disease OR stroke; not CAD-specific and not future 10-year risk. Exploratory, unweighted Daman & Diu survey-sample model; not clinically validated. Do not use for medical decisions.'}
+
+Model Key: diabetes_random_forest
+  model_key: diabetes_random_forest
+  model_name: random_forest
+  task_name: diabetes
+  predicted_class: 0
+  predicted_class_meaning: no_reported_diagnosed_diabetes
+  model_positive_class_probability: 0.086527
+  classification_threshold: 0.5
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4964; target complete labels n=4948
+  model_status: baseline_combined_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
 ----------------------------------------------------------------------
+
+Model Key: cvd_composite_logistic_regression
+  model_key: cvd_composite_logistic_regression
+  model_name: logistic_regression
+  task_name: cvd_composite
+  predicted_class: 0
+  predicted_class_meaning: no_reported_cvd_composite
+  model_positive_class_probability: 0.311176
+  classification_threshold: 0.5
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4964; target complete labels n=4948
+  model_status: baseline_combined_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI-defined CVD condition composite (hypertension OR chronic heart disease OR stroke). It is NOT CAD-specific and NOT a future 10-year cardiovascular risk score. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+Model Key: cvd_composite_random_forest
+  model_key: cvd_composite_random_forest
+  model_name: random_forest
+  task_name: cvd_composite
+  predicted_class: 0
+  predicted_class_meaning: no_reported_cvd_composite
+  model_positive_class_probability: 0.390587
+  classification_threshold: 0.5
+  data_scope: Combined Maharashtra and Daman & Diu sample, total n=4964; target complete labels n=4948
+  model_status: baseline_combined_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI-defined CVD condition composite (hypertension OR chronic heart disease OR stroke). It is NOT CAD-specific and NOT a future 10-year cardiovascular risk score. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+--- 3. HISTORICAL DAMAN & DIU-ONLY PRESERVED BASELINES ---
+
+Historical Model Key: historical_diabetes_logistic_regression_dd
+  model_key: historical_diabetes_logistic_regression_dd
+  model_name: logistic_regression
+  task_name: diabetes
+  predicted_class: 0
+  predicted_class_meaning: no_reported_diagnosed_diabetes
+  model_positive_class_probability: 0.341903
+  classification_threshold: 0.5
+  data_scope: Daman and Diu filtered sample, n=991; target-specific complete labels n=986
+  model_status: exploratory_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+Historical Model Key: historical_diabetes_random_forest_tuned_dd
+  model_key: historical_diabetes_random_forest_tuned_dd
+  model_name: random_forest
+  task_name: diabetes
+  predicted_class: 0
+  predicted_class_meaning: no_reported_diagnosed_diabetes
+  model_positive_class_probability: 0.369985
+  classification_threshold: 0.5
+  data_scope: Daman and Diu filtered sample, n=986; target-usable records
+  model_status: exploratory_lasi_survey_data_not_clinically_validated_tuned
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+Historical Model Key: historical_cvd_composite_logistic_regression_dd
+  model_key: historical_cvd_composite_logistic_regression_dd
+  model_name: logistic_regression
+  task_name: cvd_composite
+  predicted_class: 0
+  predicted_class_meaning: no_reported_cvd_composite
+  model_positive_class_probability: 0.24531
+  classification_threshold: 0.5
+  data_scope: Daman and Diu filtered sample, n=991; target-specific complete labels n=986
+  model_status: exploratory_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI-defined CVD condition composite (hypertension OR chronic heart disease OR stroke). It is NOT CAD-specific and NOT a future 10-year cardiovascular risk score. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+Historical Model Key: historical_cvd_composite_random_forest_dd
+  model_key: historical_cvd_composite_random_forest_dd
+  model_name: random_forest
+  task_name: cvd_composite
+  predicted_class: 0
+  predicted_class_meaning: no_reported_cvd_composite
+  model_positive_class_probability: 0.328156
+  classification_threshold: 0.5
+  data_scope: Daman and Diu filtered sample, n=991; target-specific complete labels n=986
+  model_status: exploratory_lasi_survey_data_not_clinically_validated
+  training_environment: {'sklearn_version': '1.9.1', 'current_sklearn': '1.9.1'}
+  notice: Predicts LASI-defined CVD condition composite (hypertension OR chronic heart disease OR stroke). It is NOT CAD-specific and NOT a future 10-year cardiovascular risk score. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis.
+----------------------------------------------------------------------
+
+--- 4. INPUT VALIDATION ERROR HANDLING TESTS ---
+PASS: Missing field caught correctly: Missing required input fields: ['age_years']
+PASS: Unexpected field caught correctly: Unexpected input fields: ['unauthorized_field']
+PASS: Invalid age caught correctly: Invalid age_years value: -10. Must be numeric.
+
+All smoke tests completed successfully.

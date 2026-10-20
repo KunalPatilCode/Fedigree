@@ -1,0 +1,9 @@
+task,model,region,test_n,positive_n,negative_n,accuracy,balanced_accuracy,sensitivity,specificity,precision,f1_score,roc_auc,tn,fp,fn,tp
+diabetes,logistic_regression,Maharashtra,802,108,694,0.735661,0.710441,0.675926,0.744957,0.292,0.407821,0.763462,517,177,35,73
+diabetes,logistic_regression,Daman and Diu,188,36,152,0.659574,0.67288,0.694444,0.651316,0.320513,0.438596,0.720852,99,53,11,25
+diabetes,random_forest,Maharashtra,802,108,694,0.805486,0.696059,0.546296,0.845821,0.355422,0.430657,0.756604,587,107,49,59
+diabetes,random_forest,Daman and Diu,188,36,152,0.744681,0.672515,0.555556,0.789474,0.384615,0.454545,0.719024,120,32,16,20
+cvd_composite,logistic_regression,Maharashtra,810,246,564,0.703704,0.67951,0.617886,0.741135,0.510067,0.558824,0.745142,418,146,94,152
+cvd_composite,logistic_regression,Daman and Diu,180,62,118,0.666667,0.653909,0.612903,0.694915,0.513514,0.558824,0.708037,82,36,24,38
+cvd_composite,random_forest,Maharashtra,810,246,564,0.744444,0.688138,0.544715,0.83156,0.585153,0.564211,0.737891,469,95,112,134
+cvd_composite,random_forest,Daman and Diu,180,62,118,0.677778,0.63942,0.516129,0.762712,0.533333,0.52459,0.6848,90,28,30,32

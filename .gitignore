@@ -21,4 +21,5 @@ Thumbs.db
 
 # Restricted LASI raw data
 data/Individual_Daman_and_Diu.xlsx
+data/Individual_Maharashtra.xlsx
 *.xlsx

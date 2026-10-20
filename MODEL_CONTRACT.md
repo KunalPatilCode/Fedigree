@@ -1,80 +1,110 @@
-# Fedigree LASI Model Input/Output Contract
+# Fedigree LASI Model Input/Output Contract (Combined Maharashtra + Daman & Diu)
 
-## Selected artifacts
+## Active Artifacts
 
-- **Diabetes (Model 1):** `models/diabetes_random_forest_tuned_lasi_dd.joblib` — tuned, sensitivity-focused experimental candidate.
-- **CVD composite (Model 2):** `models/cvd_composite_logistic_regression_lasi_dd.joblib` — baseline Logistic Regression; no tuning selected.
+### 1. Fine-Tuned Candidate Artifacts
+- **Diabetes (Model 1):** `models/diabetes_random_forest_combined_tuned.joblib` — Random Forest tuned via 5-fold CV ROC-AUC + calibrated decision threshold (0.528).
+- **CVD Composite (Model 2):** `models/cvd_composite_logistic_regression_combined_tuned.joblib` — Logistic Regression tuned via 5-fold CV ROC-AUC + calibrated decision threshold (0.390).
 
-The baseline Diabetes artifacts and CVD Random Forest are retained only for comparison where present. They must not be substituted for the selected models without an explicit decision.
+### 2. Active Baseline Comparison Artifacts
+- **Diabetes (Model 1):** `models/diabetes_random_forest_combined_baseline.joblib` — fresh baseline Random Forest candidate.
+- **CVD Composite (Model 2):** `models/cvd_composite_logistic_regression_combined_baseline.joblib` — fresh baseline Logistic Regression candidate.
+- **Diabetes (LR Comparison):** `models/diabetes_logistic_regression_combined_baseline.joblib`
+- **CVD Composite (RF Comparison):** `models/cvd_composite_random_forest_combined_baseline.joblib`
 
-## General status and limitations
+### 3. Historical Baselines Preserved
+- Historical Daman & Diu-only artifacts (`models/diabetes_random_forest_tuned_lasi_dd.joblib`, `models/diabetes_random_forest_lasi_dd.joblib`, `models/diabetes_logistic_regression_lasi_dd.joblib`, `models/cvd_composite_logistic_regression_lasi_dd.joblib`, `models/cvd_composite_random_forest_lasi_dd.joblib`) remain preserved and accessible via historical keys in `lasi_model_inference.py`.
 
-These are exploratory classifiers trained on a small LASI Wave 1 Daman & Diu survey subset. Targets are self-reported diagnoses. Metrics are unweighted and based on a single stratified hold-out split; the split was inspected during prior experimentation and is not independent validation. Models are not clinically validated and must not be used for diagnosis, triage, or medical decisions.
+---
 
-## Model 1 — Diabetes reported-diagnosis classifier
+## General Status and Limitations
 
-**Target:** `HT003`: `1=Yes` (health professional ever diagnosed diabetes/high blood sugar), `2=No`. Five records with unknown target were excluded. This is classification of reported diagnosis, not future diabetes risk.
+These models are exploratory disease-classification baselines trained on combined individual records from **Maharashtra** (3,973 respondents) and **Daman & Diu** (991 respondents) from LASI Wave 1 (total n=4,964; usable target n=4,948). Targets are self-reported physician diagnoses. Metrics are unweighted exploratory results from a single stratified hold-out split (3,958 train, 990 test). Models are **not clinically validated** and must **not** be used for clinical diagnosis, triage, or medical decision-making.
 
-### Input schema (11 fields)
+---
 
-| Field | Type / codes | Source / construction |
+## Model 1 — Diabetes Reported-Diagnosis Classifier
+
+**Target:** `HT003`: `1=Yes` (physician ever diagnosed diabetes/high blood sugar), `2=No`. Mapped to binary `1` and `0`. 16 records with missing/unresolved target were excluded. This classifies reported diagnosis; it does **not** predict prospective diabetes onset.
+
+### Input Schema (11 Fields)
+
+| Field | Type / Encodings | Source / Construction |
 |---|---|---|
-| `age_years` | numeric | `DM005`, age at last birthday |
-| `sex_code` | category: source-coded | `DM003` |
-| `residence_code` | category: source-coded (`1` urban, `2` rural per codebook) | `residence` |
-| `mpce_quintile` | category `1`–`5` | `mpce_quintile` |
-| `education_level` | category `0_never_attended` or `level_<DM008 code>` | Derived from `DM006` and `DM008` |
-| `family_history_diabetes` | category `0` / `1` | `FM304` family-member indicators |
-| `hypertension_history` | category `0` / `1` | `HT002`, yes/no mapped to `1` / `0` |
-| `high_cholesterol_history` | category `0` / `1` | `HT010`, yes/no mapped to `1` / `0` |
-| `tobacco_ever` | category `0` / `1` | `HB001` |
-| `vigorous_activity_frequency` | source category code | `HB211` |
-| `moderate_activity_frequency` | source category code | `HB213` |
+| `age_years` | numeric (int / float > 0) | `DM005`, age at last birthday |
+| `sex_code` | category: `'1'`, `'2'` | `DM003` (`'1'` Male, `'2'` Female) |
+| `residence_code` | category: `'1'`, `'2'` | `residence` (`'1'` Urban, `'2'` Rural) |
+| `mpce_quintile` | category: `'1'`–`'5'` | `mpce_quintile` |
+| `education_level` | category: `'0_never_attended'` or `'level_<1-9>'` | Derived from `DM006` and `DM008` |
+| `family_history_diabetes` | category: `'0'`, `'1'` | `FM304` family-member indicators (`fm304s1`–`fm304s7`) |
+| `hypertension_history` | category: `'0'`, `'1'` | `HT002`, yes/no mapped to `'1'` / `'0'` |
+| `high_cholesterol_history` | category: `'0'`, `'1'` | `HT010`, yes/no mapped to `'1'` / `'0'` |
+| `tobacco_ever` | category: `'0'`, `'1'` | `HB001`, ever smoked or used smokeless tobacco |
+| `vigorous_activity_frequency` | category: `'1'`–`'5'` | `HB211` |
+| `moderate_activity_frequency` | category: `'1'`–`'5'` | `HB213` |
 
-### Latest selected model metrics
+### Candidate Baseline Metrics (Hold-Out Test Split N=990)
+Random Forest Baseline: Accuracy 79.39%, Balanced Accuracy 69.22%, Sensitivity 54.86%, Specificity 83.57%, Precision 36.24%, F1-Score 43.65%, ROC-AUC 0.7507. Confusion matrix: TN=707, FP=139, FN=65, TP=79.
+Training 5-fold CV: Mean ROC-AUC = 0.7764 (±0.0209), Mean Balanced Acc = 68.58% (±1.83%), Mean F1 = 42.84% (±2.00%).
 
-Tuned Random Forest: accuracy 71.72%, balanced accuracy 74.77%, sensitivity 79.41%, specificity 70.12%, precision 35.53%, F1 49.09%, ROC-AUC 0.7593. Confusion matrix: TN=115, FP=49, FN=7, TP=27.
+---
 
-Parameters: `n_estimators=200`, `max_depth=4`, `min_samples_split=15`, `min_samples_leaf=8`, `max_features="sqrt"`, `class_weight="balanced"`. Three-fold CV on the training split: mean ROC-AUC 0.8082 (SD 0.0096), mean balanced accuracy 0.7375, mean F1 0.4895. These are exploratory results; sensitivity improved versus baseline at the cost of more false positives and lower specificity/accuracy.
+## Model 2 — LASI-Defined CVD Composite Classifier
 
-## Model 2 — LASI-defined CVD composite classifier
+**Target:** `1` if any of `HT002` (hypertension), `HT006` (chronic heart disease), or `HT007` (stroke) is reported as Yes (`1`); `0` only if all three are explicitly No (`2`). 16 records with unresolved status were excluded. This is a broad condition composite, **not** CAD-specific and **not** a 10-year prospective risk score.
 
-**Target:** `1` if any of `HT002` (hypertension), `HT006` (chronic heart disease), or `HT007` (stroke) is reported; `0` only if all three are explicitly No. Unknown composite outcomes are excluded. This is not CAD-only and is not future/10-year risk.
+### Input Schema (13 Fields)
 
-### Input schema (13 fields)
-
-| Field | Type / codes | Source / construction |
+| Field | Type / Encodings | Source / Construction |
 |---|---|---|
-| `age_years` | numeric | `DM005` |
-| `sex_code` | source category code | `DM003` |
-| `residence_code` | source category code | `residence` |
-| `mpce_quintile` | category `1`–`5` | `mpce_quintile` |
-| `education_level` | category | Derived from `DM006`, `DM008` |
-| `family_history_hypertension` | category `0` / `1` | `FM303` family-member indicators |
-| `family_history_heart_disease` | category `0` / `1` | `FM305` family-member indicators |
-| `family_history_stroke` | category `0` / `1` | `FM306` family-member indicators |
-| `diabetes_reported` | category `0` / `1` | `HT003` mapped to `1` / `0` |
-| `high_cholesterol_history` | category `0` / `1` | `HT010` mapped to `1` / `0` |
-| `tobacco_ever` | category `0` / `1` | `HB001` |
-| `vigorous_activity_frequency` | source category code | `HB211` |
-| `moderate_activity_frequency` | source category code | `HB213` |
+| `age_years` | numeric (int / float > 0) | `DM005` |
+| `sex_code` | category: `'1'`, `'2'` | `DM003` (`'1'` Male, `'2'` Female) |
+| `residence_code` | category: `'1'`, `'2'` | `residence` (`'1'` Urban, `'2'` Rural) |
+| `mpce_quintile` | category: `'1'`–`'5'` | `mpce_quintile` |
+| `education_level` | category: `'0_never_attended'` or `'level_<1-9>'` | Derived from `DM006` and `DM008` |
+| `family_history_hypertension` | category: `'0'`, `'1'` | `FM303` family-member indicators (`fm303s1`–`fm303s7`) |
+| `family_history_heart_disease` | category: `'0'`, `'1'` | `FM305` family-member indicators (`fm305s1`–`fm305s7`) |
+| `family_history_stroke` | category: `'0'`, `'1'` | `FM306` family-member indicators (`fm306s1`–`fm306s7`) |
+| `diabetes_reported` | category: `'0'`, `'1'` | `HT003`, mapped to `'1'` / `'0'` |
+| `high_cholesterol_history` | category: `'0'`, `'1'` | `HT010`, mapped to `'1'` / `'0'` |
+| `tobacco_ever` | category: `'0'`, `'1'` | `HB001` |
+| `vigorous_activity_frequency` | category: `'1'`–`'5'` | `HB211` |
+| `moderate_activity_frequency` | category: `'1'`–`'5'` | `HB213` |
 
-### Selected baseline metrics
+### Candidate Baseline Metrics (Hold-Out Test Split N=990)
+Logistic Regression Baseline: Accuracy 69.70%, Balanced Accuracy 67.50%, Sensitivity 61.69%, Specificity 73.31%, Precision 51.08%, F1-Score 55.88%, ROC-AUC 0.7386. Confusion matrix: TN=500, FP=182, FN=118, TP=190.
+Training 5-fold CV: Mean ROC-AUC = 0.7439 (±0.0210), Mean Balanced Acc = 68.19% (±2.06%), Mean F1 = 56.72% (±2.53%).
 
-Logistic Regression: accuracy 73.23%, balanced accuracy 69.32%, sensitivity 57.58%, specificity 81.06%, precision 60.32%, F1 58.91%, ROC-AUC 0.7586. Confusion matrix: TN=107, FP=25, FN=28, TP=38. Model 2 remains at baseline; do not use an older tuned CVD candidate as the selected artifact.
+---
 
-## Prediction response
+## Prediction Response Schema
 
-`lasi_model_inference.py` returns model name, task, predicted class, class meaning, positive-class probability, model status and a limitation notice. The probability is the model score for its target label; it is not a calibrated individual medical-risk percentage.
+The inference helper `predict(model_key, input_features)` returns:
+```json
+{
+  "model_key": "diabetes_random_forest",
+  "model_name": "random_forest",
+  "task_name": "diabetes",
+  "predicted_class": 0,
+  "predicted_class_meaning": "no_reported_diagnosed_diabetes",
+  "model_positive_class_probability": 0.086527,
+  "classification_threshold": 0.528,
+  "data_scope": "Combined Maharashtra and Daman & Diu sample, total n=4964; target complete labels n=4948",
+  "model_status": "baseline_combined_lasi_survey_data_not_clinically_validated",
+  "training_environment": {
+    "sklearn_version": "1.9.1",
+    "current_sklearn": "1.9.1"
+  },
+  "notice": "Predicts LASI self-reported diabetes diagnosis classification (HT003), NOT prospective future diabetes risk and NOT a clinical diagnostic test. Exploratory baseline model trained on LASI survey data. Not clinically validated. Do NOT deploy for medical decision-making, individual triage, or diagnosis."
+}
+```
 
-## Runtime contract
+---
 
-- Match exact field names and accepted categorical codes.
-- Send one dictionary/profile containing every required feature and no unexpected fields.
-- Do not refit preprocessing in the API; use the saved pipeline.
-- Keep the selected artifact paths above consistent between inference code and README.
-- `joblib` artifacts should be loaded only from trusted sources and with compatible dependency versions.
+## Runtime Contract and Validation Rules
 
-## Data handling
-
-Keep the authorized Individual-level XLSX local and out of public GitHub. Follow IIPS access and data-use conditions. Only share code, documentation, and permitted aggregate metrics.
+1. **Schema enforcement:** Incoming requests must provide all required features. Missing or unexpected fields raise explicit `ValueError`.
+2. **Type validation:** `age_years` must be numeric and plausible (1–125).
+3. **No independent preprocessing in API:** The saved `joblib` pipeline contains the fitted `ColumnTransformer` (median imputation, scaling, and one-hot encoding).
+4. **Dependency alignment:** Built with Python 3.13.7, scikit-learn 1.9.1, pandas 3.0.6, numpy 2.5.4, joblib 1.6.0.
+5. **Data protection:** Raw Excel extracts and respondent IDs are never committed or exposed via the API.

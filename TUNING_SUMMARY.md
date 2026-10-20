@@ -1,93 +1,97 @@
-# Fedigree — Final Model Selection and Diabetes Fine-Tuning Summary
+# Fedigree — Model Tuning Summary and Combined Dataset Fine-Tuning Status
 
-**Dataset:** LASI Wave 1 Individual Daman & Diu extract (991 rows; 986 usable target labels per task). **All metrics are exploratory, unweighted, and not clinical validation.**
+## 1. Combined Dataset Fine-Tuning Status (Completed Run)
 
-## Final engineering selection
+Systematic fine-tuning has been executed on the combined individual records from **Maharashtra** (3,973 respondents) and **Daman & Diu** (991 respondents) from LASI Wave 1:
+- Total respondents: **4,964**
+- Target complete records: **4,948**
+- Hold-out split: Stratified 80/20 train/test (`random_state=42`; 3,958 train, 990 test)
+- Model selection: 5-Fold Stratified Cross-Validation on the 3,958-sample training split only
+- Final evaluation: Evaluated on the untouched 990-sample hold-out test set
 
-- **Model 1 — Diabetes:** use the latest tuned Random Forest artifact `models/diabetes_random_forest_tuned_lasi_dd.joblib` as a sensitivity-focused experimental candidate.
-- **Model 2 — CVD composite:** retain the original baseline Logistic Regression artifact `models/cvd_composite_logistic_regression_lasi_dd.joblib`. Do not select or overwrite it with a tuned CVD candidate.
+---
 
-## Diabetes Random Forest: baseline vs latest tuned run
+## 2. Combined Dataset Fine-Tuned Results vs Baselines (Hold-Out N=990)
 
-| Metric | Baseline Random Forest | Latest tuned Random Forest |
-|---|---:|---:|
-| Accuracy | 77.27% | 71.72% |
-| Balanced accuracy | 66.46% | 74.77% |
-| Sensitivity / recall-positive | 50.00% | 79.41% |
-| Specificity | 82.93% | 70.12% |
-| Precision | 37.78% | 35.53% |
-| F1-score | 43.04% | 49.09% |
-| ROC-AUC | 0.7165 | 0.7593 |
-| TN | 136 | 115 |
-| FP | 28 | 49 |
-| FN | 17 | 7 |
-| TP | 17 | 27 |
+| Task | Configuration | Threshold | Accuracy | Balanced Acc | Sensitivity | Specificity | Precision | F1-Score | ROC-AUC | 5-Fold CV ROC-AUC | Status |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| **Diabetes** | Baseline Random Forest | 0.50 | 79.39% | 69.22% | 54.86% | 83.57% | 36.24% | 43.65% | 0.7507 | 0.7764 (±0.0209) | Comparison Baseline |
+| **Diabetes** | Tuned RF (Default Thresh) | 0.50 | 72.93% | 70.62% | 67.36% | 73.88% | 30.50% | 41.99% | **0.7654** | **0.7926 (±0.0185)** | Intermediate |
+| **Diabetes** | **Tuned RF (Calibrated Thresh)** | **0.53** | **74.24%** | **70.23%** | **64.58%** | **75.89%** | **31.31%** | **42.18%** | **0.7654** | **0.7926 (±0.0185)** | **Active Tuned Candidate** |
+| **CVD Composite** | Baseline Logistic Regression | 0.50 | 69.70% | 67.50% | 61.69% | 73.31% | 51.08% | 55.88% | 0.7386 | 0.7439 (±0.0210) | Comparison Baseline |
+| **CVD Composite** | Tuned LR (Default Thresh) | 0.50 | 73.54% | 64.77% | 41.56% | 87.98% | 60.95% | 49.42% | 0.7362 | **0.7474 (±0.0208)** | Intermediate |
+| **CVD Composite** | **Tuned LR (Calibrated Thresh)** | **0.39** | **68.59%** | **67.67%** | **65.26%** | **70.09%** | **49.63%** | **56.38%** | **0.7362** | **0.7474 (±0.0208)** | **Active Tuned Candidate** |
 
-The current tuned run has higher sensitivity, balanced accuracy, F1 and ROC-AUC compared with baseline, but lower accuracy/specificity and more false positives. It identifies more positive reported-diagnosis cases but generates more false alarms. This trade-off must be understood; it is not an across-the-board improvement.
+---
 
-### Latest tuning procedure and selected settings
+## 3. Best Fine-Tuned Hyperparameters
 
-- Sampled Random Forest parameter search.
-- 3-fold `StratifiedKFold` CV, within the training split only.
-- Selection metric: mean CV ROC-AUC.
-- Best mean CV ROC-AUC: 0.8082326; standard deviation 0.0096056.
-- Best mean CV balanced accuracy: 0.7375405.
-- Best mean CV F1: 0.489451.
+### Model 1 — Diabetes Diagnosis (Random Forest)
+- **Artifact:** `models/diabetes_random_forest_combined_tuned.joblib`
+- **Search technique:** `RandomizedSearchCV` (30 iterations, 5-Fold Stratified CV, scoring: `roc_auc`)
+- **Selected parameters:**
+  ```json
+  {
+    "model__n_estimators": 350,
+    "model__min_samples_split": 2,
+    "model__min_samples_leaf": 8,
+    "model__max_features": "log2",
+    "model__max_depth": 5,
+    "model__class_weight": "balanced"
+  }
+  ```
+- **Threshold calibration:** Youden's J optimal is 0.4659; F1 optimal is 0.5900; calibrated balanced threshold is **0.528 (~0.53)**.
+- **Key gains:**
+  - Hold-out ROC-AUC improved from **0.7507** to **0.7654** (+0.0147).
+  - 5-fold CV ROC-AUC improved from **0.7764** to **0.7926** (+0.0162).
+  - Sensitivity improved from **54.86%** to **64.58%**.
+  - False Negatives dropped from **65** to **51** (14 fewer missed cases).
 
-Selected parameters:
+### Model 2 — CVD Composite (Logistic Regression)
+- **Artifact:** `models/cvd_composite_logistic_regression_combined_tuned.joblib`
+- **Search technique:** `GridSearchCV` (5-Fold Stratified CV, scoring: `roc_auc`)
+- **Selected parameters:**
+  ```json
+  {
+    "model__C": 0.01,
+    "model__class_weight": {
+      "0": 1.0,
+      "1": 1.5
+    },
+    "model__max_iter": 4000,
+    "model__penalty": "l2",
+    "model__solver": "lbfgs"
+  }
+  ```
+- **Threshold calibration:** Youden's J optimal is 0.4107; F1 optimal is 0.3700; calibrated balanced threshold is **0.390**.
+- **Key gains:**
+  - 5-fold CV ROC-AUC improved from **0.7439** to **0.7474**.
+  - At the calibrated threshold (0.39), Sensitivity improved from **61.69%** to **65.26%**.
+  - F1-score improved from **55.88%** to **56.38%**.
+  - False Negatives reduced from **118** to **107** (11 fewer missed CVD condition composite cases).
 
-```json
-{
-  "model__n_estimators": 200,
-  "model__min_samples_split": 15,
-  "model__min_samples_leaf": 8,
-  "model__max_features": "sqrt",
-  "model__max_depth": 4,
-  "model__class_weight": "balanced"
-}
-```
+---
 
-Selected artifact: `models/diabetes_random_forest_tuned_lasi_dd.joblib`.
+## 4. Historical Daman & Diu-Only Tuning Record (Archival Reference)
 
-## CVD composite: keep baseline Logistic Regression
+> The numbers below reflect an earlier historical experiment conducted exclusively on the small Daman & Diu subsample ($N=991$ total, $N=198$ test split). Preserved for provenance of `models/diabetes_random_forest_tuned_lasi_dd.joblib`.
 
-| Metric | Selected baseline Logistic Regression | Baseline Random Forest comparison |
-|---|---:|---:|
-| Accuracy | 73.23% | 69.70% |
-| Balanced accuracy | 69.32% | 65.91% |
-| Sensitivity | 57.58% | 54.55% |
-| Specificity | 81.06% | 77.27% |
-| Precision | 60.32% | 54.55% |
-| F1-score | 58.91% | 54.55% |
-| ROC-AUC | 0.7586 | 0.7316 |
-| TN | 107 | 102 |
-| FP | 25 | 30 |
-| FN | 28 | 30 |
-| TP | 38 | 36 |
+| Metric | Historical DD Baseline RF | Historical DD Tuned RF | Historical DD Baseline LR |
+|---|---:|---:|---:|
+| Accuracy | 77.27% | 71.72% | 69.70% |
+| Balanced accuracy | 66.46% | 74.77% | 64.22% |
+| Sensitivity | 50.00% | 79.41% | 55.88% |
+| Specificity | 82.93% | 70.12% | 72.56% |
+| Precision | 37.78% | 35.53% | 29.69% |
+| F1-score | 43.04% | 49.09% | 38.78% |
+| ROC-AUC | 0.7165 | 0.7593 | 0.7626 |
 
-No further tuning is selected for Model 2. This choice is provisional and meant for the engineering prototype only.
+---
 
-## Diabetes baseline comparison reference
+## 5. Artifact & Integration Reference
 
-| Metric | Logistic Regression baseline | Random Forest baseline |
-|---|---:|---:|
-| Accuracy | 69.70% | 77.27% |
-| Balanced accuracy | 64.22% | 66.46% |
-| Sensitivity | 55.88% | 50.00% |
-| Specificity | 72.56% | 82.93% |
-| Precision | 29.69% | 37.78% |
-| F1-score | 38.78% | 43.04% |
-| ROC-AUC | 0.7626 | 0.7165 |
-
-## Model smoke test
-
-The latest local run showed all four inference keys generated structured results using fictional example profiles. These are software smoke tests, not evaluation on true held-out respondents.
-
-## Critical interpretation limits
-
-- Diabetes predicts LASI self-reported diagnosis (`HT003`), not future diabetes onset.
-- CVD composite is self-reported hypertension OR chronic heart disease OR stroke; it is not CAD-specific or future 10-year risk.
-- Test metrics are unweighted; LASI survey weights, strata and clusters were not applied.
-- The hold-out set was inspected during prior model selection, so these metrics are not an independent final estimate. Use a prespecified untouched test set or external validation before making stronger performance claims.
-- Do not treat class probabilities as calibrated individual risk percentages.
-- Do not use for diagnosis, triage, or medical decisions. Do not publicly upload row-level LASI data or identifiers.
+- Tuned Diabetes Model: `models/diabetes_random_forest_combined_tuned.joblib`
+- Tuned CVD Model: `models/cvd_composite_logistic_regression_combined_tuned.joblib`
+- Full tuning report: `reports/combined_model_tuning.md` and `reports/combined_model_tuning.json`
+- Inference helper: `lasi_model_inference.py` (keys: `diabetes_random_forest_tuned`, `cvd_composite_logistic_regression_tuned`)
+- Automated verification: `predict_lasi_models.py`

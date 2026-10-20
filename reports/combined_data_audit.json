@@ -1,0 +1,178 @@
+{
+  "audit_scope": "LASI Wave 1 Individual extract combined audit (Maharashtra + Daman & Diu)",
+  "source_files": {
+    "Individual_Daman_and_Diu.xlsx": {
+      "file_name": "Individual_Daman_and_Diu.xlsx",
+      "rows": 991,
+      "columns": 2623,
+      "state_counts": {
+        "Daman and Diu": 991
+      },
+      "unique_respondent_ids": 991,
+      "missing_respondent_ids": 0,
+      "internal_duplicate_ids": 0,
+      "overlap_with_other_files": 0,
+      "ht002_hypertension_counts": {
+        "1_yes": 308,
+        "2_no": 678,
+        "missing": 5
+      },
+      "ht003_diabetes_counts": {
+        "1_yes": 171,
+        "2_no": 815,
+        "missing": 5
+      },
+      "ht006_heart_disease_counts": {
+        "1_yes": 27,
+        "2_no": 959,
+        "missing": 5
+      },
+      "ht007_stroke_counts": {
+        "1_yes": 13,
+        "2_no": 973,
+        "missing": 5
+      },
+      "stateindividualweight_stats": {
+        "count": 991,
+        "min": 0.9536,
+        "mean": 34.248,
+        "max": 180.7681
+      },
+      "indiaindividualweight_stats": {
+        "count": 991,
+        "min": 0.807,
+        "mean": 35.695,
+        "max": 152.9818
+      }
+    },
+    "Individual_Maharashtra.xlsx": {
+      "file_name": "Individual_Maharashtra.xlsx",
+      "rows": 3973,
+      "columns": 2623,
+      "state_counts": {
+        "Maharashtra": 3973
+      },
+      "unique_respondent_ids": 3973,
+      "missing_respondent_ids": 0,
+      "internal_duplicate_ids": 0,
+      "overlap_with_other_files": 0,
+      "ht002_hypertension_counts": {
+        "1_yes": 1113,
+        "2_no": 2849,
+        "missing": 11
+      },
+      "ht003_diabetes_counts": {
+        "1_yes": 549,
+        "2_no": 3413,
+        "missing": 11
+      },
+      "ht006_heart_disease_counts": {
+        "1_yes": 182,
+        "2_no": 3780,
+        "missing": 11
+      },
+      "ht007_stroke_counts": {
+        "1_yes": 103,
+        "2_no": 3859,
+        "missing": 11
+      },
+      "stateindividualweight_stats": {
+        "count": 3973,
+        "min": 341.6811,
+        "mean": 6520.5162,
+        "max": 82456.1953
+      },
+      "indiaindividualweight_stats": {
+        "count": 3973,
+        "min": 370.1535,
+        "mean": 7341.1952,
+        "max": 89327.3047
+      }
+    }
+  },
+  "combined_totals": {
+    "total_rows": 4964,
+    "state_counts": {
+      "Daman and Diu": 991,
+      "Maharashtra": 3973
+    },
+    "duplicate_respondent_ids": 0,
+    "columns_per_source_file": 2623,
+    "feature_missing_value_counts": {
+      "age_years": 0,
+      "sex_code": 0,
+      "residence_code": 0,
+      "mpce_quintile": 0,
+      "education_level": 0,
+      "family_history_diabetes": 31,
+      "family_history_hypertension": 31,
+      "family_history_heart_disease": 31,
+      "family_history_stroke": 31,
+      "hypertension_history": 16,
+      "high_cholesterol_history": 16,
+      "diabetes_reported": 16,
+      "tobacco_ever": 57,
+      "vigorous_activity_frequency": 57,
+      "moderate_activity_frequency": 57
+    }
+  },
+  "target_distributions": {
+    "model_1_diabetes_ht003": {
+      "definition": "HT003 self-reported health-professional diagnosis (1=Yes, 2=No)",
+      "usable_count": 4948,
+      "positive_count": 720,
+      "negative_count": 4228,
+      "missing_count": 16,
+      "positive_prevalence_pct": 14.55
+    },
+    "model_2_cvd_composite": {
+      "definition": "Any of HT002 (hypertension), HT006 (heart disease), or HT007 (stroke) reported as 1=Yes; 2=No across all three for negative",
+      "usable_count": 4948,
+      "positive_count": 1538,
+      "negative_count": 3410,
+      "missing_count": 16,
+      "positive_prevalence_pct": 31.08
+    },
+    "ht006_chronic_heart_disease_alone": {
+      "usable": 4948,
+      "positive": 209,
+      "negative": 4739,
+      "notice": "Chronic heart disease alone is reported in 209 cases across both states. Model 2 is broad CVD composite, not CAD-specific."
+    }
+  },
+  "target_leakage_prevention": {
+    "diabetes_leakage_excluded": [
+      "ht003",
+      "ht003a-e",
+      "ht004*",
+      "ht005*",
+      "age_of_diagnosis",
+      "medication_status"
+    ],
+    "cvd_composite_leakage_excluded": [
+      "ht002",
+      "ht002a-d",
+      "ht006",
+      "ht006a-h",
+      "ht007",
+      "ht007a-k"
+    ],
+    "feature_contract_verified": true
+  },
+  "survey_weighting_methodology": {
+    "available_weights": [
+      "stateindividualweight",
+      "indiaindividualweight"
+    ],
+    "methodology_note": "LASI is a multi-stage stratified cluster sample. In the combined sample, Maharashtra's state weights reflect ~25.9M adults (mean weight ~6,520) while Daman & Diu reflect ~34,000 adults (mean weight ~34). India individual weights reflect national expansion. Primary reported metrics are unweighted exploratory results from an 80/20 stratified split. Exploratory survey-weighted test metrics are computed using normalized indiaindividualweight (mean=1.0) with scikit-learn sample_weight. Note that scikit-learn sample weights adjust the empirical distribution but do not implement Taylor series linearization or survey cluster/strata variance estimation."
+  },
+  "limitations": [
+    "LASI outcomes are self-reported diagnoses, not prospective incidence or lab-confirmed outcomes.",
+    "Baseline models only: no fine-tuning or hyperparameter search was conducted in this experiment.",
+    "Primary metrics are unweighted 80/20 stratified split hold-out metrics; complex survey design standard errors require specialized survey software.",
+    "Model 1 classifies self-reported diabetes diagnosis; it is not a prospective diabetes risk score.",
+    "Model 2 classifies self-reported CVD composite; it is not CAD-specific and not a 10-year Framingham/ASCVD risk score.",
+    "Not clinically validated. Do not deploy for clinical decision-making, individual triage, or diagnosis.",
+    "Restricted LASI raw respondent data and individual identifiers are not included in this audit or public repository."
+  ]
+}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations } from "@/lib/translations";
-import { GitFork, Activity, FileCheck, ArrowRight, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import { GitFork, Activity, FileCheck, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 
 export default function HomePage() {
   const { language } = usePedigreeStore();
@@ -89,7 +89,7 @@ export default function HomePage() {
             <div className="max-w-2xl">
               <div className="flex items-center gap-2 text-emerald-300 text-sm font-semibold mb-3">
                 <ShieldCheck className="w-5 h-5" />
-                <span>The South Asian "Thin-Fat" Phenotype Reality</span>
+                <span>The South Asian &quot;Thin-Fat&quot; Phenotype Reality</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold leading-snug">
                 Why standard Western calculators like FamGenix fail Indian patients:

@@ -46,13 +46,16 @@ class MLService:
         positive_idx = classes.index(1) if 1 in classes else 1
         prob = float(pipeline.predict_proba(df_input)[0][positive_idx])
 
+        model_name = self.diabetes_artifact.get("model_name", "diabetes_random_forest_lasi_dd")
+        model_status = self.diabetes_artifact.get("status", "exploratory_lasi_survey_data_baseline")
+
         return {
-            "model_name": "diabetes_random_forest_tuned_lasi_dd",
+            "model_name": model_name,
             "task_name": "diabetes_diagnosis_classification",
             "predicted_class": pred,
             "predicted_class_meaning": "reported_diagnosed_diabetes" if pred == 1 else "no_reported_diagnosed_diabetes",
             "probability": round(prob, 4),
-            "model_status": "exploratory_lasi_survey_data_tuned",
+            "model_status": model_status,
             "notice": (
                 "Predicts LASI self-reported diabetes diagnosis classification, not future diabetes risk "
                 "or a clinical diagnosis. Exploratory survey-sample model; not clinically validated."

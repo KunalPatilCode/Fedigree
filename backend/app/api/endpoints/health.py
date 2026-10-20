@@ -12,7 +12,7 @@ def health_check():
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "models_loaded": {
-            "diabetes_random_forest_tuned": ml_service.diabetes_artifact is not None,
+            "diabetes_random_forest_lasi_dd": ml_service.diabetes_artifact is not None,
             "cvd_composite_logistic_regression": ml_service.cvd_artifact is not None
         }
     }

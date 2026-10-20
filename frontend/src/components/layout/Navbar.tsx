@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations, Language } from "@/lib/translations";
-import { Activity, GitFork, FileText, Home, Globe } from "lucide-react";
+import { Activity, GitFork, FileText, Home, Globe, FlaskConical, ShieldCheck } from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -15,6 +15,8 @@ export function Navbar() {
     { href: "/", label: t.navHome, icon: Home },
     { href: "/tree", label: t.navTree, icon: GitFork },
     { href: "/assess", label: t.navAssess, icon: Activity },
+    { href: "/profile", label: t.navProfile, icon: ShieldCheck },
+    { href: "/predict", label: t.navPredict, icon: FlaskConical },
     { href: "/report", label: t.navReport, icon: FileText },
   ];
 

@@ -22,3 +22,7 @@ Thumbs.db
 # Restricted LASI raw data
 data/Individual_Daman_and_Diu.xlsx
 *.xlsx
+
+# Local scratch / downloads
+output/
+models/*_downloads.joblib

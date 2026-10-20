@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations } from "@/lib/translations";
-import { Activity, MapPin, Gauge, ShieldAlert, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Activity, MapPin, Gauge, ShieldAlert, ArrowRight } from "lucide-react";
 
 const MAHARASHTRA_DISTRICTS = [
   "Pune",
@@ -155,7 +155,7 @@ export default function AssessPage() {
                 <button
                   key={act.key}
                   type="button"
-                  onClick={() => setAssessment({ physicalActivity: act.key as any })}
+                  onClick={() => setAssessment({ physicalActivity: act.key as "vigorous" | "moderate" | "sedentary" })}
                   className={`p-4 rounded-2xl text-left border transition-all ${
                     assessment.physicalActivity === act.key
                       ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs"

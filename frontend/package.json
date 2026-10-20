@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev -p 3001 --webpack",
+    "build": "next build --webpack",
+    "start": "next start -p 3001",
     "lint": "eslint"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/turbopack": "^4",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.1",
+    "postcss": "^8.5.30",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

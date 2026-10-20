@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     MODELS_DIR: Path = BASE_DIR / "models"
     
     # Selected Model Artifacts
-    DIABETES_MODEL_PATH: Path = MODELS_DIR / "diabetes_random_forest_tuned_lasi_dd.joblib"
+    DIABETES_MODEL_PATH: Path = MODELS_DIR / "diabetes_random_forest_lasi_dd.joblib"
+    DIABETES_TUNED_MODEL_PATH: Path = MODELS_DIR / "diabetes_random_forest_tuned_lasi_dd.joblib"
     CVD_MODEL_PATH: Path = MODELS_DIR / "cvd_composite_logistic_regression_lasi_dd.joblib"
 
     class Config:

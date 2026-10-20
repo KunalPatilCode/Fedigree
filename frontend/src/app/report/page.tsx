@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations } from "@/lib/translations";
-import { Printer, Download, ArrowLeft, ShieldCheck, FileText, Activity, AlertCircle, Utensils } from "lucide-react";
+import { Printer, ArrowLeft, Activity, AlertCircle, Utensils } from "lucide-react";
 import Link from "next/link";
 
 export default function ReportPage() {
@@ -12,6 +12,7 @@ export default function ReportPage() {
   const [currentDate, setCurrentDate] = useState<string>("15/10/2026");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentDate(new Date().toLocaleDateString("en-IN"));
   }, []);
 
@@ -205,7 +206,7 @@ export default function ReportPage() {
 
         {/* Footer Disclaimer */}
         <div className="mt-8 pt-4 border-t border-slate-200 text-[10px] text-slate-400 text-center">
-          Notice: This triage document provides risk awareness based on ICMR-INDIAB IDRS and LASI research models. It does not replace a clinical physician's formal medical diagnosis.
+          Notice: This triage document provides risk awareness based on ICMR-INDIAB IDRS and LASI research models. It does not replace a clinical physician&apos;s formal medical diagnosis.
         </div>
       </div>
     </div>

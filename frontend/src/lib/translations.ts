@@ -7,6 +7,8 @@ export interface Translations {
   navTree: string;
   navAssess: string;
   navReport: string;
+  navPredict: string;
+  navProfile: string;
   // Landing
   heroTitle: string;
   heroSubtitle: string;
@@ -82,6 +84,8 @@ export const translations: Record<Language, Translations> = {
     navTree: "Family Tree",
     navAssess: "Health Assessment",
     navReport: "Doctor Triage Brief",
+    navPredict: "ML Diabetes Test",
+    navProfile: "Health Profile",
     heroTitle: "Prevent NCDs Before They Start Across Generations",
     heroSubtitle: "Mapping 3-generation Indian family health history with the ICMR-validated Indian Diabetes Risk Score (IDRS), AI/ML models, and Maharashtra live environmental AQI.",
     ctaStartTree: "Build Family Tree",
@@ -151,6 +155,8 @@ export const translations: Record<Language, Translations> = {
     navTree: "कौटुंबिक वृक्ष",
     navAssess: "आरोग्य तपासणी",
     navReport: "डॉक्टर अहवाल",
+    navPredict: "ML मधुमेह चाचणी",
+    navProfile: "आरोग्य प्रोफाइल",
     heroTitle: "पिढ्यानपिढ्या होणारे जीवनशैली आजार वेळेआधीच ओळखा व टाळा",
     heroSubtitle: "३ पिढ्यांचा कौटुंबिक इतिहास, ICMR प्रमाणित भारतीय मधुमेह जोखीम गुण (IDRS), ML मॉडेल्स आणि महाराष्ट्रातील हवेची गुणवत्ता (AQI) यांचा संगम.",
     ctaStartTree: "कौटुंबिक वृक्ष तयार करा",
@@ -220,6 +226,8 @@ export const translations: Record<Language, Translations> = {
     navTree: "फैमिली ट्री",
     navAssess: "स्वास्थ्य जांच",
     navReport: "डॉक्टर रिपोर्ट",
+    navPredict: "ML डायबिटीज टेस्ट",
+    navProfile: "स्वास्थ्य प्रोफ़ाइल",
     heroTitle: "पीढ़ी-दर-पीढ़ी होने वाले जीवनशैली रोगों को समय रहते पहचानें और रोकें",
     heroSubtitle: "3 पीढ़ियों का पारिवारिक इतिहास, ICMR प्रमाणित भारतीय मधुमेह जोखिम स्कोर (IDRS), ML मॉडल्स और महाराष्ट्र का रियल-टाइम प्रदूषण (AQI).",
     ctaStartTree: "फैमिली ट्री बनाएं",

@@ -447,13 +447,13 @@ export default function PredictPage() {
     ? "#e11d48" // rose-600
     : isModerateRisk
     ? "#f59e0b" // amber-500
-    : "#10b981"; // emerald-500
+    : "#8064A9"; // purple-500
 
   const gaugeTrackColor = isHighRisk
     ? "#ffe4e6" // rose-100
     : isModerateRisk
     ? "#fef3c7" // amber-100
-    : "#d1fae5"; // emerald-100
+    : "#EAE2F5"; // lavender
 
   const gaugeRadius = 78;
   const gaugeCircumference = 2 * Math.PI * gaugeRadius;
@@ -463,27 +463,27 @@ export default function PredictPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Top Testing Banner */}
-      <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-[#FAF8FC] to-[#EAE2F5]/50 border border-[#ded3eb] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5">
-          <div className="p-2.5 rounded-2xl bg-emerald-600 text-white shrink-0 shadow-md shadow-emerald-600/20">
+          <div className="p-2.5 rounded-2xl bg-[#452653] text-white shrink-0 shadow-md shadow-[#452653]/20">
             <FlaskConical className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-sm text-emerald-950">{t.bannerTitle}</span>
-              <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-200/80 text-emerald-800">
+              <span className="font-bold text-sm text-[#452653]">{t.bannerTitle}</span>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]">
                 {t.bannerBadge}
               </span>
             </div>
-            <p className="text-xs text-emerald-800/90 mt-1 leading-relaxed max-w-2xl">
+            <p className="text-xs text-[#5e546b] mt-1 leading-relaxed max-w-2xl">
               {t.bannerDesc}
             </p>
           </div>
         </div>
 
         {/* Trilingual Switcher */}
-        <div className="flex items-center bg-white/90 p-1 rounded-2xl border border-emerald-200/70 shadow-xs shrink-0 self-end sm:self-center">
-          <Globe className="w-3.5 h-3.5 text-emerald-600 ml-2 mr-1" />
+        <div className="flex items-center bg-white/90 p-1 rounded-2xl border border-[#ded3eb] shadow-xs shrink-0 self-end sm:self-center">
+          <Globe className="w-3.5 h-3.5 text-[#8064A9] ml-2 mr-1" />
           {(["en", "mr", "hi"] as Language[]).map((lang) => (
             <button
               key={lang}
@@ -491,8 +491,8 @@ export default function PredictPage() {
               onClick={() => setLanguage(lang)}
               className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 language === lang
-                  ? "bg-emerald-600 text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  ? "bg-[#452653] text-white shadow-xs font-bold"
+                  : "text-[#5e546b] hover:text-[#292333] hover:bg-[#FAF8FC]"
               }`}
             >
               {lang === "en" ? "EN" : lang === "mr" ? "मराठी" : "हिंदी"}
@@ -505,33 +505,33 @@ export default function PredictPage() {
       <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-md">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#452653] bg-[#EAE2F5] px-2.5 py-0.5 rounded-md border border-[#ded3eb]">
               FastAPI Inference Bench
             </span>
             <span className="text-xs text-slate-400">•</span>
             <span className="text-xs text-slate-500 font-medium">LASI Wave 1 Schema</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#292333] tracking-tight">
             {t.pageTitle}
           </h1>
-          <p className="text-slate-500 text-sm mt-1">{t.pageSubtitle}</p>
+          <p className="text-[#5e546b] text-sm mt-1">{t.pageSubtitle}</p>
         </div>
 
         <button
           type="button"
           onClick={handleReset}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-white border border-slate-200 px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors shadow-2xs self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5e546b] hover:text-[#292333] bg-white border border-[#ded3eb] px-3.5 py-2 rounded-xl hover:bg-[#FAF8FC] transition-colors shadow-2xs self-start sm:self-auto cursor-pointer"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3.5 h-3.5 text-[#8064A9]" />
           <span>{t.resetDefaults}</span>
         </button>
       </div>
 
       {/* Quick Profile Presets */}
-      <div className="mb-6 p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+      <div className="mb-6 p-4 rounded-2xl bg-white border border-[#ded3eb] shadow-xs">
         <div className="flex items-center justify-between gap-2 mb-2.5">
-          <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="text-xs font-bold text-[#292333] uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#8064A9]" />
             <span>Quick Test Profiles (Click to Load &amp; Test Sensitivity)</span>
           </span>
           <span className="text-[11px] text-slate-400">Instant demographic scenarios</span>
@@ -554,10 +554,10 @@ export default function PredictPage() {
                 moderate_activity_frequency: 1,
               })
             }
-            className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition-all text-xs cursor-pointer"
+            className="p-2.5 rounded-xl border border-[#ded3eb] hover:border-[#8064A9] hover:bg-[#FAF8FC] text-left transition-all text-xs cursor-pointer"
           >
-            <div className="font-bold text-slate-900">Young Adult (20y)</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Graduate, Active (51.0%)</div>
+            <div className="font-bold text-[#292333]">Young Adult (20y)</div>
+            <div className="text-[10px] text-[#5e546b] mt-0.5">Graduate, Active (51.0%)</div>
           </button>
           <button
             type="button"
@@ -576,10 +576,10 @@ export default function PredictPage() {
                 moderate_activity_frequency: 2,
               })
             }
-            className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition-all text-xs cursor-pointer"
+            className="p-2.5 rounded-xl border border-[#ded3eb] hover:border-[#8064A9] hover:bg-[#FAF8FC] text-left transition-all text-xs cursor-pointer"
           >
-            <div className="font-bold text-slate-900">Middle-Aged (48y)</div>
-            <div className="text-[10px] text-slate-500 mt-0.5">Baseline LASI Adult (54.3%)</div>
+            <div className="font-bold text-[#292333]">Middle-Aged (48y)</div>
+            <div className="text-[10px] text-[#5e546b] mt-0.5">Baseline LASI Adult (54.3%)</div>
           </button>
           <button
             type="button"
@@ -620,10 +620,10 @@ export default function PredictPage() {
                 moderate_activity_frequency: 1,
               })
             }
-            className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/30 hover:border-emerald-500 hover:bg-emerald-50 text-left transition-all text-xs cursor-pointer"
+            className="p-2.5 rounded-xl border border-[#ded3eb] bg-[#FAF8FC] hover:border-[#8064A9] hover:bg-[#EAE2F5]/40 text-left transition-all text-xs cursor-pointer"
           >
-            <div className="font-bold text-emerald-950">Senior Healthy (65y)</div>
-            <div className="text-[10px] text-emerald-700/80 mt-0.5">Rural, Active Labor (52.1%)</div>
+            <div className="font-bold text-[#452653]">Senior Healthy (65y)</div>
+            <div className="text-[10px] text-[#8064A9] mt-0.5">Rural, Active Labor (52.1%)</div>
           </button>
         </div>
       </div>
@@ -633,9 +633,9 @@ export default function PredictPage() {
         {/* ========================================================
             Section 1: Personal Demographics (5 Features)
            ======================================================== */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3">
-            <User className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs space-y-6">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb] pb-3">
+            <User className="w-5 h-5 text-[#8064A9]" />
             <span>{t.secDemographics}</span>
           </div>
 
@@ -643,10 +643,10 @@ export default function PredictPage() {
             {/* 1. age_years */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333]">
                   {t.ageLabel}
                 </label>
-                <span className="text-sm font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                <span className="text-sm font-bold text-[#452653] bg-[#EAE2F5] px-2.5 py-0.5 rounded-lg border border-[#ded3eb]">
                   {formData.age_years} yrs
                 </span>
               </div>
@@ -661,15 +661,15 @@ export default function PredictPage() {
                     age_years: Math.max(18, Math.min(120, Number(e.target.value) || 18)),
                   })
                 }
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#ded3eb] font-semibold text-[#292333] focus:ring-2 focus:ring-[#8064A9] focus:border-[#8064A9] outline-none"
                 required
               />
-              <span className="text-[11px] text-slate-400 mt-1 block">{t.ageHelp}</span>
+              <span className="text-[11px] text-[#5e546b] mt-1 block">{t.ageHelp}</span>
             </div>
 
             {/* 2. sex_code (1=Male, 2=Female) */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333] mb-2">
                 {t.sexLabel}
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -678,11 +678,11 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, sex_code: 1 })}
                   className={`py-2.5 px-3 rounded-xl font-semibold text-sm border flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     formData.sex_code === 1
-                      ? "bg-blue-50 border-blue-500 text-blue-700 ring-2 ring-blue-500/20 shadow-xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
-                  <User className="w-4 h-4 text-blue-600" />
+                  <User className="w-4 h-4 text-[#8064A9]" />
                   <span>{t.male}</span>
                 </button>
                 <button
@@ -690,11 +690,11 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, sex_code: 2 })}
                   className={`py-2.5 px-3 rounded-xl font-semibold text-sm border flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     formData.sex_code === 2
-                      ? "bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20 shadow-xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
-                  <User className="w-4 h-4 text-rose-600" />
+                  <User className="w-4 h-4 text-[#8064A9]" />
                   <span>{t.female}</span>
                 </button>
               </div>
@@ -704,7 +704,7 @@ export default function PredictPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
             {/* 3. residence_code (1=Urban, 2=Rural) */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333] mb-2">
                 {t.residenceLabel}
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -713,11 +713,11 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, residence_code: 1 })}
                   className={`py-2.5 px-3 rounded-xl font-semibold text-sm border flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     formData.residence_code === 1
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20 shadow-xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
-                  <Building2 className="w-4 h-4 text-emerald-600" />
+                  <Building2 className="w-4 h-4 text-[#8064A9]" />
                   <span>{t.urban} (1)</span>
                 </button>
                 <button
@@ -725,11 +725,11 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, residence_code: 2 })}
                   className={`py-2.5 px-3 rounded-xl font-semibold text-sm border flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     formData.residence_code === 2
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20 shadow-xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
-                  <Trees className="w-4 h-4 text-emerald-600" />
+                  <Trees className="w-4 h-4 text-[#8064A9]" />
                   <span>{t.rural} (2)</span>
                 </button>
               </div>
@@ -737,7 +737,7 @@ export default function PredictPage() {
 
             {/* 5. education_level (string) */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333] mb-2">
                 {t.educationLabel}
               </label>
               <div className="relative">
@@ -746,7 +746,7 @@ export default function PredictPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, education_level: e.target.value })
                   }
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-slate-300 font-semibold text-sm text-slate-900 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none appearance-none cursor-pointer"
+                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-[#ded3eb] font-semibold text-sm text-[#292333] bg-white focus:ring-2 focus:ring-[#8064A9] focus:border-[#8064A9] outline-none appearance-none cursor-pointer"
                 >
                   {EDUCATION_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -768,10 +768,10 @@ export default function PredictPage() {
           {/* 4. mpce_quintile (1-5) */}
           <div className="pt-2">
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333]">
                 {t.incomeLabel}
               </label>
-              <span className="text-xs font-bold text-emerald-800 bg-emerald-100/70 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+              <span className="text-xs font-bold text-[#452653] bg-[#EAE2F5] px-2.5 py-0.5 rounded-lg border border-[#ded3eb]">
                 Quintile {formData.mpce_quintile} / 5
               </span>
             </div>
@@ -785,14 +785,14 @@ export default function PredictPage() {
                     onClick={() => setFormData({ ...formData, mpce_quintile: q })}
                     className={`py-2.5 px-1.5 rounded-2xl text-center border transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-emerald-600 border-emerald-600 text-white shadow-sm ring-2 ring-emerald-500/30"
-                        : "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                        ? "bg-[#452653] border-[#452653] text-white shadow-sm ring-2 ring-[#8064A9]/30"
+                        : "bg-white border-[#ded3eb] text-[#292333] hover:border-[#8064A9] hover:bg-[#FAF8FC]"
                     }`}
                   >
                     <div className="font-extrabold text-sm sm:text-base">Q{q}</div>
                     <div
                       className={`text-[10px] hidden sm:block ${
-                        isSelected ? "text-emerald-100" : "text-slate-400"
+                        isSelected ? "text-[#EAE2F5]" : "text-[#5e546b]"
                       }`}
                     >
                       {q === 1
@@ -805,27 +805,27 @@ export default function PredictPage() {
                 );
               })}
             </div>
-            <span className="text-[11px] text-slate-400 mt-2 block">{t.incomeHelp}</span>
+            <span className="text-[11px] text-[#5e546b] mt-2 block">{t.incomeHelp}</span>
           </div>
         </div>
 
         {/* ========================================================
             Section 2: Medical History (3 Features)
            ======================================================== */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3">
-            <HeartPulse className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs space-y-6">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb] pb-3">
+            <HeartPulse className="w-5 h-5 text-[#8064A9]" />
             <span>{t.secMedical}</span>
           </div>
 
           <div className="space-y-4">
             {/* 6. family_history_diabetes (0 or 1) */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <div className="font-bold text-sm text-slate-900">
+                <div className="font-bold text-sm text-[#292333]">
                   {t.familyDiabetesLabel}
                 </div>
-                <div className="text-xs text-slate-500">{t.familyDiabetesHelp}</div>
+                <div className="text-xs text-[#5e546b]">{t.familyDiabetesHelp}</div>
               </div>
               <div className="flex gap-2 min-w-[170px]">
                 <button
@@ -834,7 +834,7 @@ export default function PredictPage() {
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.family_history_diabetes === 1
                       ? "bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.yes} (1)
@@ -844,8 +844,8 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, family_history_diabetes: 0 })}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.family_history_diabetes === 0
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-700 ring-2 ring-emerald-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.no} (0)
@@ -854,12 +854,12 @@ export default function PredictPage() {
             </div>
 
             {/* 7. hypertension_history (0 or 1) */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <div className="font-bold text-sm text-slate-900">
+                <div className="font-bold text-sm text-[#292333]">
                   {t.hypertensionLabel}
                 </div>
-                <div className="text-xs text-slate-500">{t.hypertensionHelp}</div>
+                <div className="text-xs text-[#5e546b]">{t.hypertensionHelp}</div>
               </div>
               <div className="flex gap-2 min-w-[170px]">
                 <button
@@ -868,7 +868,7 @@ export default function PredictPage() {
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.hypertension_history === 1
                       ? "bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.yes} (1)
@@ -878,8 +878,8 @@ export default function PredictPage() {
                   onClick={() => setFormData({ ...formData, hypertension_history: 0 })}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.hypertension_history === 0
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-700 ring-2 ring-emerald-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.no} (0)
@@ -888,12 +888,12 @@ export default function PredictPage() {
             </div>
 
             {/* 8. high_cholesterol_history (0 or 1) */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <div className="font-bold text-sm text-slate-900">
+                <div className="font-bold text-sm text-[#292333]">
                   {t.cholesterolLabel}
                 </div>
-                <div className="text-xs text-slate-500">{t.cholesterolHelp}</div>
+                <div className="text-xs text-[#5e546b]">{t.cholesterolHelp}</div>
               </div>
               <div className="flex gap-2 min-w-[170px]">
                 <button
@@ -904,7 +904,7 @@ export default function PredictPage() {
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.high_cholesterol_history === 1
                       ? "bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.yes} (1)
@@ -916,8 +916,8 @@ export default function PredictPage() {
                   }
                   className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     formData.high_cholesterol_history === 0
-                      ? "bg-emerald-50 border-emerald-500 text-emerald-700 ring-2 ring-emerald-500/20 shadow-2xs"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                      : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                   }`}
                 >
                   {t.no} (0)
@@ -930,17 +930,17 @@ export default function PredictPage() {
         {/* ========================================================
             Section 3: Lifestyle Factors (3 Features)
            ======================================================== */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3">
-            <Activity className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs space-y-6">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb] pb-3">
+            <Activity className="w-5 h-5 text-[#8064A9]" />
             <span>{t.secLifestyle}</span>
           </div>
 
           {/* 9. tobacco_ever (0 or 1) */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
-              <div className="font-bold text-sm text-slate-900">{t.tobaccoLabel}</div>
-              <div className="text-xs text-slate-500">{t.tobaccoHelp}</div>
+              <div className="font-bold text-sm text-[#292333]">{t.tobaccoLabel}</div>
+              <div className="text-xs text-[#5e546b]">{t.tobaccoHelp}</div>
             </div>
             <div className="flex gap-2 min-w-[170px]">
               <button
@@ -949,7 +949,7 @@ export default function PredictPage() {
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                   formData.tobacco_ever === 1
                     ? "bg-rose-50 border-rose-500 text-rose-700 ring-2 ring-rose-500/20 shadow-2xs"
-                    : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                    : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                 }`}
               >
                 {t.yes} (1)
@@ -959,8 +959,8 @@ export default function PredictPage() {
                 onClick={() => setFormData({ ...formData, tobacco_ever: 0 })}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                   formData.tobacco_ever === 0
-                    ? "bg-emerald-50 border-emerald-500 text-emerald-700 ring-2 ring-emerald-500/20 shadow-2xs"
-                    : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                    ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                    : "bg-white border-[#ded3eb] text-[#5e546b] hover:border-[#8064A9]"
                 }`}
               >
                 {t.no} (0)
@@ -971,10 +971,10 @@ export default function PredictPage() {
           {/* 10. vigorous_activity_frequency (1-4) */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333]">
                 {t.vigorousLabel}
               </label>
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <span className="text-xs font-bold text-[#452653] bg-[#EAE2F5] px-2 py-0.5 rounded border border-[#ded3eb]">
                 Code {formData.vigorous_activity_frequency}
               </span>
             </div>
@@ -993,37 +993,37 @@ export default function PredictPage() {
                     }
                     className={`p-3 rounded-2xl text-left border transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-500/20 shadow-2xs"
-                        : "bg-white border-slate-200 hover:border-slate-300"
+                        ? "bg-[#EAE2F5] border-[#8064A9] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                        : "bg-white border-[#ded3eb] hover:border-[#8064A9]"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className="font-bold text-slate-900 text-xs sm:text-sm">
+                      <span className="font-bold text-[#292333] text-xs sm:text-sm">
                         {language === "mr"
                           ? freq.labelMr
                           : language === "hi"
                           ? freq.labelHi
                           : freq.labelEn}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400">
+                      <span className="text-[10px] font-bold text-[#5e546b]">
                         {freq.code}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500">{freq.descEn}</p>
+                    <p className="text-[11px] text-[#5e546b]">{freq.descEn}</p>
                   </button>
                 );
               })}
             </div>
-            <span className="text-[11px] text-slate-400 block">{t.vigorousHelp}</span>
+            <span className="text-[11px] text-[#5e546b] block">{t.vigorousHelp}</span>
           </div>
 
           {/* 11. moderate_activity_frequency (1-4) */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#292333]">
                 {t.moderateLabel}
               </label>
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              <span className="text-xs font-bold text-[#452653] bg-[#EAE2F5] px-2 py-0.5 rounded border border-[#ded3eb]">
                 Code {formData.moderate_activity_frequency}
               </span>
             </div>
@@ -1042,36 +1042,36 @@ export default function PredictPage() {
                     }
                     className={`p-3 rounded-2xl text-left border transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-emerald-50 border-emerald-500 ring-2 ring-emerald-500/20 shadow-2xs"
-                        : "bg-white border-slate-200 hover:border-slate-300"
+                        ? "bg-[#EAE2F5] border-[#8064A9] ring-2 ring-[#8064A9]/20 shadow-2xs"
+                        : "bg-white border-[#ded3eb] hover:border-[#8064A9]"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className="font-bold text-slate-900 text-xs sm:text-sm">
+                      <span className="font-bold text-[#292333] text-xs sm:text-sm">
                         {language === "mr"
                           ? freq.labelMr
                           : language === "hi"
                           ? freq.labelHi
                           : freq.labelEn}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-400">
+                      <span className="text-[10px] font-bold text-[#5e546b]">
                         {freq.code}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500">{freq.descEn}</p>
+                    <p className="text-[11px] text-[#5e546b]">{freq.descEn}</p>
                   </button>
                 );
               })}
             </div>
-            <span className="text-[11px] text-slate-400 block">{t.moderateHelp}</span>
+            <span className="text-[11px] text-[#5e546b] block">{t.moderateHelp}</span>
           </div>
         </div>
 
         {/* Global Clinical Disclaimer Banner Before Submit */}
-        <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-          <div className="text-xs text-slate-600 space-y-1">
-            <span className="font-bold text-slate-800 block">
+        <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex items-start gap-3">
+          <ShieldAlert className="w-5 h-5 text-[#8064A9] shrink-0 mt-0.5" />
+          <div className="text-xs text-[#5e546b] space-y-1">
+            <span className="font-bold text-[#292333] block">
               {t.clinicalDisclaimerTitle}
             </span>
             <p className="leading-relaxed">{t.clinicalDisclaimerText}</p>
@@ -1082,7 +1082,7 @@ export default function PredictPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+          className="w-full py-4 rounded-2xl bg-[#452653] hover:bg-[#573068] text-white font-bold text-base shadow-lg shadow-[#452653]/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
         >
           {isLoading ? (
             <>
@@ -1141,16 +1141,16 @@ export default function PredictPage() {
       {result && (
         <div
           ref={resultsRef}
-          className="mt-10 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+          className="mt-10 p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
         >
           {/* Section Card Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-            <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+          <div className="flex items-center justify-between border-b border-[#ded3eb] pb-3 flex-wrap gap-2">
+            <div className="flex items-center gap-2 text-[#452653] font-bold text-lg">
+              <CheckCircle2 className="w-5 h-5 text-[#8064A9]" />
               <span>{t.secResults}</span>
             </div>
 
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]">
               {result.model_status || "Inference Output"}
             </span>
           </div>
@@ -1158,7 +1158,7 @@ export default function PredictPage() {
           {/* Results Gauge and Summary Grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             {/* Circular Progress Gauge */}
-            <div className="md:col-span-5 flex flex-col items-center justify-center p-6 bg-slate-50 rounded-3xl border border-slate-200/80">
+            <div className="md:col-span-5 flex flex-col items-center justify-center p-6 bg-[#FAF8FC] rounded-3xl border border-[#ded3eb]">
               <div className="relative w-48 h-48 flex items-center justify-center">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 200 200">
                   {/* Background Track */}
@@ -1186,10 +1186,10 @@ export default function PredictPage() {
                 </svg>
 
                 <div className="absolute flex flex-col items-center justify-center text-center px-4">
-                  <span className="text-4xl font-black tracking-tight text-slate-900">
+                  <span className="text-4xl font-black tracking-tight text-[#292333]">
                     {(probability * 100).toFixed(1)}%
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#5e546b] mt-0.5">
                     {t.probabilityLabel}
                   </span>
                 </div>
@@ -1202,7 +1202,7 @@ export default function PredictPage() {
                     ? "bg-rose-50 text-rose-800 border-rose-300"
                     : isModerateRisk
                     ? "bg-amber-50 text-amber-800 border-amber-300"
-                    : "bg-emerald-50 text-emerald-800 border-emerald-300"
+                    : "bg-[#EAE2F5] text-[#452653] border-[#ded3eb]"
                 }`}
               >
                 {isHighRisk
@@ -1216,7 +1216,7 @@ export default function PredictPage() {
             {/* Model Outcomes & Details */}
             <div className="md:col-span-7 space-y-5">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#5e546b] block mb-1">
                   {t.classificationLabel}
                 </span>
                 <div className="flex items-center gap-2.5">
@@ -1225,17 +1225,17 @@ export default function PredictPage() {
                       <AlertCircle className="w-5 h-5" />
                     </div>
                   ) : (
-                    <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
-                      <CheckCircle2 className="w-5 h-5" />
+                    <div className="p-2 rounded-xl bg-[#EAE2F5] text-[#452653]">
+                      <CheckCircle2 className="w-5 h-5 text-[#8064A9]" />
                     </div>
                   )}
                   <div>
-                    <h3 className="text-lg font-extrabold text-slate-900 leading-tight">
+                    <h3 className="text-lg font-extrabold text-[#292333] leading-tight">
                       {result.predicted_class === 1
                         ? t.posClassMeaning
                         : t.negClassMeaning}
                     </h3>
-                    <p className="text-xs text-slate-500 font-mono mt-0.5">
+                    <p className="text-xs text-[#5e546b] font-mono mt-0.5">
                       Raw Meaning: {result.predicted_class_meaning} (Class:{" "}
                       {result.predicted_class})
                     </p>
@@ -1244,42 +1244,42 @@ export default function PredictPage() {
               </div>
 
               {/* Model Metadata Card */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <div className="flex items-center justify-between text-xs text-slate-600">
-                  <span className="font-semibold text-slate-500">{t.modelBadge}:</span>
-                  <span className="font-mono font-bold text-slate-800">
+              <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] space-y-2">
+                <div className="flex items-center justify-between text-xs text-[#5e546b]">
+                  <span className="font-semibold text-[#5e546b]">{t.modelBadge}:</span>
+                  <span className="font-mono font-bold text-[#292333]">
                     {result.model_name || "RandomForest (LASI-DD)"}
                   </span>
                 </div>
                 {result.task_name && (
-                  <div className="flex items-center justify-between text-xs text-slate-600">
-                    <span className="font-semibold text-slate-500">Task:</span>
-                    <span className="font-mono text-slate-700">{result.task_name}</span>
+                  <div className="flex items-center justify-between text-xs text-[#5e546b]">
+                    <span className="font-semibold text-[#5e546b]">Task:</span>
+                    <span className="font-mono text-[#292333]">{result.task_name}</span>
                   </div>
                 )}
               </div>
 
               {/* Model Notice */}
               {result.notice && (
-                <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200/80 flex items-start gap-2.5 text-xs text-blue-900">
-                  <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <div className="p-3.5 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex items-start gap-2.5 text-xs text-[#292333]">
+                  <Info className="w-4 h-4 text-[#8064A9] shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <span className="font-bold text-blue-950 block">
+                    <span className="font-bold text-[#452653] block">
                       {t.modelNoticeTitle}
                     </span>
-                    <p className="leading-relaxed text-blue-800/90">{result.notice}</p>
+                    <p className="leading-relaxed text-[#5e546b]">{result.notice}</p>
                   </div>
                 </div>
               )}
 
               {/* Live Telemetry Bar */}
               {apiMeta && (
-                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between flex-wrap gap-2 text-xs">
-                  <div className="flex items-center gap-2 font-bold text-emerald-900">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div className="p-3 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] flex items-center justify-between flex-wrap gap-2 text-xs">
+                  <div className="flex items-center gap-2 font-bold text-[#452653]">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#8064A9] animate-pulse"></span>
                     <span>Live Backend Response ({apiMeta.status} OK)</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[11px] text-emerald-700 font-mono">
+                  <div className="flex items-center gap-3 text-[11px] text-[#8064A9] font-mono">
                     <span>Latency: <strong>{apiMeta.latencyMs}ms</strong></span>
                     <span>•</span>
                     <span>Received: <strong>{apiMeta.timestamp}</strong></span>
@@ -1303,77 +1303,77 @@ export default function PredictPage() {
           </div>
 
           {/* Evaluated 11 Feature Summary Vector */}
-          <div className="border-t border-slate-100 pt-6">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+          <div className="border-t border-[#ded3eb] pt-6">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#5e546b] mb-3">
               {t.featuresSummaryTitle}
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">age_years</span>
-                <span className="font-bold text-slate-800">{formData.age_years}</span>
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">age_years</span>
+                <span className="font-bold text-[#292333]">{formData.age_years}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">sex_code</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">sex_code</span>
+                <span className="font-bold text-[#292333]">
                   {formData.sex_code === 1 ? "1 (Male)" : "2 (Female)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">residence_code</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">residence_code</span>
+                <span className="font-bold text-[#292333]">
                   {formData.residence_code === 1 ? "1 (Urban)" : "2 (Rural)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">mpce_quintile</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">mpce_quintile</span>
+                <span className="font-bold text-[#292333]">
                   Q{formData.mpce_quintile}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">education_level</span>
-                <span className="font-bold text-slate-800 font-mono text-[11px] truncate block">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">education_level</span>
+                <span className="font-bold text-[#292333] font-mono text-[11px] truncate block">
                   {formData.education_level}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">family_diabetes</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">family_diabetes</span>
+                <span className="font-bold text-[#292333]">
                   {formData.family_history_diabetes === 1 ? "1 (Yes)" : "0 (No)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">hypertension</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">hypertension</span>
+                <span className="font-bold text-[#292333]">
                   {formData.hypertension_history === 1 ? "1 (Yes)" : "0 (No)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">high_cholesterol</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">high_cholesterol</span>
+                <span className="font-bold text-[#292333]">
                   {formData.high_cholesterol_history === 1 ? "1 (Yes)" : "0 (No)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">tobacco_ever</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">tobacco_ever</span>
+                <span className="font-bold text-[#292333]">
                   {formData.tobacco_ever === 1 ? "1 (Yes)" : "0 (No)"}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">vigorous_activity</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">vigorous_activity</span>
+                <span className="font-bold text-[#292333]">
                   Code {formData.vigorous_activity_frequency}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-400 block text-[10px]">moderate_activity</span>
-                <span className="font-bold text-slate-800">
+              <div className="p-2.5 rounded-xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <span className="text-[#5e546b] block text-[10px]">moderate_activity</span>
+                <span className="font-bold text-[#292333]">
                   Code {formData.moderate_activity_frequency}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-                <span className="font-bold text-emerald-800 text-xs">
+              <div className="p-2.5 rounded-xl bg-[#EAE2F5] border border-[#ded3eb] flex items-center justify-center">
+                <span className="font-bold text-[#452653] text-xs">
                   All 11 Features Evaluated
                 </span>
               </div>
@@ -1381,8 +1381,8 @@ export default function PredictPage() {
           </div>
 
           {/* Action Footer with 'Test Again' Reset */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
-            <p className="text-xs text-slate-500">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#ded3eb]">
+            <p className="text-xs text-[#5e546b]">
               Need to evaluate another demographic profile? Modify features above or reset.
             </p>
             <button
@@ -1391,7 +1391,7 @@ export default function PredictPage() {
                 setResult(null);
                 window.scrollTo({ top: 180, behavior: "smooth" });
               }}
-              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 transition-transform hover:scale-101 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#452653] hover:bg-[#573068] text-white font-bold text-sm shadow-md shadow-[#452653]/20 flex items-center justify-center gap-2 transition-transform hover:scale-101 cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>{t.testAgain}</span>

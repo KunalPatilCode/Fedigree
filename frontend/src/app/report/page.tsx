@@ -32,7 +32,7 @@ export default function ReportPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 print:hidden">
         <Link
           href="/assess"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#5e546b] hover:text-[#452653] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Assessment</span>
@@ -41,7 +41,7 @@ export default function ReportPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handlePrint}
-            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-transform hover:scale-102"
+            className="px-6 py-2.5 rounded-xl bg-[#452653] hover:bg-[#573068] text-white font-bold text-sm shadow-md shadow-[#452653]/20 flex items-center gap-2 transition-transform hover:scale-102"
           >
             <Printer className="w-4 h-4" />
             <span>{t.downloadPdf}</span>
@@ -50,22 +50,22 @@ export default function ReportPage() {
       </div>
 
       {/* Printable Clinical 1-Page Document Container */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-8 sm:p-12 print:shadow-none print:border-none print:p-0">
+      <div className="bg-white rounded-3xl border border-[#ded3eb] shadow-xl p-8 sm:p-12 print:shadow-none print:border-none print:p-0">
         {/* Header with SEVA Badge & Clinical Stamp */}
-        <div className="flex items-start justify-between border-b-2 border-slate-900 pb-6 mb-6">
+        <div className="flex items-start justify-between border-b-2 border-[#292333] pb-6 mb-6">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-black tracking-tight text-slate-900">{t.appName}</span>
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+              <span className="text-2xl font-black tracking-tight text-[#292333]">{t.appName}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#452653] bg-[#EAE2F5] px-2.5 py-0.5 rounded border border-[#ded3eb]">
                 Clinical OPD Triage
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-[#5e546b] mt-1">
               Family Health Tree & Non-Communicable Disease (NCD) Preventive Care Summary
             </p>
           </div>
 
-          <div className="text-right text-xs text-slate-500">
+          <div className="text-right text-xs text-[#5e546b]">
             <div><strong>Date:</strong> {currentDate}</div>
             <div><strong>Location:</strong> {assessment.district}, Maharashtra</div>
             <div className="text-[10px] text-slate-400">SEVA Innovation Challenge 2026</div>
@@ -73,18 +73,18 @@ export default function ReportPage() {
         </div>
 
         {/* Section 1: Patient Biometrics & Air Quality Index */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] mb-6 text-xs">
           <div>
             <span className="text-slate-400 block uppercase font-semibold">Subject Age / Sex</span>
-            <span className="font-bold text-slate-900 text-sm">{assessment.ageYears} Yrs • {assessment.gender.toUpperCase()}</span>
+            <span className="font-bold text-[#292333] text-sm">{assessment.ageYears} Yrs • {assessment.gender.toUpperCase()}</span>
           </div>
           <div>
             <span className="text-slate-400 block uppercase font-semibold">Waist Circumference</span>
-            <span className="font-bold text-slate-900 text-sm">{assessment.waistCm} cm</span>
+            <span className="font-bold text-[#292333] text-sm">{assessment.waistCm} cm</span>
           </div>
           <div>
             <span className="text-slate-400 block uppercase font-semibold">Physical Activity</span>
-            <span className="font-bold text-slate-900 text-sm capitalize">{assessment.physicalActivity}</span>
+            <span className="font-bold text-[#292333] text-sm capitalize">{assessment.physicalActivity}</span>
           </div>
           <div>
             <span className="text-slate-400 block uppercase font-semibold">Ambient AQI ({assessment.district})</span>
@@ -95,63 +95,63 @@ export default function ReportPage() {
         {/* Section 2: Stratified Clinical Risk Cards (Dual-Engine) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Card 1: IDRS (Clinical Standard) */}
-          <div className="p-5 rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/30">
-            <div className="flex items-center justify-between text-xs font-bold text-emerald-900 mb-2">
+          <div className="p-5 rounded-2xl border-2 border-[#8064A9]/40 bg-[#EAE2F5]/30">
+            <div className="flex items-center justify-between text-xs font-bold text-[#452653] mb-2">
               <span>MDRF / ICMR IDRS</span>
               <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${
-                score >= 60 ? "bg-rose-100 text-rose-800" : score >= 30 ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"
+                score >= 60 ? "bg-rose-100 text-rose-800" : score >= 30 ? "bg-amber-100 text-amber-800" : "bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]"
               }`}>
                 {riskLevel} Risk
               </span>
             </div>
-            <div className="text-3xl font-black text-slate-900 mb-1">
+            <div className="text-3xl font-black text-[#292333] mb-1">
               {score} <span className="text-sm font-normal text-slate-500">/ 100</span>
             </div>
-            <p className="text-[11px] text-slate-600 leading-snug">
+            <p className="text-[11px] text-[#5e546b] leading-snug">
               Validated Indian Diabetes Risk Score. Cutoff: &ge;60 indicates high risk for undiagnosed diabetes.
             </p>
           </div>
 
           {/* Card 2: LASI ML Model 1 (Diabetes) */}
-          <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+          <div className="p-5 rounded-2xl border border-[#ded3eb] bg-[#FAF8FC]">
+            <div className="flex items-center justify-between text-xs font-bold text-[#292333] mb-2">
               <span>LASI ML Diabetes Model</span>
-              <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">Tuned RF</span>
+              <span className="text-[10px] bg-[#EAE2F5] text-[#452653] px-2 py-0.5 rounded font-semibold border border-[#ded3eb]">Tuned RF</span>
             </div>
-            <div className="text-3xl font-black text-slate-900 mb-1">
+            <div className="text-3xl font-black text-[#292333] mb-1">
               {diabProb}%
             </div>
-            <p className="text-[11px] text-slate-500 leading-snug">
+            <p className="text-[11px] text-[#5e546b] leading-snug">
               Indian longitudinal survey demographic classification probability (11 features).
             </p>
           </div>
 
           {/* Card 3: LASI ML Model 2 (CVD Composite) */}
-          <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70">
-            <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+          <div className="p-5 rounded-2xl border border-[#ded3eb] bg-[#FAF8FC]">
+            <div className="flex items-center justify-between text-xs font-bold text-[#292333] mb-2">
               <span>LASI CVD Composite</span>
-              <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">LogReg</span>
+              <span className="text-[10px] bg-[#EAE2F5] text-[#452653] px-2 py-0.5 rounded font-semibold border border-[#ded3eb]">LogReg</span>
             </div>
-            <div className="text-3xl font-black text-slate-900 mb-1">
+            <div className="text-3xl font-black text-[#292333] mb-1">
               {cvdProb}%
             </div>
-            <p className="text-[11px] text-slate-500 leading-snug">
+            <p className="text-[11px] text-[#5e546b] leading-snug">
               Composite likelihood for Hypertension, Heart Disease, or Stroke based on family load.
             </p>
           </div>
         </div>
 
         {/* Section 3: Family Pedigree Snapshot */}
-        <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/40 mb-6">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
-            <Activity className="w-4 h-4 text-emerald-600" />
+        <div className="p-5 rounded-2xl border border-[#ded3eb] bg-[#FAF8FC]/60 mb-6">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#292333] mb-3 flex items-center gap-1.5">
+            <Activity className="w-4 h-4 text-[#8064A9]" />
             <span>3-Generation Family Tree Disease Lineage</span>
           </h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             {relatives.map((r) => (
-              <div key={r.id} className="p-2.5 rounded-xl bg-white border border-slate-200">
-                <div className="font-bold text-slate-800 capitalize flex items-center justify-between">
+              <div key={r.id} className="p-2.5 rounded-xl bg-white border border-[#ded3eb]">
+                <div className="font-bold text-[#292333] capitalize flex items-center justify-between">
                   <span>{r.relation}</span>
                   <span className="text-[10px] font-normal text-slate-400">{r.age}y</span>
                 </div>
@@ -183,29 +183,29 @@ export default function ReportPage() {
         </div>
 
         {/* Section 5: ICMR-NIN Cultural Dietary Prescription (Maharashtra) */}
-        <div className="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200 text-xs">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-900 mb-2 flex items-center gap-1.5">
-            <Utensils className="w-4 h-4 text-emerald-700" />
+        <div className="p-5 rounded-2xl bg-[#EAE2F5]/40 border border-[#ded3eb] text-xs">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#452653] mb-2 flex items-center gap-1.5">
+            <Utensils className="w-4 h-4 text-[#8064A9]" />
             <span>{t.dietAdviceTitle}</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-slate-700 mt-2">
-            <div className="p-2.5 rounded-xl bg-white border border-emerald-100">
-              <strong className="block text-emerald-800">1. Whole Grains / Millets</strong>
+            <div className="p-2.5 rounded-xl bg-white border border-[#ded3eb]">
+              <strong className="block text-[#452653]">1. Whole Grains / Millets</strong>
               Replace polished white rice with traditional Maharashtrian Jowar (ज्वारी) or Bajra (बाजरी) bhakri for low glycemic index.
             </div>
-            <div className="p-2.5 rounded-xl bg-white border border-emerald-100">
-              <strong className="block text-emerald-800">2. Edible Oil Limitation</strong>
+            <div className="p-2.5 rounded-xl bg-white border border-[#ded3eb]">
+              <strong className="block text-[#452653]">2. Edible Oil Limitation</strong>
               Cap daily cooking oil to &le;20 grams/day. Rotate groundnut oil and mustard oil; avoid repeated deep frying.
             </div>
-            <div className="p-2.5 rounded-xl bg-white border border-emerald-100">
-              <strong className="block text-emerald-800">3. Daily 30-Min Brisk Walk</strong>
+            <div className="p-2.5 rounded-xl bg-white border border-[#ded3eb]">
+              <strong className="block text-[#452653]">3. Daily 30-Min Brisk Walk</strong>
               Accumulate at least 150 minutes of moderate physical activity weekly to cut insulin resistance by up to 30%.
             </div>
           </div>
         </div>
 
         {/* Footer Disclaimer */}
-        <div className="mt-8 pt-4 border-t border-slate-200 text-[10px] text-slate-400 text-center">
+        <div className="mt-8 pt-4 border-t border-[#ded3eb] text-[10px] text-slate-400 text-center">
           Notice: This triage document provides risk awareness based on ICMR-INDIAB IDRS and LASI research models. It does not replace a clinical physician&apos;s formal medical diagnosis.
         </div>
       </div>

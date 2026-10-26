@@ -72,21 +72,21 @@ function AddRelativeModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
-          <div className="flex items-center gap-2.5 font-bold text-slate-800 text-base sm:text-lg">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#ded3eb] bg-[#FAF8FC]">
+          <div className="flex items-center gap-2.5 font-bold text-[#292333] text-base sm:text-lg">
+            <div className="w-8 h-8 rounded-lg bg-[#EAE2F5] text-[#452653] flex items-center justify-center">
               {isEditing ? <Edit3 className="w-4 h-4" /> : <User className="w-4 h-4" />}
             </div>
             <div>
               <span>{isEditing ? "Edit Relative / माहिती बदला" : t.addRelative}</span>
-              <p className="text-[11px] font-normal text-slate-500">
+              <p className="text-[11px] font-normal text-[#5e546b]">
                 {isEditing ? `Modifying profile for ${initialData?.name}` : "Clinical pedigree node registration"}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-[#452653] hover:bg-[#EAE2F5]/50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -107,7 +107,7 @@ function AddRelativeModalForm({
                 if (["father", "brother", "grandfather"].includes(val)) setGender("male");
                 if (["mother", "sister", "grandmother"].includes(val)) setGender("female");
               }}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500 font-medium disabled:bg-slate-100 disabled:cursor-not-allowed"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm focus:outline-hidden focus:ring-2 focus:ring-[#8064A9] font-medium disabled:bg-slate-100 disabled:cursor-not-allowed"
             >
               {isEditing && initialData?.relation === "self" && (
                 <option value="self">{t.selfNode}</option>
@@ -133,7 +133,7 @@ function AddRelativeModalForm({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Ramesh Patil"
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#8064A9]"
               />
             </div>
             <div>
@@ -146,7 +146,7 @@ function AddRelativeModalForm({
                 max={120}
                 value={age}
                 onChange={(e) => setAge(Number(e.target.value))}
-                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#8064A9]"
                 required
               />
             </div>
@@ -193,7 +193,7 @@ function AddRelativeModalForm({
                 onClick={() => setIsAlive(!isAlive)}
                 className={`w-full py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                   isAlive
-                    ? "bg-emerald-50 border-emerald-500 text-emerald-700"
+                    ? "bg-[#EAE2F5] border-[#8064A9] text-[#452653]"
                     : "bg-slate-100 border-slate-300 text-slate-600"
                 }`}
               >
@@ -213,56 +213,56 @@ function AddRelativeModalForm({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
+              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-[#FAF8FC] cursor-pointer transition-colors">
                 <input
                   type="checkbox"
                   checked={hasDiabetes}
                   onChange={(e) => setHasDiabetes(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#8064A9] rounded border-slate-300 focus:ring-[#8064A9]"
                 />
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
                 <span className="text-xs font-medium text-slate-800">{t.diabetes}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
+              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-[#FAF8FC] cursor-pointer transition-colors">
                 <input
                   type="checkbox"
                   checked={hasHypertension}
                   onChange={(e) => setHasHypertension(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#8064A9] rounded border-slate-300 focus:ring-[#8064A9]"
                 />
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
                 <span className="text-xs font-medium text-slate-800">{t.hypertension}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
+              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-[#FAF8FC] cursor-pointer transition-colors">
                 <input
                   type="checkbox"
                   checked={hasHeartDisease}
                   onChange={(e) => setHasHeartDisease(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#8064A9] rounded border-slate-300 focus:ring-[#8064A9]"
                 />
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0" />
                 <span className="text-xs font-medium text-slate-800">{t.heartDisease}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors">
+              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-[#FAF8FC] cursor-pointer transition-colors">
                 <input
                   type="checkbox"
                   checked={hasStroke}
                   onChange={(e) => setHasStroke(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#8064A9] rounded border-slate-300 focus:ring-[#8064A9]"
                 />
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
                 <span className="text-xs font-medium text-slate-800">{t.stroke}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors sm:col-span-2">
+              <label className="flex items-center gap-2.5 p-2 rounded-xl border border-slate-200 hover:bg-[#FAF8FC] cursor-pointer transition-colors sm:col-span-2">
                 <input
                   type="checkbox"
                   checked={hasAsthma}
                   onChange={(e) => setHasAsthma(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                  className="w-4 h-4 text-[#8064A9] rounded border-slate-300 focus:ring-[#8064A9]"
                 />
                 <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0" />
                 <span className="text-xs font-medium text-slate-800">{t.respiratory}</span>
@@ -281,22 +281,22 @@ function AddRelativeModalForm({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Diagnosed at age 48, currently prescribed Metformin & Telmisartan"
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-hidden focus:ring-2 focus:ring-[#8064A9] resize-none"
             />
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ded3eb]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#5e546b] hover:bg-[#FAF8FC] transition-colors"
             >
               {t.cancel}
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/20 transition-all hover:scale-102"
+              className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#452653] hover:bg-[#573068] shadow-md shadow-[#452653]/20 transition-all hover:scale-102"
             >
               {isEditing ? "Update Relative" : t.save}
             </button>

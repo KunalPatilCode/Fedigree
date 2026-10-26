@@ -1,0 +1,24 @@
+{
+  "name": "fedigree",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fedigree - Family Health Tree & NCD Preventive Care Platform",
+  "homepage": "https://github.com/KunalPatilCode/Fedigree#readme",
+  "bugs": {
+    "url": "https://github.com/KunalPatilCode/Fedigree/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KunalPatilCode/Fedigree.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint"
+  }
+}

@@ -242,9 +242,9 @@ function RiskGauge({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - pct);
 
-  let strokeColor = "#10B981"; // emerald
-  let bgClass = "text-emerald-100";
-  let textColor = "text-emerald-700";
+  let strokeColor = "#8064A9"; // purple
+  let bgClass = "text-[#EAE2F5]";
+  let textColor = "text-[#452653]";
 
   if (colorScheme === "auto") {
     if (pct > 0.6) {
@@ -556,7 +556,7 @@ export default function ProfilePage() {
   // Risk level color helpers
   const getRiskBadge = (level: string) => {
     switch (level) {
-      case "Low": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "Low": return "bg-[#EAE2F5] text-[#452653] border-[#ded3eb]";
       case "Moderate": return "bg-amber-100 text-amber-800 border-amber-200";
       case "High": return "bg-orange-100 text-orange-800 border-orange-200";
       case "Very High": return "bg-rose-100 text-rose-800 border-rose-200";
@@ -591,29 +591,29 @@ export default function ProfilePage() {
         <div>
           <Link
             href="/assess"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors mb-2"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#5e546b] hover:text-[#452653] transition-colors mb-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Assessment</span>
           </Link>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-[#452653] to-[#8064A9] bg-clip-text text-transparent">
             {t.pageTitle}
           </h1>
-          <p className="text-sm text-slate-500 mt-1 max-w-2xl">{t.pageSubtitle}</p>
+          <p className="text-sm text-[#5e546b] mt-1 max-w-2xl">{t.pageSubtitle}</p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={handleRefresh}
             disabled={isRefreshing || isCalculating}
-            className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm shadow-xs hover:bg-slate-50 flex items-center gap-2 transition-all disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl bg-white border border-[#ded3eb] text-[#292333] font-semibold text-sm shadow-xs hover:bg-[#FAF8FC] flex items-center gap-2 transition-all disabled:opacity-50"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`w-4 h-4 text-[#8064A9] ${isRefreshing ? "animate-spin" : ""}`} />
             <span>{isRefreshing ? t.refreshing : t.refreshScores}</span>
           </button>
           <button
             onClick={handlePrint}
-            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-[#452653] hover:bg-[#573068] text-white font-bold text-sm shadow-md shadow-[#452653]/20 flex items-center gap-2 transition-all hover:scale-102"
           >
             <Download className="w-4 h-4" />
             <span>{t.downloadProfile}</span>
@@ -623,19 +623,19 @@ export default function ProfilePage() {
 
       {/* ─── No Data State ─── */}
       {!hasAssessmentData && (
-        <div className="p-12 rounded-3xl bg-white border border-slate-200 shadow-xs text-center space-y-4 mb-8">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 flex items-center justify-center">
-            <Sparkles className="w-8 h-8 text-emerald-600" />
+        <div className="p-12 rounded-3xl bg-white border border-[#ded3eb] shadow-xs text-center space-y-4 mb-8">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-[#EAE2F5] flex items-center justify-center">
+            <Sparkles className="w-8 h-8 text-[#8064A9]" />
           </div>
-          <h2 className="text-xl font-bold text-slate-800">{t.noData}</h2>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
+          <h2 className="text-xl font-bold text-[#292333]">{t.noData}</h2>
+          <p className="text-sm text-[#5e546b] max-w-md mx-auto">
             {language === "mr" ? "प्रथम आरोग्य तपासणी पृष्ठावर जा आणि तुमची माहिती भरा." : language === "hi" ? "पहले स्वास्थ्य जांच पृष्ठ पर जाएं और अपनी जानकारी भरें." : "Visit the Health Assessment page first and complete your screening to generate your unified profile."}
           </p>
           <Link
             href="/assess"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 shadow-md transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#452653] text-white font-bold hover:bg-[#573068] shadow-md transition-all"
           >
-            <Activity className="w-5 h-5" />
+            <Activity className="w-5 h-5 text-[#EAE2F5]" />
             <span>{t.goAssess}</span>
             <ChevronRight className="w-4 h-4" />
           </Link>
@@ -650,7 +650,7 @@ export default function ProfilePage() {
           composite.level === "Very High" ? "bg-rose-50/60 border-rose-300"
           : composite.level === "High" ? "bg-orange-50/60 border-orange-300"
           : composite.level === "Moderate" ? "bg-amber-50/60 border-amber-300"
-          : "bg-emerald-50/60 border-emerald-300"
+          : "bg-[#EAE2F5]/40 border-[#ded3eb]"
         }`}>
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <RiskGauge
@@ -695,9 +695,9 @@ export default function ProfilePage() {
         </div>
 
         {/* ═══ Section 2: Risk Score Gauges Grid ═══ */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3 mb-6">
-            <Brain className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb]/60 pb-3 mb-6">
+            <Brain className="w-5 h-5 text-[#8064A9]" />
             <span>{t.sectionRiskScores}</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -733,9 +733,9 @@ export default function ProfilePage() {
         </div>
 
         {/* ═══ Section 3: Personal Demographics ═══ */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3 mb-6">
-            <User className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb]/60 pb-3 mb-6">
+            <User className="w-5 h-5 text-[#8064A9]" />
             <span>{t.sectionDemographics}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -751,12 +751,12 @@ export default function ProfilePage() {
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={i} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+                <div key={i} className="p-3.5 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb]">
                   <div className="flex items-center gap-1.5 text-slate-400 text-xs font-semibold uppercase mb-1">
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className="w-3.5 h-3.5 text-[#8064A9]" />
                     {item.label}
                   </div>
-                  <div className="text-sm font-bold text-slate-800">{item.value}</div>
+                  <div className="text-sm font-bold text-[#292333]">{item.value}</div>
                 </div>
               );
             })}
@@ -765,7 +765,7 @@ export default function ProfilePage() {
           {/* AQI Sub-section */}
           {aqiData && (
             <div className="mt-4 p-4 rounded-2xl bg-amber-50/50 border border-amber-200 flex items-center gap-4">
-              <Wind className={`w-6 h-6 flex-shrink-0 ${aqiData.aqi > 150 ? "text-rose-600" : aqiData.aqi > 100 ? "text-amber-600" : "text-emerald-600"}`} />
+              <Wind className={`w-6 h-6 flex-shrink-0 ${aqiData.aqi > 150 ? "text-rose-600" : aqiData.aqi > 100 ? "text-amber-600" : "text-[#8064A9]"}`} />
               <div className="flex-1">
                 <div className="text-xs font-semibold uppercase text-amber-800">{t.aqiExposure} — {aqiData.district}</div>
                 <div className="text-lg font-black text-slate-900">{aqiData.aqi} <span className="text-sm font-normal text-slate-500">({aqiData.category})</span></div>
@@ -776,38 +776,38 @@ export default function ProfilePage() {
         </div>
 
         {/* ═══ Section 4: Family Hereditary Load ═══ */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3 mb-6">
-            <Users className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb]/60 pb-3 mb-6">
+            <Users className="w-5 h-5 text-[#8064A9]" />
             <span>{t.sectionHeredity}</span>
           </div>
 
           {/* Summary Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-              <div className="text-3xl font-black text-slate-900">{heredity.totalRelatives}</div>
-              <div className="text-xs text-slate-500 font-medium">{t.familyMembers}</div>
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] text-center">
+              <div className="text-3xl font-black text-[#292333]">{heredity.totalRelatives}</div>
+              <div className="text-xs text-[#5e546b] font-medium">{t.familyMembers}</div>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center">
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] text-center">
               <div className="text-3xl font-black text-rose-700">{heredity.affectedMembers}</div>
-              <div className="text-xs text-slate-500 font-medium">{t.affectedMembers}</div>
+              <div className="text-xs text-[#5e546b] font-medium">{t.affectedMembers}</div>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-              <div className="text-3xl font-black text-slate-900">{heredity.totalConditions}</div>
-              <div className="text-xs text-slate-500 font-medium">{t.conditionsDetected}</div>
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] text-center">
+              <div className="text-3xl font-black text-[#292333]">{heredity.totalConditions}</div>
+              <div className="text-xs text-[#5e546b] font-medium">{t.conditionsDetected}</div>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-              <div className={`text-3xl font-black ${heredity.level === "Low" ? "text-emerald-700" : heredity.level === "Moderate" ? "text-amber-700" : "text-rose-700"}`}>
+            <div className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] text-center">
+              <div className={`text-3xl font-black ${heredity.level === "Low" ? "text-[#452653]" : heredity.level === "Moderate" ? "text-amber-700" : "text-rose-700"}`}>
                 {heredity.score}
               </div>
-              <div className="text-xs text-slate-500 font-medium">{t.heredityTitle}</div>
+              <div className="text-xs text-[#5e546b] font-medium">{t.heredityTitle}</div>
             </div>
           </div>
 
           {/* Heredity level message */}
           <div className={`p-4 rounded-2xl border mb-6 ${getRiskBadge(heredity.level)}`}>
             <div className="flex items-center gap-2">
-              {heredity.level === "Low" ? <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              {heredity.level === "Low" ? <CheckCircle2 className="w-5 h-5 text-[#8064A9]" />
                 : heredity.level === "Moderate" ? <AlertTriangle className="w-5 h-5 text-amber-600" />
                 : <XCircle className="w-5 h-5 text-rose-600" />}
               <span className="text-sm font-semibold">{getHeredityMessage(heredity.level)}</span>
@@ -861,7 +861,7 @@ export default function ProfilePage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-emerald-600 italic">
+                    <div className="text-[#8064A9] italic">
                       {language === "mr" ? "NCD नाही" : language === "hi" ? "NCD नहीं" : "No NCDs"}
                     </div>
                   )}
@@ -872,15 +872,15 @@ export default function ProfilePage() {
         </div>
 
         {/* ═══ Section 5: Personalized Recommendations ═══ */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3 mb-6">
-            <Shield className="w-5 h-5 text-emerald-600" />
+        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs">
+          <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb]/60 pb-3 mb-6">
+            <Shield className="w-5 h-5 text-[#8064A9]" />
             <span>{t.sectionRecommendations}</span>
           </div>
 
           {recommendations.length === 0 ? (
             <div className="text-center py-8 text-slate-500">
-              <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-400 mb-3" />
+              <CheckCircle2 className="w-12 h-12 mx-auto text-[#8064A9] mb-3" />
               <p className="text-sm font-medium">{language === "mr" ? "सध्या कोणत्या विशेष शिफारसी नाहीत!" : language === "hi" ? "फिलहाल कोई विशेष सुझाव नहीं!" : "No specific recommendations at this time. Keep up the healthy lifestyle!"}</p>
             </div>
           ) : (
@@ -889,10 +889,10 @@ export default function ProfilePage() {
                 const Icon = rec.icon;
                 const priorityColor = rec.priority === "critical" ? "border-l-rose-500 bg-rose-50/30"
                   : rec.priority === "important" ? "border-l-amber-500 bg-amber-50/30"
-                  : "border-l-emerald-500 bg-emerald-50/30";
+                  : "border-l-[#8064A9] bg-[#EAE2F5]/30";
                 const priorityBadge = rec.priority === "critical" ? "bg-rose-100 text-rose-700"
                   : rec.priority === "important" ? "bg-amber-100 text-amber-700"
-                  : "bg-emerald-100 text-emerald-700";
+                  : "bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]";
                 const priorityLabel = rec.priority === "critical" ? (language === "mr" ? "तातडीचे" : language === "hi" ? "अत्यावश्यक" : "Critical")
                   : rec.priority === "important" ? (language === "mr" ? "महत्त्वाचे" : language === "hi" ? "महत्वपूर्ण" : "Important")
                   : (language === "mr" ? "सल्ला" : language === "hi" ? "सलाह" : "Advisory");
@@ -901,16 +901,16 @@ export default function ProfilePage() {
                   <div key={i} className={`p-4 rounded-2xl border-l-4 border border-slate-100 ${priorityColor}`}>
                     <div className="flex items-start gap-3">
                       <div className="w-9 h-9 flex-shrink-0 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-xs">
-                        <Icon className="w-4.5 h-4.5 text-slate-600" />
+                        <Icon className="w-4.5 h-4.5 text-[#452653]" />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="text-sm font-bold text-slate-800">{rec.title}</h4>
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${priorityBadge}`}>
+                          <h4 className="text-sm font-bold text-[#292333]">{rec.title}</h4>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${priorityBadge}`}>
                             {priorityLabel}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-600 leading-relaxed">{rec.description}</p>
+                        <p className="text-xs text-[#5e546b] leading-relaxed">{rec.description}</p>
                       </div>
                     </div>
                   </div>
@@ -922,9 +922,9 @@ export default function ProfilePage() {
 
         {/* ═══ Section 6: IDRS Breakdown (if available) ═══ */}
         {idrsResult && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs">
-            <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg border-b border-slate-100 pb-3 mb-6">
-              <Stethoscope className="w-5 h-5 text-emerald-600" />
+          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#ded3eb] shadow-xs">
+            <div className="flex items-center gap-2 text-[#452653] font-bold text-lg border-b border-[#ded3eb]/60 pb-3 mb-6">
+              <Stethoscope className="w-5 h-5 text-[#8064A9]" />
               <span>{language === "mr" ? "IDRS गुण विश्लेषण" : language === "hi" ? "IDRS स्कोर विश्लेषण" : "IDRS Score Breakdown"}</span>
             </div>
 
@@ -957,23 +957,23 @@ export default function ProfilePage() {
                   max: idrsResult.breakdown.familyHistory.max,
                 },
               ].map((b, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <div key={i} className="p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb]">
                   <div className="text-xs font-semibold uppercase text-slate-400 mb-1">{b.label}</div>
-                  <div className="text-sm font-bold text-slate-800 mb-2">{b.value}</div>
+                  <div className="text-sm font-bold text-[#292333] mb-2">{b.value}</div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-500 ${b.points >= b.max ? "bg-rose-500" : b.points > 0 ? "bg-amber-500" : "bg-emerald-500"}`}
+                        className={`h-full rounded-full transition-all duration-500 ${b.points >= b.max ? "bg-rose-500" : b.points > 0 ? "bg-amber-500" : "bg-[#8064A9]"}`}
                         style={{ width: `${b.max > 0 ? (b.points / b.max) * 100 : 0}%` }}
                       />
                     </div>
-                    <span className="text-xs font-bold text-slate-600">{b.points}/{b.max}</span>
+                    <span className="text-xs font-bold text-[#292333]">{b.points}/{b.max}</span>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 text-sm text-emerald-900">
+            <div className="mt-4 p-4 rounded-2xl bg-[#EAE2F5]/40 border border-[#ded3eb] text-sm text-[#452653]">
               <strong>{language === "mr" ? "शिफारस:" : language === "hi" ? "सुझाव:" : "Recommendation:"}</strong> {idrsResult.recommendation}
             </div>
           </div>

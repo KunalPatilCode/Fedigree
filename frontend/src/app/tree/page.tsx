@@ -32,10 +32,15 @@ import {
   RotateCcw,
   Activity,
   FileText,
+  Info,
+  ShieldAlert,
+  Users,
+  CheckCircle2,
+  HelpCircle,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ILLUSTRATED SVG AVATARS (Matching the user's reference diagram)
+// ILLUSTRATED SVG AVATARS (Preserving original medical pedigree styling)
 // ─────────────────────────────────────────────────────────────────────────────
 
 function GrandmotherAvatar() {
@@ -133,8 +138,8 @@ function MotherAvatar() {
 function MeAvatar() {
   return (
     <svg viewBox="0 0 100 100" className="w-full h-full pointer-events-none">
-      <circle cx="50" cy="50" r="48" fill="#EAE2F5" stroke="#8064A9" strokeWidth="3" />
-      <path d="M 20 92 C 20 68, 80 68, 80 92 Z" fill="#8064A9" />
+      <circle cx="50" cy="50" r="48" fill="#EAE2F5" stroke="#452653" strokeWidth="4" />
+      <path d="M 20 92 C 20 68, 80 68, 80 92 Z" fill="#452653" />
       <path d="M 42 66 L 50 78 L 58 66 Z" fill="#FFFFFF" />
       <rect x="44" y="55" width="12" height="15" fill="#FDD6BA" rx="3" />
       <circle cx="50" cy="43" r="19" fill="#FDD6BA" />
@@ -225,6 +230,7 @@ function ChildAvatar({ gender }: { gender: "male" | "female" }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOM REACT FLOW NODE: FamilyMemberNode
+// Precise 88px circle alignment for strictly horizontal and orthogonal edges
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface FamilyMemberNodeData extends Record<string, unknown> {
@@ -267,101 +273,144 @@ function FamilyMemberNode({ data }: NodeProps<Node<FamilyMemberNodeData>>) {
   return (
     <div
       className={`relative flex flex-col items-center cursor-pointer select-none transition-all duration-200 group ${
-        isDimmed ? "opacity-35 grayscale-40" : "opacity-100"
+        isDimmed ? "opacity-30 grayscale-40" : "opacity-100"
       }`}
+      style={{ width: "160px" }}
     >
-      {/* Handles for Orthogonal React Flow Connectors */}
+      {/* 
+        Precise Handles anchored to the 88px Avatar Circle:
+        - Top/Bottom at center X (50%), Top Y=0, Bottom Y=88px
+        - Left/Right at vertical midpoint Y=44px
+        Both target & source handles registered to prevent edge mismatches
+      */}
       <Handle
         type="target"
         position={Position.Top}
         id="top"
-        className="!w-2 !h-2 !bg-[#8064A9] !border-none opacity-0 group-hover:opacity-60 transition-opacity"
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white !top-0 opacity-0 group-hover:opacity-80 transition-opacity"
+      />
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white !top-0 opacity-0 group-hover:opacity-80 transition-opacity"
       />
       <Handle
         type="source"
         position={Position.Bottom}
         id="bottom"
-        className="!w-2 !h-2 !bg-[#8064A9] !border-none opacity-0 group-hover:opacity-60 transition-opacity"
+        style={{ top: "88px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom-target"
+        style={{ top: "88px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left"
-        className="!w-2 !h-2 !bg-[#8064A9] !border-none opacity-0 group-hover:opacity-60 transition-opacity"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left-source"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
       />
       <Handle
         type="source"
         position={Position.Right}
         id="right"
-        className="!w-2 !h-2 !bg-[#8064A9] !border-none opacity-0 group-hover:opacity-60 transition-opacity"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right-target"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0 group-hover:opacity-80 transition-opacity"
       />
 
-      {/* Avatar Container */}
+      {/* Avatar Circular Container */}
       <div
-        className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full shadow-md transition-all duration-200 group-hover:scale-105 group-hover:shadow-xl ${
+        className={`relative w-[88px] h-[88px] rounded-full transition-all duration-200 group-hover:scale-105 group-hover:shadow-xl ${
           isSelected
-            ? "ring-4 ring-[#452653] shadow-lg scale-105"
+            ? "ring-4 ring-[#452653] shadow-xl shadow-[#452653]/30 scale-105"
             : isSelf
-            ? "ring-4 ring-[#8064A9] shadow-[#8064A9]/30"
-            : "ring-2 ring-white/90"
-        } ${isPulsing ? "ring-4 ring-rose-500 shadow-rose-500/40 animate-pulse scale-105" : ""}`}
+            ? "ring-4 ring-[#8064A9] shadow-lg shadow-[#8064A9]/25"
+            : "ring-2 ring-white/95 shadow-md shadow-slate-900/10"
+        } ${isPulsing ? "ring-4 ring-rose-500 shadow-rose-500/50 animate-pulse scale-105" : ""}`}
       >
         {renderAvatar()}
 
-        {/* Deceased diagonal slash indicator */}
+        {/* Deceased diagonal slash indicator (Clinical Pedigree Standard) */}
         {!relative.isAlive && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-24 h-0.5 bg-slate-800 rotate-45 rounded-full shadow-xs" />
           </div>
         )}
 
+        {/* Proband Tag for ME */}
+        {isSelf && (
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-[#452653] text-white font-extrabold text-[9px] rounded-full shadow-md uppercase tracking-wider whitespace-nowrap">
+            PROBAND
+          </span>
+        )}
+
         {/* Pulse / Flag Indicator Badge */}
         {isPulsing && (
-          <span className="absolute -top-1 -right-1 px-1.5 py-0.2 bg-rose-600 text-white font-black text-[9px] rounded-full shadow-md animate-bounce">
+          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-rose-600 text-white font-black text-[9px] rounded-full shadow-md animate-bounce">
             FLAG
           </span>
         )}
       </div>
 
       {/* Labels below Avatar */}
-      <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#8064A9] mt-2 text-center whitespace-nowrap">
+      <span className="text-[11px] font-black uppercase tracking-wider text-[#8064A9] mt-2.5 text-center truncate max-w-[150px]">
         {labelTitle}
       </span>
-      <span className="text-xs font-bold text-[#292333] max-w-[130px] truncate text-center">
+      <span className="text-xs font-bold text-[#292333] max-w-[145px] truncate text-center leading-tight">
         {relative.name}
       </span>
-      <span className="text-[10px] text-slate-400 font-medium">
+      <span className="text-[10px] text-[#5e546b] font-medium mt-0.5">
         {relative.age} yrs • {relative.isAlive ? "Living" : "Deceased"}
       </span>
 
       {/* Condition Pills */}
-      <div className="flex flex-wrap justify-center gap-1 mt-1 max-w-[130px]">
+      <div className="flex flex-wrap justify-center gap-1 mt-1.5 max-w-[150px]">
         {relative.hasDiabetes && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-white/95 border border-rose-200 text-rose-700 shadow-xs">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 border border-rose-200 text-rose-700 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             T2D
           </span>
         )}
         {relative.hasHypertension && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-white/95 border border-blue-200 text-blue-700 shadow-xs">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-blue-50 border border-blue-200 text-blue-700 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
             BP
           </span>
         )}
         {relative.hasHeartDisease && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-white/95 border border-purple-200 text-purple-700 shadow-xs">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-purple-50 border border-purple-200 text-purple-700 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
             CAD
           </span>
         )}
         {relative.hasStroke && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-white/95 border border-amber-200 text-amber-700 shadow-xs">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 border border-amber-200 text-amber-700 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             Stroke
           </span>
         )}
         {relative.hasAsthma && (
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-white/95 border border-teal-200 text-teal-700 shadow-xs">
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-teal-50 border border-teal-200 text-teal-700 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
             Asthma
           </span>
@@ -373,6 +422,7 @@ function FamilyMemberNode({ data }: NodeProps<Node<FamilyMemberNodeData>>) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CUSTOM REACT FLOW NODE: AddPlaceholderNode
+// Perfectly matches 88px circle dimensions and handle heights
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AddPlaceholderNodeData extends Record<string, unknown> {
@@ -386,26 +436,80 @@ function AddPlaceholderNode({ data }: NodeProps<Node<AddPlaceholderNodeData>>) {
   const { relationType, labelTitle, subLabel, onAdd } = data;
 
   return (
-    <div className="relative flex flex-col items-center select-none cursor-pointer">
-      <Handle type="target" position={Position.Top} id="top" className="opacity-0" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="opacity-0" />
-      <Handle type="target" position={Position.Left} id="left" className="opacity-0" />
-      <Handle type="source" position={Position.Right} id="right" className="opacity-0" />
+    <div
+      className="relative flex flex-col items-center select-none cursor-pointer group"
+      style={{ width: "160px" }}
+    >
+      {/* Precision Handles matching FamilyMemberNode */}
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="top"
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white !top-0 opacity-0"
+      />
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white !top-0 opacity-0"
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom"
+        style={{ top: "88px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom-target"
+        style={{ top: "88px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="left"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left-source"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="right"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right-target"
+        style={{ top: "44px" }}
+        className="!w-2.5 !h-2.5 !bg-[#8064A9] !border-2 !border-white opacity-0"
+      />
 
       <button
         type="button"
         onClick={() => onAdd(relationType)}
-        className="w-20 h-20 sm:w-22 sm:h-22 rounded-full border-2 border-dashed border-[#8064A9]/40 bg-[#EAE2F5]/30 hover:bg-[#EAE2F5]/80 flex flex-col items-center justify-center text-[#8064A9] hover:text-[#452653] hover:scale-105 active:scale-95 transition-all shadow-xs group"
+        className="w-[88px] h-[88px] rounded-full border-2 border-dashed border-[#8064A9]/40 bg-[#EAE2F5]/40 hover:bg-[#EAE2F5]/80 flex flex-col items-center justify-center text-[#8064A9] hover:text-[#452653] hover:scale-105 active:scale-95 transition-all shadow-xs group"
         title={`Add ${labelTitle}`}
       >
         <Plus className="w-6 h-6 mb-0.5 group-hover:scale-125 transition-transform" />
         <span className="text-[10px] font-extrabold uppercase tracking-wider">Add</span>
       </button>
 
-      <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#8064A9] mt-2 whitespace-nowrap">
+      <span className="text-[11px] font-black uppercase tracking-wider text-[#8064A9] mt-2.5 text-center truncate max-w-[150px]">
         {labelTitle}
       </span>
-      <span className="text-[10px] text-slate-400 italic mt-0.5">{subLabel}</span>
+      <span className="text-[10px] text-[#5e546b] italic mt-0.5 text-center">{subLabel}</span>
     </div>
   );
 }
@@ -425,6 +529,9 @@ function PedigreeFlowCanvas() {
 
   // Pulse Filter
   const [pulseFilter, setPulseFilter] = useState<DiseasePulse>("all");
+
+  // Legend visibility toggle
+  const [showLegend, setShowLegend] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -460,13 +567,26 @@ function PedigreeFlowCanvas() {
     []
   );
 
+  // Live condition count statistics for the UX filter strip
+  const counts = useMemo(() => {
+    return {
+      total: relatives.length,
+      diabetes: relatives.filter((r) => r.hasDiabetes).length,
+      hypertension: relatives.filter((r) => r.hasHypertension).length,
+      heart: relatives.filter((r) => r.hasHeartDisease).length,
+      stroke: relatives.filter((r) => r.hasStroke).length,
+      asthma: relatives.filter((r) => r.hasAsthma).length,
+    };
+  }, [relatives]);
+
   // ───────────────────────────────────────────────────────────────────────────
-  // COMPUTE GRAPH NODES AND EDGES DYNAMICALLY FROM STORE
+  // COMPUTE GRAPH NODES AND EDGES DYNAMICALLY WITH CENTER AXIS AT X = 450
   // ───────────────────────────────────────────────────────────────────────────
   const { nodes, edges } = useMemo(() => {
     const computedNodes: Node[] = [];
     const computedEdges: Edge[] = [];
 
+    // Distinct relative categories
     const grandfathers = relatives.filter((r) => r.relation === "grandfather");
     const grandmothers = relatives.filter((r) => r.relation === "grandmother");
     const father = relatives.find((r) => r.relation === "father");
@@ -491,15 +611,24 @@ function PedigreeFlowCanvas() {
       return !checkPulsing(rel);
     };
 
-    // ── Tier 1: Grandparents (Y = 40) ──
+    // Central geometric axis
+    const CENTER_X = 450;
+    const GEN_I_Y = 60;
+    const GEN_II_Y = 280;
+    const GEN_III_Y = 510;
+    const GEN_IV_Y = 740;
+
+    // ── Tier 1: Generation I • Grandparents (Y = 60) ──
     const gm = grandmothers[0];
     const gf = grandfathers[0];
+    const gmX = CENTER_X - 120; // 330
+    const gfX = CENTER_X + 120; // 570
 
     if (gm) {
       computedNodes.push({
         id: gm.id,
         type: "familyMember",
-        position: { x: 320, y: 40 },
+        position: { x: gmX, y: GEN_I_Y },
         data: {
           relative: gm,
           labelTitle: "GRANDMOTHER",
@@ -513,7 +642,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: "placeholder-gm",
         type: "addPlaceholder",
-        position: { x: 320, y: 40 },
+        position: { x: gmX, y: GEN_I_Y },
         data: {
           relationType: "grandmother",
           labelTitle: "GRANDMOTHER",
@@ -527,7 +656,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: gf.id,
         type: "familyMember",
-        position: { x: 560, y: 40 },
+        position: { x: gfX, y: GEN_I_Y },
         data: {
           relative: gf,
           labelTitle: "GRANDFATHER",
@@ -541,7 +670,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: "placeholder-gf",
         type: "addPlaceholder",
-        position: { x: 560, y: 40 },
+        position: { x: gfX, y: GEN_I_Y },
         data: {
           relationType: "grandfather",
           labelTitle: "GRANDFATHER",
@@ -551,7 +680,7 @@ function PedigreeFlowCanvas() {
       });
     }
 
-    // Marriage edge between Grandparents
+    // Marriage horizontal relationship bar between Grandparents
     computedEdges.push({
       id: "edge-gm-gf",
       source: gm ? gm.id : "placeholder-gm",
@@ -562,12 +691,15 @@ function PedigreeFlowCanvas() {
       style: { stroke: "#8064A9", strokeWidth: 2.5 },
     });
 
-    // ── Tier 2: Parents (Y = 270) ──
+    // ── Tier 2: Generation II • Parents (Y = 280) ──
+    const motherX = CENTER_X - 120; // 330
+    const fatherX = CENTER_X + 120; // 570
+
     if (mother) {
       computedNodes.push({
         id: mother.id,
         type: "familyMember",
-        position: { x: 320, y: 270 },
+        position: { x: motherX, y: GEN_II_Y },
         data: {
           relative: mother,
           labelTitle: "MOTHER",
@@ -581,7 +713,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: "placeholder-mother",
         type: "addPlaceholder",
-        position: { x: 320, y: 270 },
+        position: { x: motherX, y: GEN_II_Y },
         data: {
           relationType: "mother",
           labelTitle: "MOTHER",
@@ -595,7 +727,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: father.id,
         type: "familyMember",
-        position: { x: 560, y: 270 },
+        position: { x: fatherX, y: GEN_II_Y },
         data: {
           relative: father,
           labelTitle: "FATHER",
@@ -609,7 +741,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: "placeholder-father",
         type: "addPlaceholder",
-        position: { x: 560, y: 270 },
+        position: { x: fatherX, y: GEN_II_Y },
         data: {
           relationType: "father",
           labelTitle: "FATHER",
@@ -619,7 +751,7 @@ function PedigreeFlowCanvas() {
       });
     }
 
-    // Marriage edge between Parents
+    // Marriage horizontal relationship bar between Parents
     computedEdges.push({
       id: "edge-mother-father",
       source: mother ? mother.id : "placeholder-mother",
@@ -630,7 +762,7 @@ function PedigreeFlowCanvas() {
       style: { stroke: "#8064A9", strokeWidth: 2.5 },
     });
 
-    // Descent edge from Grandparents down to Father/Mother
+    // Descent edge from Grandparents down to Father (paternal lineage)
     const gpSource = gf ? gf.id : "placeholder-gf";
     const parentTarget = father ? father.id : "placeholder-father";
     computedEdges.push({
@@ -643,116 +775,169 @@ function PedigreeFlowCanvas() {
       style: { stroke: "#8064A9", strokeWidth: 2 },
     });
 
-    // ── Tier 3: Generation III (Siblings & ME) (Y = 500) ──
-    const tier3List: { rel?: Relative; type: Relative["relation"]; label: string; avatar: string }[] =
-      [];
+    // ── Tier 3: Generation III • Proband (ME) & Siblings (Y = 510) ──
+    // ME is placed strictly at CENTER_X (450).
+    // Brothers placed to the left, Sisters placed to the right for symmetry!
 
-    brothers.forEach((b, i) => {
-      tier3List.push({
-        rel: b,
-        type: "brother",
-        label: `BROTHER ${brothers.length > 1 ? i + 1 : ""}`.trim(),
-        avatar: "brother",
+    // ME Node
+    const selfNodeId = self ? self.id : "placeholder-self";
+    if (self) {
+      computedNodes.push({
+        id: self.id,
+        type: "familyMember",
+        position: { x: CENTER_X, y: GEN_III_Y },
+        data: {
+          relative: self,
+          labelTitle: "ME (PROBAND)",
+          avatarType: "self",
+          isPulsing: checkPulsing(self),
+          isDimmed: checkDimmed(self),
+          isSelected: selectedRelativeId === self.id,
+        },
       });
-    });
-
-    sisters.forEach((s, i) => {
-      tier3List.push({
-        rel: s,
-        type: "sister",
-        label: `SISTER ${sisters.length > 1 ? i + 1 : ""}`.trim(),
-        avatar: "sister",
-      });
-    });
-
-    // If no brother or sister yet, provide placeholder slots
-    if (brothers.length === 0) {
-      tier3List.unshift({
-        type: "brother",
-        label: "BROTHER",
-        avatar: "brother",
-      });
-    }
-    if (sisters.length === 0) {
-      tier3List.push({
-        type: "sister",
-        label: "SISTER",
-        avatar: "sister",
+    } else {
+      computedNodes.push({
+        id: "placeholder-self",
+        type: "addPlaceholder",
+        position: { x: CENTER_X, y: GEN_III_Y },
+        data: {
+          relationType: "self",
+          labelTitle: "ME",
+          subLabel: "स्वतः",
+          onAdd: handleOpenAdd,
+        },
       });
     }
 
-    // Add ME (Index Subject)
-    tier3List.push({
-      rel: self,
-      type: "self",
-      label: "ME",
-      avatar: "self",
+    // Edge from parents down to ME
+    const primaryParent = father ? father.id : "placeholder-father";
+    computedEdges.push({
+      id: `edge-parent-to-${selfNodeId}`,
+      source: primaryParent,
+      target: selfNodeId,
+      sourceHandle: "bottom",
+      targetHandle: "top",
+      type: "smoothstep",
+      style: { stroke: "#452653", strokeWidth: 2.5 },
     });
 
-    // Calculate dynamic X spacing
-    const tier3Spacing = 220;
-    const tier3StartX = 440 - ((tier3List.length - 1) * tier3Spacing) / 2;
-
-    tier3List.forEach((item, index) => {
-      const posX = tier3StartX + index * tier3Spacing;
-      const nodeId = item.rel ? item.rel.id : `placeholder-${item.type}-${index}`;
-
-      if (item.rel) {
+    // Brothers placed to the left of ME
+    const siblingSpacing = 220;
+    if (brothers.length > 0) {
+      brothers.forEach((b, i) => {
+        const posX = CENTER_X - (i + 1) * siblingSpacing;
         computedNodes.push({
-          id: nodeId,
+          id: b.id,
           type: "familyMember",
-          position: { x: posX, y: 500 },
+          position: { x: posX, y: GEN_III_Y },
           data: {
-            relative: item.rel,
-            labelTitle: item.label,
-            avatarType: item.avatar,
-            isPulsing: checkPulsing(item.rel),
-            isDimmed: checkDimmed(item.rel),
-            isSelected: selectedRelativeId === item.rel.id,
+            relative: b,
+            labelTitle: `BROTHER ${brothers.length > 1 ? i + 1 : ""}`.trim(),
+            avatarType: "brother",
+            isPulsing: checkPulsing(b),
+            isDimmed: checkDimmed(b),
+            isSelected: selectedRelativeId === b.id,
           },
         });
-      } else {
-        computedNodes.push({
-          id: nodeId,
-          type: "addPlaceholder",
-          position: { x: posX, y: 500 },
-          data: {
-            relationType: item.type,
-            labelTitle: item.label,
-            subLabel: item.type === "brother" ? "भाऊ" : "बहीण",
-            onAdd: handleOpenAdd,
-          },
+        computedEdges.push({
+          id: `edge-parent-to-${b.id}`,
+          source: primaryParent,
+          target: b.id,
+          sourceHandle: "bottom",
+          targetHandle: "top",
+          type: "smoothstep",
+          style: { stroke: "#8064A9", strokeWidth: 2 },
         });
-      }
-
-      // Edge from parents down to sibling / ME
-      const parentRoot = father ? father.id : "placeholder-father";
+      });
+    } else {
+      // Placeholder Brother on the left
+      const posX = CENTER_X - siblingSpacing;
+      computedNodes.push({
+        id: "placeholder-brother",
+        type: "addPlaceholder",
+        position: { x: posX, y: GEN_III_Y },
+        data: {
+          relationType: "brother",
+          labelTitle: "BROTHER",
+          subLabel: "भाऊ",
+          onAdd: handleOpenAdd,
+        },
+      });
       computedEdges.push({
-        id: `edge-parent-to-${nodeId}`,
-        source: parentRoot,
-        target: nodeId,
+        id: "edge-parent-to-placeholder-brother",
+        source: primaryParent,
+        target: "placeholder-brother",
         sourceHandle: "bottom",
         targetHandle: "top",
         type: "smoothstep",
-        style: { stroke: "#8064A9", strokeWidth: 2 },
+        style: { stroke: "#8064A9", strokeWidth: 1.5, strokeDasharray: "4 4" },
       });
-    });
+    }
 
-    // ── Tier 4: Generation IV (Children) (Y = 730) ──
-    const selfNodeId = self ? self.id : "placeholder-self";
-    const selfNodeObj = computedNodes.find((n) => n.id === selfNodeId);
-    const selfPosX = selfNodeObj ? selfNodeObj.position.x : 440;
+    // Sisters placed to the right of ME
+    if (sisters.length > 0) {
+      sisters.forEach((s, i) => {
+        const posX = CENTER_X + (i + 1) * siblingSpacing;
+        computedNodes.push({
+          id: s.id,
+          type: "familyMember",
+          position: { x: posX, y: GEN_III_Y },
+          data: {
+            relative: s,
+            labelTitle: `SISTER ${sisters.length > 1 ? i + 1 : ""}`.trim(),
+            avatarType: "sister",
+            isPulsing: checkPulsing(s),
+            isDimmed: checkDimmed(s),
+            isSelected: selectedRelativeId === s.id,
+          },
+        });
+        computedEdges.push({
+          id: `edge-parent-to-${s.id}`,
+          source: primaryParent,
+          target: s.id,
+          sourceHandle: "bottom",
+          targetHandle: "top",
+          type: "smoothstep",
+          style: { stroke: "#8064A9", strokeWidth: 2 },
+        });
+      });
+    } else {
+      // Placeholder Sister on the right
+      const posX = CENTER_X + siblingSpacing;
+      computedNodes.push({
+        id: "placeholder-sister",
+        type: "addPlaceholder",
+        position: { x: posX, y: GEN_III_Y },
+        data: {
+          relationType: "sister",
+          labelTitle: "SISTER",
+          subLabel: "बहीण",
+          onAdd: handleOpenAdd,
+        },
+      });
+      computedEdges.push({
+        id: "edge-parent-to-placeholder-sister",
+        source: primaryParent,
+        target: "placeholder-sister",
+        sourceHandle: "bottom",
+        targetHandle: "top",
+        type: "smoothstep",
+        style: { stroke: "#8064A9", strokeWidth: 1.5, strokeDasharray: "4 4" },
+      });
+    }
 
+    // ── Tier 4: Generation IV • Offspring / Children (Y = 740) ──
+    // Children descend directly below ME (CENTER_X = 450)
     if (children.length > 0) {
       const childSpacing = 200;
-      const childStartX = selfPosX - ((children.length - 1) * childSpacing) / 2;
+      const childStartX = CENTER_X - ((children.length - 1) * childSpacing) / 2;
 
       children.forEach((child, idx) => {
         const posX = childStartX + idx * childSpacing;
         computedNodes.push({
           id: child.id,
           type: "familyMember",
-          position: { x: posX, y: 730 },
+          position: { x: posX, y: GEN_IV_Y },
           data: {
             relative: child,
             labelTitle: child.gender === "female" ? "DAUGHTER" : "SON",
@@ -770,15 +955,18 @@ function PedigreeFlowCanvas() {
           sourceHandle: "bottom",
           targetHandle: "top",
           type: "smoothstep",
-          style: { stroke: "#8064A9", strokeWidth: 2 },
+          style: { stroke: "#452653", strokeWidth: 2 },
         });
       });
     } else {
-      // Default placeholder slots for Daughter & Son
+      // Symmetrical placeholder slots for Daughter & Son directly centered below ME
+      const daughterX = CENTER_X - 110; // 340
+      const sonX = CENTER_X + 110; // 560
+
       computedNodes.push({
         id: "placeholder-daughter",
         type: "addPlaceholder",
-        position: { x: selfPosX - 100, y: 730 },
+        position: { x: daughterX, y: GEN_IV_Y },
         data: {
           relationType: "child",
           labelTitle: "DAUGHTER",
@@ -790,7 +978,7 @@ function PedigreeFlowCanvas() {
       computedNodes.push({
         id: "placeholder-son",
         type: "addPlaceholder",
-        position: { x: selfPosX + 100, y: 730 },
+        position: { x: sonX, y: GEN_IV_Y },
         data: {
           relationType: "child",
           labelTitle: "SON",
@@ -806,7 +994,7 @@ function PedigreeFlowCanvas() {
         sourceHandle: "bottom",
         targetHandle: "top",
         type: "smoothstep",
-        style: { stroke: "#8064A9", strokeWidth: 2 },
+        style: { stroke: "#8064A9", strokeWidth: 1.5, strokeDasharray: "4 4" },
       });
 
       computedEdges.push({
@@ -816,14 +1004,14 @@ function PedigreeFlowCanvas() {
         sourceHandle: "bottom",
         targetHandle: "top",
         type: "smoothstep",
-        style: { stroke: "#8064A9", strokeWidth: 2 },
+        style: { stroke: "#8064A9", strokeWidth: 1.5, strokeDasharray: "4 4" },
       });
     }
 
     return { nodes: computedNodes, edges: computedEdges };
   }, [relatives, pulseFilter, selectedRelativeId, handleOpenAdd]);
 
-  // Click on any node -> Select relative to show details in drawer!
+  // Click on any node -> Select relative to show details in drawer
   const onNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
       if (node.type === "familyMember" && node.data?.relative) {
@@ -839,43 +1027,48 @@ function PedigreeFlowCanvas() {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* TOP HEADER CONTROLS BAR */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <div className="relative z-20 px-6 py-4 bg-[#FAF8FC]/95 backdrop-blur-md border-b border-[#ded3eb] flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#EAE2F5] text-[#452653] flex items-center justify-center font-bold">
+      <div className="relative z-20 px-4 sm:px-6 py-3.5 bg-white/90 backdrop-blur-xl border-b border-[#ded3eb] flex flex-col md:flex-row items-center justify-between gap-3 shadow-xs">
+        {/* Left: Title & Quick Stats */}
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="w-10 h-10 rounded-2xl bg-[#EAE2F5] text-[#452653] flex items-center justify-center shrink-0 shadow-xs">
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-base sm:text-lg font-bold text-[#292333] tracking-tight">
-                React Flow Family Health Tree
+                Family Health Pedigree Tree
               </h1>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]">
-                Live Canvas
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]">
+                3-Gen Pedigree
+              </span>
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                {counts.total} Members Tracked
               </span>
             </div>
-            <p className="text-xs text-[#5e546b]">
-              Click any node to inspect health history • Drag nodes to reposition • Pan & Zoom freely
+            <p className="text-xs text-[#5e546b] mt-0.5">
+              Click any relative to edit risk parameters • Drag nodes to customize arrangement • Pan & Zoom freely
             </p>
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
           <button
             onClick={() => fitView({ duration: 600, padding: 0.15 })}
-            className="px-3.5 py-1.5 rounded-xl border border-[#ded3eb] bg-white hover:bg-[#FAF8FC] text-[#292333] text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors"
-            title="Auto-Align & Fit View"
+            className="px-3 py-1.5 rounded-xl border border-[#ded3eb] bg-white hover:bg-[#FAF8FC] text-[#292333] text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors"
+            title="Auto-Align and Center Family Tree"
           >
             <RotateCcw className="w-3.5 h-3.5 text-[#8064A9]" />
-            <span>Reset View</span>
+            <span className="hidden sm:inline">Align & Reset</span>
           </button>
 
           <button
             onClick={() => handleOpenAdd("father")}
-            className="px-4 py-1.5 rounded-xl bg-[#452653] hover:bg-[#573068] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all hover:scale-102"
+            className="px-3.5 py-1.5 rounded-xl bg-[#452653] hover:bg-[#573068] text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all hover:scale-102"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>Add Member</span>
+            <span>Add Relative</span>
           </button>
 
           <Link
@@ -888,84 +1081,160 @@ function PedigreeFlowCanvas() {
         </div>
       </div>
 
-      {/* Disease Pulse / Highlight Filter Strip */}
-      <div className="relative z-10 px-6 py-2 bg-[#FAF8FC] border-b border-[#ded3eb] flex items-center justify-center gap-2 flex-wrap">
-        <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#5e546b] mr-1 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-[#8064A9]" />
-          <span>Disease Pathway Glow:</span>
-        </span>
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* DISEASE PATHWAY GLOW & GENERATION RULER STRIP */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <div className="relative z-10 px-4 sm:px-6 py-2 bg-[#FAF8FC]/95 border-b border-[#ded3eb] flex items-center justify-between gap-3 overflow-x-auto text-xs">
+        {/* Pathway Glow Filters */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[11px] font-black uppercase tracking-wider text-[#5e546b] flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5 text-[#8064A9]" />
+            <span className="hidden sm:inline">Disease Pathway:</span>
+          </span>
 
+          <button
+            onClick={() => setPulseFilter("all")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+              pulseFilter === "all"
+                ? "bg-[#452653] text-white shadow-xs font-bold"
+                : "bg-white text-[#5e546b] border border-[#ded3eb] hover:bg-[#EAE2F5]/50"
+            }`}
+          >
+            All ({counts.total})
+          </button>
+          <button
+            onClick={() => setPulseFilter("diabetes")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              pulseFilter === "diabetes"
+                ? "bg-rose-600 text-white shadow-xs scale-102 font-bold"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-rose-50 hover:text-rose-700"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-rose-500" />
+            <span>Diabetes ({counts.diabetes})</span>
+          </button>
+          <button
+            onClick={() => setPulseFilter("hypertension")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              pulseFilter === "hypertension"
+                ? "bg-blue-600 text-white shadow-xs scale-102 font-bold"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-blue-50 hover:text-blue-700"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-blue-500" />
+            <span>High BP ({counts.hypertension})</span>
+          </button>
+          <button
+            onClick={() => setPulseFilter("heart")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              pulseFilter === "heart"
+                ? "bg-purple-600 text-white shadow-xs scale-102 font-bold"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-purple-50 hover:text-purple-700"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-purple-600" />
+            <span>CAD ({counts.heart})</span>
+          </button>
+          <button
+            onClick={() => setPulseFilter("stroke")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              pulseFilter === "stroke"
+                ? "bg-amber-600 text-white shadow-xs scale-102 font-bold"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-amber-50 hover:text-amber-700"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
+            <span>Stroke ({counts.stroke})</span>
+          </button>
+          <button
+            onClick={() => setPulseFilter("asthma")}
+            className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              pulseFilter === "asthma"
+                ? "bg-teal-600 text-white shadow-xs scale-102 font-bold"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-teal-50 hover:text-teal-700"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-teal-500" />
+            <span>Asthma ({counts.asthma})</span>
+          </button>
+        </div>
+
+        {/* Legend Button */}
         <button
-          onClick={() => setPulseFilter("all")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-            pulseFilter === "all"
-              ? "bg-[#452653] text-white shadow-xs font-bold"
-              : "bg-white text-[#5e546b] border border-[#ded3eb] hover:bg-[#EAE2F5]/40"
+          onClick={() => setShowLegend(!showLegend)}
+          className={`px-2.5 py-1 rounded-xl border text-xs font-semibold shrink-0 flex items-center gap-1 transition-colors ${
+            showLegend
+              ? "bg-[#452653] text-white border-[#452653]"
+              : "bg-white border-[#ded3eb] text-[#5e546b] hover:text-[#452653]"
           }`}
+          title="Toggle Pedigree Clinical Symbols Guide"
         >
-          All Members
-        </button>
-        <button
-          onClick={() => setPulseFilter("diabetes")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-            pulseFilter === "diabetes"
-              ? "bg-rose-600 text-white shadow-xs scale-102"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 hover:text-rose-700"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-rose-500" />
-          <span>Diabetes</span>
-        </button>
-        <button
-          onClick={() => setPulseFilter("hypertension")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-            pulseFilter === "hypertension"
-              ? "bg-blue-600 text-white shadow-xs scale-102"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-blue-50 hover:text-blue-700"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-blue-500" />
-          <span>High BP</span>
-        </button>
-        <button
-          onClick={() => setPulseFilter("heart")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-            pulseFilter === "heart"
-              ? "bg-purple-600 text-white shadow-xs scale-102"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-purple-700"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-purple-600" />
-          <span>Heart CAD</span>
-        </button>
-        <button
-          onClick={() => setPulseFilter("stroke")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-            pulseFilter === "stroke"
-              ? "bg-amber-600 text-white shadow-xs scale-102"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-amber-50 hover:text-amber-700"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-amber-500" />
-          <span>Stroke</span>
-        </button>
-        <button
-          onClick={() => setPulseFilter("asthma")}
-          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-            pulseFilter === "asthma"
-              ? "bg-teal-600 text-white shadow-xs scale-102"
-              : "bg-white text-slate-600 border border-slate-200 hover:bg-teal-50 hover:text-teal-700"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-teal-500" />
-          <span>Asthma</span>
+          <HelpCircle className="w-3.5 h-3.5" />
+          <span>{showLegend ? "Hide Guide" : "Pedigree Guide"}</span>
         </button>
       </div>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* MAIN CANVAS & SLIDE-OVER DETAIL DRAWER */}
+      {/* MAIN CANVAS & INTERACTIVE SLIDE DRAWER */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <div className="relative flex-1 w-full min-h-[600px] h-full">
+      <div className="relative flex-1 w-full min-h-[600px] h-full overflow-hidden">
+        {/* Left Generation Track Overlay */}
+        <div className="absolute left-3 top-8 z-10 hidden md:flex flex-col gap-36 pointer-events-none select-none text-[10px] font-black uppercase tracking-widest text-[#8064A9]/70">
+          <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#ded3eb] shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8064A9]" />
+            <span>GEN I • Grandparents</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#ded3eb] shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8064A9]" />
+            <span>GEN II • Parents</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#ded3eb] shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#452653]" />
+            <span>GEN III • Proband & Siblings</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#ded3eb] shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#8064A9]" />
+            <span>GEN IV • Offspring</span>
+          </div>
+        </div>
+
+        {/* Floating Pedigree Clinical Guide (Collapsible) */}
+        {showLegend && (
+          <div className="absolute top-4 left-4 sm:left-48 z-30 bg-white/95 backdrop-blur-md border border-[#ded3eb] p-3.5 rounded-2xl shadow-xl max-w-xs text-xs space-y-2 animate-in fade-in duration-150">
+            <div className="flex items-center justify-between border-b border-[#ded3eb] pb-1.5">
+              <span className="font-extrabold uppercase tracking-wider text-[#452653] text-[11px]">
+                Pedigree Nomenclature Guide
+              </span>
+              <button
+                onClick={() => setShowLegend(false)}
+                className="text-slate-400 hover:text-slate-700"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px] text-[#5e546b]">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-[#EAE2F5] border border-[#8064A9]" />
+                <span>Circle: Female</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3.5 h-3.5 rounded-sm bg-[#EAE2F5] border border-[#8064A9]" />
+                <span>Square: Male</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-[#452653] text-white flex items-center justify-center font-bold text-[8px]">
+                  P
+                </span>
+                <span>Proband: Index Patient</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3.5 h-0.5 bg-slate-800 rotate-45 inline-block" />
+                <span>Slash: Deceased</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -973,8 +1242,8 @@ function PedigreeFlowCanvas() {
           onNodeClick={onNodeClick}
           fitView
           fitViewOptions={{ padding: 0.15 }}
-          minZoom={0.5}
-          maxZoom={1.6}
+          minZoom={0.4}
+          maxZoom={1.5}
           defaultEdgeOptions={{
             type: "smoothstep",
             animated: false,
@@ -990,7 +1259,7 @@ function PedigreeFlowCanvas() {
           {/* MiniMap */}
           <MiniMap
             position="bottom-left"
-            className="!mb-16 !bg-white/90 !border !border-[#ded3eb] !rounded-xl overflow-hidden shadow-sm"
+            className="!mb-16 !bg-white/95 !border !border-[#ded3eb] !rounded-xl overflow-hidden shadow-sm"
             nodeColor="#EAE2F5"
             maskColor="rgba(234, 226, 245, 0.4)"
           />
@@ -1000,13 +1269,13 @@ function PedigreeFlowCanvas() {
         {/* INTERACTIVE NODE DETAIL DRAWER (WHEN ANY NODE IS CLICKED) */}
         {/* ─────────────────────────────────────────────────────────── */}
         {selectedRelative && (
-          <div className="absolute top-4 right-4 bottom-4 w-full max-w-sm z-30 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-[#ded3eb] flex flex-col overflow-hidden animate-in fade-in slide-in-from-right-4 duration-200">
+          <div className="absolute top-3 right-3 bottom-3 w-full max-w-sm z-30 bg-white/98 backdrop-blur-xl rounded-3xl shadow-2xl border border-[#ded3eb] flex flex-col overflow-hidden animate-in fade-in slide-in-from-right-4 duration-200">
             {/* Drawer Header */}
-            <div className="p-5 border-b border-[#ded3eb] bg-[#FAF8FC] flex items-center justify-between">
+            <div className="p-4 sm:p-5 border-b border-[#ded3eb] bg-[#FAF8FC] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#8064A9]" />
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#452653]">
-                  Node Details & Clinical Risk
+                <span className="text-[11px] font-black uppercase tracking-widest text-[#452653]">
+                  Relative Clinical Profile
                 </span>
               </div>
               <button
@@ -1020,13 +1289,13 @@ function PedigreeFlowCanvas() {
             </div>
 
             {/* Drawer Content */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-5 text-slate-700">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-slate-700">
               {/* Profile Card */}
-              <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb]">
-                <div className="w-14 h-14 rounded-full bg-[#EAE2F5] border-2 border-[#8064A9] flex items-center justify-center shrink-0 font-extrabold text-base text-[#452653]">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb]">
+                <div className="w-14 h-14 rounded-full bg-[#EAE2F5] border-2 border-[#8064A9] flex items-center justify-center shrink-0 font-black text-base text-[#452653]">
                   {selectedRelative.relation === "self" ? "ME" : selectedRelative.relation[0].toUpperCase()}
                 </div>
-                <div className="overflow-hidden">
+                <div className="overflow-hidden flex-1">
                   <h3 className="font-extrabold text-[#292333] text-base leading-tight truncate">
                     {selectedRelative.name}
                   </h3>
@@ -1042,7 +1311,7 @@ function PedigreeFlowCanvas() {
                           isAlive: !selectedRelative.isAlive,
                         })
                       }
-                      className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border transition-colors ${
+                      className={`px-2 py-0.5 rounded-md text-[11px] font-bold border transition-colors ${
                         selectedRelative.isAlive
                           ? "bg-[#EAE2F5] border-[#ded3eb] text-[#452653]"
                           : "bg-slate-200 border-slate-400 text-slate-700"
@@ -1060,7 +1329,7 @@ function PedigreeFlowCanvas() {
                             age: Math.max(1, selectedRelative.age - 1),
                           })
                         }
-                        className="px-2 py-0.5 hover:bg-slate-100 text-slate-600"
+                        className="px-2 py-0.5 hover:bg-slate-100 text-slate-600 font-bold"
                       >
                         -
                       </button>
@@ -1074,7 +1343,7 @@ function PedigreeFlowCanvas() {
                             age: Math.min(120, selectedRelative.age + 1),
                           })
                         }
-                        className="px-2 py-0.5 hover:bg-slate-100 text-slate-600"
+                        className="px-2 py-0.5 hover:bg-slate-100 text-slate-600 font-bold"
                       >
                         +
                       </button>
@@ -1083,48 +1352,46 @@ function PedigreeFlowCanvas() {
                 </div>
               </div>
 
-              {/* Hereditary Risk Analysis */}
-              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80">
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900 mb-1.5">
+              {/* Hereditary Risk Analysis Callout */}
+              <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/90 text-xs">
+                <div className="flex items-center gap-1.5 font-black uppercase tracking-wider text-amber-900 mb-1">
                   <HeartPulse className="w-4 h-4 text-amber-600" />
-                  <span>Hereditary Risk Impact</span>
+                  <span>Hereditary Impact (IDRS & Clinical)</span>
                 </div>
                 {selectedRelative.relation === "father" || selectedRelative.relation === "mother" ? (
-                  <div className="text-xs text-amber-950 space-y-1 leading-relaxed">
+                  <div className="text-amber-950 space-y-1 leading-relaxed">
                     <p>
-                      <strong>Direct Parental Contributor:</strong> Parental diabetes adds directly (+10
+                      <strong>Parental Contributor:</strong> Parental diabetes adds directly (+10
                       or +20 points) to the Indian Diabetes Risk Score (IDRS).
                     </p>
                     <p className="font-semibold text-rose-700">
                       {selectedRelative.hasDiabetes
-                        ? "⚠️ Positive diabetes diagnosis: Adds +10/20 hereditary risk penalty."
-                        : "✅ No diabetes reported: 0 hereditary penalty from this parent."}
+                        ? "⚠️ Positive diabetes: Adds direct hereditary risk to Index Patient."
+                        : "✅ No diabetes reported: 0 parental risk points added."}
                     </p>
                   </div>
                 ) : selectedRelative.relation === "self" ? (
-                  <div className="text-xs text-amber-950 leading-relaxed">
+                  <div className="text-amber-950 leading-relaxed">
                     <p>
-                      <strong>Primary Subject (Index Proband):</strong> Your health parameters will be
-                      evaluated against the LASI survey models and ICMR standards in screening.
+                      <strong>Primary Subject (Index Proband):</strong> Evaluated against Indian demographic survey models and clinical algorithms in the Screening step.
                     </p>
                   </div>
                 ) : (
-                  <div className="text-xs text-amber-950 leading-relaxed">
+                  <div className="text-amber-950 leading-relaxed">
                     <p>
-                      <strong>Kinship Lineage:</strong> Tracks familial clustering of early coronary
-                      artery disease, stroke, and chronic asthma across generations.
+                      <strong>Kinship Lineage:</strong> Tracks familial clustering of early coronary artery disease, stroke, and chronic asthma across generations.
                     </p>
                   </div>
                 )}
               </div>
 
               {/* 1-Click Interactive Condition Toggles */}
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600">
-                    Diagnosed Conditions (Live Toggles)
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-600">
+                    Live Health Conditions
                   </span>
-                  <span className="text-[10px] text-slate-400">Click to switch</span>
+                  <span className="text-[10px] text-slate-400">1-click to toggle</span>
                 </div>
 
                 <div className="space-y-1.5">
@@ -1230,7 +1497,7 @@ function PedigreeFlowCanvas() {
                 </div>
               </div>
 
-              {/* Notes display */}
+              {/* Clinical Notes Display */}
               {selectedRelative.notes && (
                 <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
                   <div className="flex items-center gap-1.5 font-bold text-slate-700 mb-1">

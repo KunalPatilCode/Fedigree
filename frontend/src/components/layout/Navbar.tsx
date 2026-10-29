@@ -16,7 +16,6 @@ import {
   Menu,
   X,
   Globe,
-  ShieldCheck,
 } from "lucide-react";
 
 export function Navbar() {
@@ -112,11 +111,6 @@ export function Navbar() {
                 </button>
               ))}
             </div>
-          </div>
-
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#FAF8FC] border border-[#ded3eb] text-[11px] text-[#5e546b]">
-            <ShieldCheck className="w-4 h-4 text-[#8064A9] shrink-0" />
-            <span className="truncate font-medium">ICMR-INDIAB & LASI AI</span>
           </div>
         </div>
       </aside>
@@ -226,11 +220,6 @@ export function Navbar() {
                   );
                 })}
               </nav>
-            </div>
-
-            <div className="pt-4 border-t border-[#ded3eb] text-xs text-[#5e546b] flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#8064A9] shrink-0" />
-              <span>ICMR-INDIAB & LASI AI</span>
             </div>
           </div>
         </div>

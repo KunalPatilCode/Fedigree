@@ -29,7 +29,7 @@ function createGlowTexture(colorStop: string = "rgba(180, 154, 215, 0.85)"): THR
 }
 
 /**
- * Creates a delicate star sparkle sprite for active nucleotide loci.
+ * Creates an ultra-fine, delicate crystalline star sparkle sprite for active nucleotide loci.
  */
 function createSparkleTexture(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
@@ -40,21 +40,36 @@ function createSparkleTexture(): THREE.CanvasTexture {
     ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(0, 0, 64, 64);
 
-    // Star glint
-    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
+    // Soft subtle radial aura
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 22);
     grad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-    grad.addColorStop(0.3, "rgba(234, 226, 245, 0.8)");
-    grad.addColorStop(0.8, "rgba(180, 154, 215, 0.2)");
+    grad.addColorStop(0.2, "rgba(254, 243, 199, 0.75)"); // subtle warm champagne
+    grad.addColorStop(0.5, "rgba(234, 226, 245, 0.3)");
     grad.addColorStop(1, "rgba(69, 38, 83, 0)");
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(32, 32, 30, 0, Math.PI * 2);
+    ctx.arc(32, 32, 22, 0, Math.PI * 2);
     ctx.fill();
 
-    // Cross rays
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.fillRect(30, 8, 4, 48);
-    ctx.fillRect(8, 30, 48, 4);
+    // Fine, tapered needle star rays
+    ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+    // Vertical ray
+    ctx.beginPath();
+    ctx.moveTo(32, 12);
+    ctx.lineTo(33, 32);
+    ctx.lineTo(32, 52);
+    ctx.lineTo(31, 32);
+    ctx.closePath();
+    ctx.fill();
+
+    // Horizontal ray
+    ctx.beginPath();
+    ctx.moveTo(12, 32);
+    ctx.lineTo(32, 33);
+    ctx.lineTo(52, 32);
+    ctx.lineTo(32, 31);
+    ctx.closePath();
+    ctx.fill();
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;
@@ -396,13 +411,13 @@ export function DnaBackground() {
     sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePositions, 3));
 
     const sparkleMaterial = new THREE.PointsMaterial({
-      size: 7.5,
+      size: 2.6,
       map: sparkleTexture,
       transparent: true,
-      opacity: 0.95,
+      opacity: 0.85,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
-      color: new THREE.Color("#FDE68A"),
+      color: new THREE.Color("#FFFBEB"),
     });
     const sparkleMesh = new THREE.Points(sparkleGeometry, sparkleMaterial);
     dnaGroup.add(sparkleMesh);
@@ -562,8 +577,8 @@ export function DnaBackground() {
         }
         colorAttr.needsUpdate = true;
 
-        // Modulate sparkle highlights with shimmering oscillation
-        sparkleMaterial.size = 7.0 + Math.sin(elapsedTime * 4.0) * 2.2 + clickEnergy * 5.0;
+        // Modulate delicate sparkle highlights with gentle micro-shimmer
+        sparkleMaterial.size = 2.2 + Math.sin(elapsedTime * 3.5) * 0.6 + clickEnergy * 1.4;
 
         // Drift ambient background particles gently upward
         const posAttr = ambientGeometry.attributes.position;

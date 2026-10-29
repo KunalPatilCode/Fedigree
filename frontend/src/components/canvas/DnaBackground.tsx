@@ -4,23 +4,57 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 /**
- * Creates an in-memory radial glow circular particle texture
- * avoiding external asset requests and guaranteeing instant rendering.
+ * Creates a high-fidelity multi-stop radial glow particle texture
+ * with an intense white hot core and smooth bioluminescent corona.
  */
-function createGlowTexture(): THREE.CanvasTexture {
+function createGlowTexture(colorStop: string = "rgba(180, 154, 215, 0.85)"): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");
+    gradient.addColorStop(0.15, "rgba(255, 255, 255, 0.95)");
+    gradient.addColorStop(0.35, colorStop);
+    gradient.addColorStop(0.65, "rgba(128, 100, 169, 0.35)");
+    gradient.addColorStop(0.9, "rgba(69, 38, 83, 0.08)");
+    gradient.addColorStop(1, "rgba(69, 38, 83, 0.0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 128, 128);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
+/**
+ * Creates a delicate star sparkle sprite for active nucleotide loci.
+ */
+function createSparkleTexture(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 64;
   canvas.height = 64;
   const ctx = canvas.getContext("2d");
   if (ctx) {
-    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-    gradient.addColorStop(0.2, "rgba(234, 226, 245, 0.95)"); // #EAE2F5
-    gradient.addColorStop(0.45, "rgba(180, 154, 215, 0.75)"); // #B49AD7
-    gradient.addColorStop(0.75, "rgba(128, 100, 169, 0.35)"); // #8064A9
-    gradient.addColorStop(1, "rgba(69, 38, 83, 0.0)");       // #452653
-    ctx.fillStyle = gradient;
+    ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(0, 0, 64, 64);
+
+    // Star glint
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
+    grad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
+    grad.addColorStop(0.3, "rgba(234, 226, 245, 0.8)");
+    grad.addColorStop(0.8, "rgba(180, 154, 215, 0.2)");
+    grad.addColorStop(1, "rgba(69, 38, 83, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(32, 32, 30, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cross rays
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.fillRect(30, 8, 4, 48);
+    ctx.fillRect(8, 30, 48, 4);
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.needsUpdate = true;
@@ -64,27 +98,27 @@ export function DnaBackground() {
 
     // Root group for all DNA objects
     const dnaGroup = new THREE.Group();
-    // Default anchor: positioned comfortably on the right side of the screen
     dnaGroup.position.set(3.4, 0.0, 0);
     dnaGroup.rotation.set(-0.2, -0.45, 0.25);
     scene.add(dnaGroup);
 
     // ─────────────────────────────────────────────────────────────
-    // FEDIGREE THEME COLOR PALETTE
+    // COLOR PALETTE (Fedigree Rich Bioluminescent Tokens)
     // ─────────────────────────────────────────────────────────────
     const colors = {
-      plum: new THREE.Color("#452653"),       // Deep plum: structural filaments & base pairs
-      deepPurple: new THREE.Color("#573068"), // Deep purple
-      purple: new THREE.Color("#8064A9"),     // Primary purple: glowing strands
-      softLavender: new THREE.Color("#B49AD7"),// Soft lavender: plexus filaments & particles
-      paleLavender: new THREE.Color("#EAE2F5"),// Pale lavender: secondary highlights
-      white: new THREE.Color("#FFFFFF"),       // Pure white glints
+      plum: new THREE.Color("#452653"),
+      deepPurple: new THREE.Color("#573068"),
+      purple: new THREE.Color("#8064A9"),
+      softLavender: new THREE.Color("#B49AD7"),
+      paleLavender: new THREE.Color("#EAE2F5"),
+      goldAmber: new THREE.Color("#F59E0B"), // Genetic risk marker highlight
+      cyanGlow: new THREE.Color("#38BDF8"),  // Active biomarker pulse
+      white: new THREE.Color("#FFFFFF"),
     };
 
     // ─────────────────────────────────────────────────────────────
-    // DNA SPLINE & PARAMETRIC DOUBLE HELIX GENERATION
+    // PARAMETRIC DOUBLE HELIX WITH DYNAMIC ENERGY PULSES
     // ─────────────────────────────────────────────────────────────
-    // Spline curve guiding the DNA across 3D space with natural organic curvature
     const splinePoints = [
       new THREE.Vector3(1.6, -11.0, -3.5),
       new THREE.Vector3(3.2, -5.5, -1.0),
@@ -94,28 +128,31 @@ export function DnaBackground() {
     ];
     const spineCurve = new THREE.CatmullRomCurve3(splinePoints, false, "centripetal");
 
-    const steps = 110;
-    const turns = 3.4;
-    const helixRadius = 1.45;
+    const steps = 120;
+    const turns = 3.6;
+    const helixRadius = 1.5;
     const subStrandCount = 4;
-    const subRadius = 0.22;
+    const subRadius = 0.24;
 
-    // Arrays to store geometry vertices and colors
     const linePositions: number[] = [];
     const lineColors: number[] = [];
 
     const particlePositions: number[] = [];
     const particleColors: number[] = [];
+    const particleBaseColors: THREE.Color[] = [];
+    const particleTValues: number[] = []; // Distance along helix for pulse waves
     const particleSizes: number[] = [];
+    const baseParticleSizes: number[] = [];
 
-    // Helper to push a particle
-    const addParticle = (pos: THREE.Vector3, color: THREE.Color, size: number) => {
+    const addParticle = (pos: THREE.Vector3, color: THREE.Color, size: number, tVal: number) => {
       particlePositions.push(pos.x, pos.y, pos.z);
       particleColors.push(color.r, color.g, color.b);
+      particleBaseColors.push(color.clone());
+      particleTValues.push(tVal);
       particleSizes.push(size);
+      baseParticleSizes.push(size);
     };
 
-    // Helper to push a line segment
     const addLineSegment = (
       p1: THREE.Vector3,
       p2: THREE.Vector3,
@@ -126,8 +163,8 @@ export function DnaBackground() {
       lineColors.push(c1.r, c1.g, c1.b, c2.r, c2.g, c2.b);
     };
 
-    // Pre-calculate strand points along spine curve
     interface HelixNode {
+      t: number;
       center: THREE.Vector3;
       strandA: THREE.Vector3;
       strandB: THREE.Vector3;
@@ -135,7 +172,6 @@ export function DnaBackground() {
       subB: THREE.Vector3[];
     }
     const nodes: HelixNode[] = [];
-
     const upVector = new THREE.Vector3(0, 1, 0);
 
     for (let i = 0; i <= steps; i++) {
@@ -143,15 +179,11 @@ export function DnaBackground() {
       const center = spineCurve.getPointAt(t);
       const tangent = spineCurve.getTangentAt(t);
 
-      // Compute orthonormal basis (Normal & Binormal)
       let normal = new THREE.Vector3().crossVectors(tangent, upVector).normalize();
       if (normal.lengthSq() < 0.001) normal = new THREE.Vector3(1, 0, 0);
       const binormal = new THREE.Vector3().crossVectors(tangent, normal).normalize();
 
-      // Helical angle
       const theta = t * turns * Math.PI * 2;
-
-      // Base vector offset from center
       const offsetDir = new THREE.Vector3()
         .addScaledVector(normal, Math.cos(theta))
         .addScaledVector(binormal, Math.sin(theta));
@@ -159,7 +191,6 @@ export function DnaBackground() {
       const strandA = center.clone().addScaledVector(offsetDir, helixRadius);
       const strandB = center.clone().addScaledVector(offsetDir, -helixRadius);
 
-      // Auxiliary sub-filaments spiraling around Strand A and Strand B
       const subA: THREE.Vector3[] = [];
       const subB: THREE.Vector3[] = [];
 
@@ -174,86 +205,87 @@ export function DnaBackground() {
         subB.push(strandB.clone().sub(subOffset));
       }
 
-      nodes.push({ center, strandA, strandB, subA, subB });
+      nodes.push({ t, center, strandA, strandB, subA, subB });
     }
 
     // ─────────────────────────────────────────────────────────────
-    // ASSEMBLE PLEXUS MESH, BASE PAIRS & GLOWING PARTICLES
+    // ASSEMBLE PARTICLES & LADDER RUNGS
     // ─────────────────────────────────────────────────────────────
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
+      const t = node.t;
 
-      // 1. Primary Strand Particles
-      addParticle(node.strandA, colors.plum, 4.0);
-      addParticle(node.strandB, colors.deepPurple, 4.0);
+      // 1. Primary Strand Backbone Particles
+      const isLocus = i % 14 === 0;
+      const strandAColor = isLocus ? colors.goldAmber : colors.plum;
+      const strandBColor = isLocus ? colors.cyanGlow : colors.deepPurple;
+      const strandSize = isLocus ? 6.2 : 4.4;
 
-      // White sparkle highlights periodically
-      if (i % 4 === 0) {
-        addParticle(node.strandA, colors.white, 3.2);
-        addParticle(node.strandB, colors.white, 3.2);
+      addParticle(node.strandA, strandAColor, strandSize, t);
+      addParticle(node.strandB, strandBColor, strandSize, t);
+
+      // Periodic crystalline glints
+      if (i % 3 === 0) {
+        addParticle(node.strandA, colors.white, 3.4, t);
+        addParticle(node.strandB, colors.white, 3.4, t);
       }
 
-      // Particles on auxiliary sub-filaments
+      // 2. Auxiliary Sub-Strands (forming braided DNA sheath)
       for (let s = 0; s < subStrandCount; s++) {
         const cA = s % 2 === 0 ? colors.purple : colors.softLavender;
         const cB = s % 2 === 0 ? colors.softLavender : colors.purple;
-        addParticle(node.subA[s], cA, 2.4);
-        addParticle(node.subB[s], cB, 2.4);
+        addParticle(node.subA[s], cA, 2.6, t);
+        addParticle(node.subB[s], cB, 2.6, t);
 
-        // Additional organic micro-dust around strands
+        // Organic micro-dust
         if (i % 2 === 0) {
           const jitter = new THREE.Vector3(
-            (Math.random() - 0.5) * 0.16,
-            (Math.random() - 0.5) * 0.16,
-            (Math.random() - 0.5) * 0.16
+            (Math.random() - 0.5) * 0.18,
+            (Math.random() - 0.5) * 0.18,
+            (Math.random() - 0.5) * 0.18
           );
-          addParticle(node.subA[s].clone().add(jitter), colors.paleLavender, 1.8);
-          addParticle(node.subB[s].clone().add(jitter), colors.paleLavender, 1.8);
+          addParticle(node.subA[s].clone().add(jitter), colors.paleLavender, 1.9, t);
+          addParticle(node.subB[s].clone().add(jitter), colors.paleLavender, 1.9, t);
         }
       }
 
-      // 2. Base Pair Ladder Rungs & Cross-Filaments (every 2-3 steps)
+      // 3. Base Pair Hydrogen Bonds (every 2 steps)
       if (i % 2 === 0) {
-        // Direct rung connection between Strand A and Strand B
         addLineSegment(node.strandA, node.strandB, colors.plum, colors.deepPurple);
-
-        // Diagonal web filaments between sub-strands
         addLineSegment(node.subA[0], node.subB[1], colors.softLavender, colors.paleLavender);
         addLineSegment(node.subA[2], node.subB[3], colors.paleLavender, colors.softLavender);
 
-        // 4-6 particles along each base-pair rung
-        const rungParticleCount = 5;
-        for (let p = 1; p < rungParticleCount; p++) {
-          const alpha = p / rungParticleCount;
+        // Base pair nucleotide dots across rungs
+        const rungDots = 5;
+        for (let p = 1; p < rungDots; p++) {
+          const alpha = p / rungDots;
           const rungPos = new THREE.Vector3().lerpVectors(node.strandA, node.strandB, alpha);
-          // slight sinusoidal arch on rungs
-          rungPos.y += Math.sin(alpha * Math.PI) * 0.08;
+          rungPos.y += Math.sin(alpha * Math.PI) * 0.1;
 
-          const rungColor =
-            p % 2 === 0 ? colors.purple : p === 1 ? colors.plum : colors.softLavender;
-          addParticle(rungPos, rungColor, 2.2);
+          const dotColor =
+            p % 2 === 0
+              ? colors.purple
+              : isLocus
+              ? colors.goldAmber
+              : colors.softLavender;
+          addParticle(rungPos, dotColor, 2.4, t);
         }
       }
 
-      // 3. Longitudinal & Plexus Interconnecting Filaments
+      // 4. Longitudinal Connectors
       if (i > 0) {
         const prev = nodes[i - 1];
-
-        // Main backbone lines
         addLineSegment(prev.strandA, node.strandA, colors.plum, colors.plum);
         addLineSegment(prev.strandB, node.strandB, colors.deepPurple, colors.deepPurple);
 
-        // Longitudinal sub-filaments
         for (let s = 0; s < subStrandCount; s++) {
           addLineSegment(prev.subA[s], node.subA[s], colors.purple, colors.purple);
           addLineSegment(prev.subB[s], node.subB[s], colors.purple, colors.purple);
 
-          // Web cross-connections (forming the organic lattice sheath)
           const nextS = (s + 1) % subStrandCount;
           addLineSegment(prev.subA[s], node.subA[nextS], colors.softLavender, colors.paleLavender);
           addLineSegment(prev.subB[s], node.subB[nextS], colors.softLavender, colors.paleLavender);
 
-          // Connect sub-fiber to main core
           if (i % 3 === 0) {
             addLineSegment(node.subA[s], node.strandA, colors.softLavender, colors.plum);
             addLineSegment(node.subB[s], node.strandB, colors.softLavender, colors.deepPurple);
@@ -263,109 +295,120 @@ export function DnaBackground() {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // AMBIENT FLOATING GENETIC DUST PARTICLES (DEPTH CLOUD)
+    // AMBIENT COSMIC DEPTH CLOUD (FLOATING CHROMOSOMAL PARTICLES)
     // ─────────────────────────────────────────────────────────────
-    const ambientCount = 320;
+    const ambientCount = 380;
     const ambientPositions = new Float32Array(ambientCount * 3);
     const ambientColors = new Float32Array(ambientCount * 3);
     const ambientSpeeds = new Float32Array(ambientCount);
+    const ambientOriginalY = new Float32Array(ambientCount);
 
     const paletteList = [
       colors.plum,
       colors.purple,
       colors.softLavender,
       colors.paleLavender,
+      colors.goldAmber,
+      colors.cyanGlow,
       colors.white,
     ];
 
     for (let a = 0; a < ambientCount; a++) {
-      // Positioned in a generous 3D bounding envelope surrounding the helix
-      ambientPositions[a * 3] = 1.0 + (Math.random() - 0.4) * 12.0;
-      ambientPositions[a * 3 + 1] = (Math.random() - 0.5) * 22.0;
-      ambientPositions[a * 3 + 2] = (Math.random() - 0.5) * 10.0;
+      ambientPositions[a * 3] = 1.0 + (Math.random() - 0.4) * 14.0;
+      const yVal = (Math.random() - 0.5) * 24.0;
+      ambientPositions[a * 3 + 1] = yVal;
+      ambientOriginalY[a] = yVal;
+      ambientPositions[a * 3 + 2] = (Math.random() - 0.5) * 12.0;
 
       const pick = paletteList[Math.floor(Math.random() * paletteList.length)];
       ambientColors[a * 3] = pick.r;
       ambientColors[a * 3 + 1] = pick.g;
       ambientColors[a * 3 + 2] = pick.b;
 
-      ambientSpeeds[a] = 0.2 + Math.random() * 0.8;
+      ambientSpeeds[a] = 0.2 + Math.random() * 0.9;
     }
 
     const ambientGeometry = new THREE.BufferGeometry();
-    ambientGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(ambientPositions, 3)
-    );
-    ambientGeometry.setAttribute(
-      "color",
-      new THREE.BufferAttribute(ambientColors, 3)
-    );
+    ambientGeometry.setAttribute("position", new THREE.BufferAttribute(ambientPositions, 3));
+    ambientGeometry.setAttribute("color", new THREE.BufferAttribute(ambientColors, 3));
 
     const glowTexture = createGlowTexture();
+    const sparkleTexture = createSparkleTexture();
 
     const ambientMaterial = new THREE.PointsMaterial({
-      size: 3.5,
+      size: 4.2,
       map: glowTexture,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.55,
-      blending: THREE.NormalBlending,
-      depthWrite: false,
-    });
-
-    const ambientPoints = new THREE.Points(ambientGeometry, ambientMaterial);
-    dnaGroup.add(ambientPoints);
-
-    // ─────────────────────────────────────────────────────────────
-    // BUILD DNA MESH & PARTICLE BUFFERS
-    // ─────────────────────────────────────────────────────────────
-    // 1. Line Filaments Geometry & Material
-    const lineGeometry = new THREE.BufferGeometry();
-    lineGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(linePositions, 3)
-    );
-    lineGeometry.setAttribute(
-      "color",
-      new THREE.Float32BufferAttribute(lineColors, 3)
-    );
-
-    const lineMaterial = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
       opacity: 0.65,
       blending: THREE.NormalBlending,
       depthWrite: false,
     });
+    const ambientPoints = new THREE.Points(ambientGeometry, ambientMaterial);
+    dnaGroup.add(ambientPoints);
+
+    // ─────────────────────────────────────────────────────────────
+    // MESH BUFFERS FOR DNA DOUBLE HELIX
+    // ─────────────────────────────────────────────────────────────
+    // 1. Line segments
+    const lineGeometry = new THREE.BufferGeometry();
+    lineGeometry.setAttribute("position", new THREE.Float32BufferAttribute(linePositions, 3));
+    lineGeometry.setAttribute("color", new THREE.Float32BufferAttribute(lineColors, 3));
+
+    const lineMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.72,
+      blending: THREE.NormalBlending,
+      depthWrite: false,
+    });
     const lineMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
     dnaGroup.add(lineMesh);
 
-    // 2. DNA Particles Geometry & Material
+    // 2. Glowing DNA Particles
     const particleGeometry = new THREE.BufferGeometry();
-    particleGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(particlePositions, 3)
-    );
-    particleGeometry.setAttribute(
-      "color",
-      new THREE.Float32BufferAttribute(particleColors, 3)
-    );
+    particleGeometry.setAttribute("position", new THREE.Float32BufferAttribute(particlePositions, 3));
+    particleGeometry.setAttribute("color", new THREE.Float32BufferAttribute(particleColors, 3));
 
     const particleMaterial = new THREE.PointsMaterial({
-      size: 3.8,
+      size: 4.4,
       map: glowTexture,
       vertexColors: true,
       transparent: true,
-      opacity: 0.88,
+      opacity: 0.92,
       blending: THREE.NormalBlending,
       depthWrite: false,
     });
     const particleMesh = new THREE.Points(particleGeometry, particleMaterial);
     dnaGroup.add(particleMesh);
 
+    // 3. Floating Sparkle Highlights on Key Risk Loci
+    const sparklePointsCount = 20;
+    const sparklePositions = new Float32Array(sparklePointsCount * 3);
+    for (let sp = 0; sp < sparklePointsCount; sp++) {
+      const nodeIndex = Math.floor((sp / sparklePointsCount) * (nodes.length - 1));
+      const targetStrand = sp % 2 === 0 ? nodes[nodeIndex].strandA : nodes[nodeIndex].strandB;
+      sparklePositions[sp * 3] = targetStrand.x;
+      sparklePositions[sp * 3 + 1] = targetStrand.y;
+      sparklePositions[sp * 3 + 2] = targetStrand.z;
+    }
+    const sparkleGeometry = new THREE.BufferGeometry();
+    sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePositions, 3));
+
+    const sparkleMaterial = new THREE.PointsMaterial({
+      size: 7.5,
+      map: sparkleTexture,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      color: new THREE.Color("#FDE68A"),
+    });
+    const sparkleMesh = new THREE.Points(sparkleGeometry, sparkleMaterial);
+    dnaGroup.add(sparkleMesh);
+
     // ─────────────────────────────────────────────────────────────
-    // INTERACTION & ANIMATION PHYSICS (MOUSE & SCROLL LERP)
+    // INTERACTION & ANIMATION PHYSICS (MOUSE, SCROLL, CLICK PULSE)
     // ─────────────────────────────────────────────────────────────
     const mouse = {
       targetX: 0,
@@ -379,10 +422,17 @@ export function DnaBackground() {
       current: 0,
     };
 
+    // Click impulse shockwave
+    let clickEnergy = 0.0;
+
     const onPointerMove = (e: MouseEvent) => {
-      // Normalize cursor coordinates from -1 to 1
       mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+
+    const onPointerDown = () => {
+      // Trigger sudden bioluminescent excitation ripple
+      clickEnergy = 1.0;
     };
 
     const onScroll = () => {
@@ -401,43 +451,43 @@ export function DnaBackground() {
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Responsive placement: shift DNA slightly right on wider viewports
       if (width < 768) {
-        dnaGroup.position.x = 1.0;
-        dnaGroup.scale.setScalar(0.72);
+        dnaGroup.position.x = 1.2;
+        dnaGroup.scale.setScalar(0.75);
       } else if (width < 1200) {
         dnaGroup.position.x = 2.4;
-        dnaGroup.scale.setScalar(0.88);
+        dnaGroup.scale.setScalar(0.9);
       } else {
         dnaGroup.position.x = 3.4;
-        dnaGroup.scale.setScalar(1.0);
+        dnaGroup.scale.setScalar(1.05);
       }
     };
 
-    // Initialize responsive positioning
     onResize();
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
-
-    // Initial scroll sync
     onScroll();
 
     // ─────────────────────────────────────────────────────────────
-    // RENDER LOOP (ORGANIC FLOW + CURSOR EASING + SCROLL PROGRESS)
+    // RENDER LOOP WITH TRAVELING BIOLUMINESCENT WAVE
     // ─────────────────────────────────────────────────────────────
-    const clock = new THREE.Clock();
+    const startTime = performance.now();
     let animationFrameId: number;
 
     const baseRotX = -0.2;
     const baseRotY = -0.45;
     const baseRotZ = 0.25;
 
+    const colorAttr = particleGeometry.attributes.color as THREE.BufferAttribute;
+    const colorArray = colorAttr.array as Float32Array;
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      const elapsedTime = clock.getElapsedTime();
+      const elapsedTime = (performance.now() - startTime) * 0.001;
 
       // Smooth interpolation for mouse and scroll
       const lerpSpeed = 0.045;
@@ -447,13 +497,15 @@ export function DnaBackground() {
       const scrollLerp = 0.055;
       scroll.current += (scroll.target - scroll.current) * scrollLerp;
 
+      // Click energy decay
+      clickEnergy *= 0.94;
+
       if (!prefersReducedMotion) {
-        // Continuous organic idle rotation + mouse parallax + scroll twist
-        const idleSpin = elapsedTime * 0.12;
+        // Dynamic continuous rotation + mouse parallax + click kick
+        const idleSpin = elapsedTime * 0.14 + clickEnergy * 0.25;
         const scrollTwist = scroll.current * Math.PI * 1.4;
 
-        dnaGroup.rotation.y =
-          baseRotY + idleSpin + mouse.currentX * 0.38 + scrollTwist;
+        dnaGroup.rotation.y = baseRotY + idleSpin + mouse.currentX * 0.38 + scrollTwist;
         dnaGroup.rotation.x =
           baseRotX +
           Math.sin(elapsedTime * 0.4) * 0.04 -
@@ -464,26 +516,63 @@ export function DnaBackground() {
           Math.cos(elapsedTime * 0.35) * 0.03 +
           mouse.currentX * 0.1;
 
-        // Gentle floating parallax translation + scroll travel
+        // Floating parallax translation
         const baseY = onResizeBaseY(window.innerWidth);
         dnaGroup.position.y =
           baseY +
-          Math.sin(elapsedTime * 0.6) * 0.15 -
+          Math.sin(elapsedTime * 0.6) * 0.18 -
           mouse.currentY * 0.35 -
           scroll.current * 2.2;
 
         const baseX = onResizeBaseX(window.innerWidth);
         dnaGroup.position.x = baseX + mouse.currentX * 0.45;
 
-        // Animate ambient drifting particles
+        // ─────────────────────────────────────────────────────────
+        // TRAVELING BIOLUMINESCENT PULSE WAVE ALONG DNA SPINAL T
+        // ─────────────────────────────────────────────────────────
+        const waveSpeed = 0.8;
+        const wavePos = (elapsedTime * waveSpeed) % 1.0;
+        const waveWidth = 0.14;
+
+        const particleCount = particleTValues.length;
+        for (let p = 0; p < particleCount; p++) {
+          const tVal = particleTValues[p];
+          const distToWave = Math.abs(tVal - wavePos);
+          const isNearWave = distToWave < waveWidth || Math.abs(tVal - (wavePos - 1.0)) < waveWidth;
+
+          const baseCol = particleBaseColors[p];
+          const idx = p * 3;
+
+          if (isNearWave || clickEnergy > 0.1) {
+            // Flash brighter with radiant cyan/white energy
+            const waveIntensity = Math.max(
+              0,
+              1.0 - distToWave / waveWidth
+            ) * 0.75 + clickEnergy * 0.8;
+
+            colorArray[idx] = Math.min(1.0, baseCol.r + waveIntensity * 0.6);
+            colorArray[idx + 1] = Math.min(1.0, baseCol.g + waveIntensity * 0.7);
+            colorArray[idx + 2] = Math.min(1.0, baseCol.b + waveIntensity * 0.9);
+          } else {
+            // Restore base color
+            colorArray[idx] = baseCol.r;
+            colorArray[idx + 1] = baseCol.g;
+            colorArray[idx + 2] = baseCol.b;
+          }
+        }
+        colorAttr.needsUpdate = true;
+
+        // Modulate sparkle highlights with shimmering oscillation
+        sparkleMaterial.size = 7.0 + Math.sin(elapsedTime * 4.0) * 2.2 + clickEnergy * 5.0;
+
+        // Drift ambient background particles gently upward
         const posAttr = ambientGeometry.attributes.position;
         const posArray = posAttr.array as Float32Array;
         for (let a = 0; a < ambientCount; a++) {
           const idx = a * 3 + 1; // Y axis
-          posArray[idx] += 0.004 * ambientSpeeds[a];
-          // Wrap around if particles drift above bounds
-          if (posArray[idx] > 11.0) {
-            posArray[idx] = -11.0;
+          posArray[idx] += 0.005 * ambientSpeeds[a];
+          if (posArray[idx] > 12.0) {
+            posArray[idx] = -12.0;
           }
         }
         posAttr.needsUpdate = true;
@@ -493,7 +582,7 @@ export function DnaBackground() {
     };
 
     function onResizeBaseX(w: number) {
-      if (w < 768) return 1.0;
+      if (w < 768) return 1.2;
       if (w < 1200) return 2.4;
       return 3.4;
     }
@@ -505,11 +594,12 @@ export function DnaBackground() {
     animate();
 
     // ─────────────────────────────────────────────────────────────
-    // CLEANUP ON UNMOUNT
+    // CLEANUP
     // ─────────────────────────────────────────────────────────────
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
 
@@ -519,7 +609,10 @@ export function DnaBackground() {
       particleMaterial.dispose();
       ambientGeometry.dispose();
       ambientMaterial.dispose();
+      sparkleGeometry.dispose();
+      sparkleMaterial.dispose();
       glowTexture.dispose();
+      sparkleTexture.dispose();
       renderer.dispose();
 
       if (container.contains(renderer.domElement)) {
@@ -536,4 +629,3 @@ export function DnaBackground() {
     />
   );
 }
-

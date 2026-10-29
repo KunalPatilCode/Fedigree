@@ -333,7 +333,8 @@ export function DnaBackground() {
       const yVal = (Math.random() - 0.5) * 24.0;
       ambientPositions[a * 3 + 1] = yVal;
       ambientOriginalY[a] = yVal;
-      ambientPositions[a * 3 + 2] = (Math.random() - 0.5) * 12.0;
+      // Strictly positioned in the background behind the DNA double helix
+      ambientPositions[a * 3 + 2] = -6.0 - Math.random() * 9.0;
 
       const pick = paletteList[Math.floor(Math.random() * paletteList.length)];
       ambientColors[a * 3] = pick.r;
@@ -355,11 +356,12 @@ export function DnaBackground() {
       map: glowTexture,
       vertexColors: true,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.55,
       blending: THREE.NormalBlending,
       depthWrite: false,
     });
     const ambientPoints = new THREE.Points(ambientGeometry, ambientMaterial);
+    ambientPoints.renderOrder = -1; // Guaranteed to render behind DNA strands and particles
     dnaGroup.add(ambientPoints);
 
     // ─────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations } from "@/lib/translations";
-import { GitFork, Activity, FileCheck, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { GitFork, Activity, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 
 export default function HomePage() {
   const { language } = usePedigreeStore();
@@ -51,36 +51,6 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(69,38,83,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(69,38,83,0.05)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
       </section>
 
-      {/* 3 Value Pillars */}
-      <section className="py-16 bg-white border-y border-[#ded3eb]/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] hover:border-[#8064A9] hover:shadow-md transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-[#EAE2F5] text-[#452653] group-hover:bg-[#452653] group-hover:text-white flex items-center justify-center mb-5 transition-colors">
-                <GitFork className="w-6 h-6 rotate-180" />
-              </div>
-              <h3 className="text-xl font-bold text-[#292333] mb-2">{t.feature1Title}</h3>
-              <p className="text-[#5e546b] text-sm leading-relaxed">{t.feature1Desc}</p>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] hover:border-[#8064A9] hover:shadow-md transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-[#EAE2F5] text-[#8064A9] group-hover:bg-[#8064A9] group-hover:text-white flex items-center justify-center mb-5 transition-colors">
-                <Activity className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-[#292333] mb-2">{t.feature2Title}</h3>
-              <p className="text-[#5e546b] text-sm leading-relaxed">{t.feature2Desc}</p>
-            </div>
-
-            <div className="p-8 rounded-2xl bg-[#FAF8FC] border border-[#ded3eb] hover:border-[#8064A9] hover:shadow-md transition-all group">
-              <div className="w-12 h-12 rounded-xl bg-[#EAE2F5] text-[#573068] group-hover:bg-[#573068] group-hover:text-white flex items-center justify-center mb-5 transition-colors">
-                <FileCheck className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-[#292333] mb-2">{t.feature3Title}</h3>
-              <p className="text-[#5e546b] text-sm leading-relaxed">{t.feature3Desc}</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* India & Maharashtra Demographic Realities */}
       <section className="py-16 bg-[#FAF8FC]">

@@ -8,13 +8,43 @@ import {
   Activity,
   ArrowRight,
   ShieldCheck,
-  Sparkles,
-  HeartPulse,
-  Wind,
-  Dna,
-  Users,
-  FileCheck,
 } from "lucide-react";
+
+// ─── Blurry purple molecular blob visual (right-side hero decoration) ─────────
+function MolecularBlob() {
+  return (
+    <div className="relative w-full h-full min-h-[420px] pointer-events-none select-none" aria-hidden="true">
+      {/* Outer lavender haze */}
+      <div className="absolute inset-0 rounded-full bg-[#c9b8e8]/20 blur-3xl scale-110" />
+
+      {/* Main central blob */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full blur-2xl"
+        style={{ background: "radial-gradient(circle, rgba(155,126,200,0.60) 0%, rgba(123,85,176,0.40) 50%, rgba(69,38,83,0.25) 100%)" }}
+      />
+
+      {/* Secondary top-right cluster */}
+      <div className="absolute top-8 right-12 w-[130px] h-[130px] rounded-full bg-[#b49ad7]/50 blur-2xl" />
+
+      {/* Third blob — bottom-left offset */}
+      <div className="absolute bottom-16 left-8 w-[100px] h-[100px] rounded-full bg-[#8064a9]/35 blur-2xl" />
+
+      {/* Small floating accent orbs */}
+      <div className="absolute top-1/3 left-1/4 w-[60px] h-[60px] rounded-full bg-[#d4c0f0]/60 blur-xl" />
+      <div className="absolute bottom-1/3 right-1/4 w-[50px] h-[50px] rounded-full bg-[#c5a8e0]/55 blur-xl" />
+      <div className="absolute top-[15%] right-[20%] w-[40px] h-[40px] rounded-full bg-[#f3edfb]/80 blur-lg" />
+      <div className="absolute bottom-[20%] left-[35%] w-[30px] h-[30px] rounded-full bg-[#ede0fa]/70 blur-md" />
+
+      {/* Tiny micro dots for depth */}
+      <div className="absolute top-[60%] right-[12%] w-[22px] h-[22px] rounded-full bg-[#b49ad7]/80 blur-md" />
+      <div className="absolute top-[30%] left-[12%] w-[18px] h-[18px] rounded-full bg-[#8064a9]/70 blur-sm" />
+      <div className="absolute top-[45%] right-[35%] w-[14px] h-[14px] rounded-full bg-white/50 blur-sm" />
+
+      {/* Bottom elongated DNA-like strand shadow */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[120px] h-[200px] rounded-full bg-[#5c3878]/30 blur-3xl rotate-12" />
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { language } = usePedigreeStore();
@@ -22,90 +52,63 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* ───────────────────────────────────────────────────────────── */}
-      {/* HERO SECTION WITH FLOATING GENOMIC CARDS */}
-      {/* ───────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#EAE2F5]/30 via-transparent to-transparent py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          {/* Top Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-[#ded3eb] text-xs font-bold text-[#452653] shadow-xs mb-6 hover:scale-105 transition-transform cursor-default">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <Sparkles className="w-3.5 h-3.5 text-[#8064A9]" />
-            <span>Interactive 3-Generation Pedigree & NCD Risk Engine</span>
-          </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#292333] tracking-tight max-w-4xl mx-auto leading-[1.15]">
-            {t.heroTitle}
-          </h1>
+      {/* ──────────────────────────────────────────────────────── */}
+      {/* HERO — Two Column: Text Left · Blob Right               */}
+      {/* ──────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden min-h-[calc(100vh-64px)] lg:min-h-screen flex items-center">
 
-          <p className="mt-6 text-base sm:text-lg lg:text-xl text-[#5e546b] max-w-3xl mx-auto leading-relaxed font-normal">
-            {t.heroSubtitle}
-          </p>
+        {/* Very soft lavender radial wash behind the hero */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#EAE2F5]/40 via-[#f5f1fb]/20 to-transparent pointer-events-none" />
+        {/* Subtle dot-grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(69,38,83,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(69,38,83,0.04)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_70%_60%_at_40%_40%,#000_60%,transparent_100%)] pointer-events-none" />
 
-          {/* CTA Action Buttons */}
-          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/tree"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#452653] hover:bg-[#573068] text-white font-extrabold text-base shadow-xl shadow-[#452653]/30 flex items-center justify-center gap-3 transition-all hover:scale-103 active:scale-98 group"
-            >
-              <GitFork className="w-5 h-5 rotate-180 group-hover:rotate-0 transition-transform duration-300" />
-              <span>{t.ctaStartTree}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 lg:py-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
 
-            <Link
-              href="/assess"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/85 backdrop-blur-md hover:bg-white text-[#292333] font-bold text-base border border-[#ded3eb] hover:border-[#8064A9] shadow-sm flex items-center justify-center gap-2.5 transition-all hover:scale-102"
-            >
-              <Activity className="w-5 h-5 text-[#8064A9]" />
-              <span>{t.ctaFastScreen}</span>
-            </Link>
-          </div>
+            {/* ── LEFT: Text Content ─────────────────────────── */}
+            <div className="flex flex-col gap-6 lg:pr-8">
+              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-[#1a1025] tracking-tight leading-[1.1]">
+                {t.heroTitle}
+              </h1>
 
-          {/* Floating Key Intelligence Badges */}
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto text-left">
-            {/* Feature 1 */}
-            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-[#ded3eb] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-              <div className="w-8 h-8 rounded-xl bg-[#EAE2F5] text-[#452653] flex items-center justify-center mb-3">
-                <Dna className="w-4 h-4" />
-              </div>
-              <h3 className="font-extrabold text-sm text-[#292333]">3-Generation Pedigree</h3>
-              <p className="text-xs text-[#5e546b] mt-1 leading-relaxed">
-                Map kinship heredity across Grandparents, Parents, Siblings, and Offspring with disease pathway glow.
+              <p className="text-base sm:text-lg text-[#5e546b] leading-relaxed max-w-xl font-normal">
+                {t.heroSubtitle}
               </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-start gap-3 mt-2">
+                <Link
+                  href="/tree"
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-[#452653] hover:bg-[#573068] text-white font-bold text-sm shadow-lg shadow-[#452653]/30 transition-all hover:scale-[1.03] active:scale-[0.98] group"
+                >
+                  <GitFork className="w-4 h-4 rotate-180 group-hover:rotate-0 transition-transform duration-300" />
+                  <span>{t.ctaStartTree}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+
+                <Link
+                  href="/assess"
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-white/85 backdrop-blur-md hover:bg-white text-[#292333] font-semibold text-sm border border-[#ded3eb] hover:border-[#8064A9] shadow-sm transition-all hover:scale-[1.02]"
+                >
+                  <Activity className="w-4 h-4 text-[#8064A9]" />
+                  <span>{t.ctaFastScreen}</span>
+                </Link>
+              </div>
             </div>
 
-            {/* Feature 2 */}
-            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-[#ded3eb] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-              <div className="w-8 h-8 rounded-xl bg-[#EAE2F5] text-[#452653] flex items-center justify-center mb-3">
-                <HeartPulse className="w-4 h-4 text-rose-600" />
-              </div>
-              <h3 className="font-extrabold text-sm text-[#292333]">IDRS Parental Triage</h3>
-              <p className="text-xs text-[#5e546b] mt-1 leading-relaxed">
-                Applies ICMR-INDIAB validated IDRS algorithm factoring +10 or +20 parental risk points.
-              </p>
+            {/* ── RIGHT: Molecular Blob Visual ──────────────── */}
+            <div className="relative flex items-center justify-center lg:justify-end h-[380px] lg:h-[520px]">
+              <MolecularBlob />
             </div>
 
-            {/* Feature 3 */}
-            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-[#ded3eb] shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-              <div className="w-8 h-8 rounded-xl bg-[#EAE2F5] text-[#452653] flex items-center justify-center mb-3">
-                <Wind className="w-4 h-4 text-sky-600" />
-              </div>
-              <h3 className="font-extrabold text-sm text-[#292333]">Live Maharashtra AQI</h3>
-              <p className="text-xs text-[#5e546b] mt-1 leading-relaxed">
-                Calibrates cardiovascular risk with live district-level Air Quality Index across 36 Maharashtra districts.
-              </p>
-            </div>
           </div>
         </div>
-
-        {/* Subtle grid pattern background tinted with deep plum */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(69,38,83,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(69,38,83,0.05)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
       </section>
 
-      {/* ───────────────────────────────────────────────────────────── */}
-      {/* INDIA & MAHARASHTRA DEMOGRAPHIC REALITY BANNER */}
-      {/* ───────────────────────────────────────────────────────────── */}
+      {/* ──────────────────────────────────────────────────────── */}
+      {/* INDIA & MAHARASHTRA DEMOGRAPHIC REALITY BANNER          */}
+      {/* ──────────────────────────────────────────────────────── */}
       <section className="py-12 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-gradient-to-r from-[#452653] via-[#573068] to-[#8064A9] text-white p-8 sm:p-12 shadow-2xl shadow-[#452653]/20 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10">

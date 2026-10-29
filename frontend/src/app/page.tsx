@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePedigreeStore } from "@/store/pedigreeStore";
 import { translations } from "@/lib/translations";
-import { GitFork, Activity, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { GitFork, Activity, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function HomePage() {
   const { language } = usePedigreeStore();
@@ -12,13 +12,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#EAE2F5]/60 via-[#FAF8FC] to-[#FAF8FC] py-20 lg:py-28">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#EAE2F5]/40 via-transparent to-transparent py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EAE2F5] text-[#452653] text-xs font-bold mb-6 border border-[#ded3eb] shadow-xs">
-            <Sparkles className="w-4 h-4 text-[#8064A9]" />
-            <span>{t.badgeHackathon}</span>
-          </div>
-
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#292333] tracking-tight max-w-4xl mx-auto leading-tight">
             {t.heroTitle}
           </h1>
@@ -53,7 +48,7 @@ export default function HomePage() {
 
 
       {/* India & Maharashtra Demographic Realities */}
-      <section className="py-16 bg-[#FAF8FC]">
+      <section className="py-16 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl bg-gradient-to-r from-[#452653] via-[#573068] to-[#8064A9] text-white p-8 sm:p-12 shadow-xl shadow-[#452653]/15 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl">

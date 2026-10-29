@@ -386,9 +386,11 @@ function AddPlaceholderNode({ data }: NodeProps<Node<AddPlaceholderNodeData>>) {
   const { relationType, labelTitle, subLabel, onAdd } = data;
 
   return (
-    <div className="flex flex-col items-center select-none cursor-pointer">
-      <Handle type="target" position={Position.Top} className="opacity-0" />
-      <Handle type="source" position={Position.Bottom} className="opacity-0" />
+    <div className="relative flex flex-col items-center select-none cursor-pointer">
+      <Handle type="target" position={Position.Top} id="top" className="opacity-0" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="opacity-0" />
+      <Handle type="target" position={Position.Left} id="left" className="opacity-0" />
+      <Handle type="source" position={Position.Right} id="right" className="opacity-0" />
 
       <button
         type="button"
@@ -833,7 +835,7 @@ function PedigreeFlowCanvas() {
   );
 
   return (
-    <div className="relative w-full h-[calc(100vh-80px)] min-h-[750px] bg-[#FAF8FC] flex flex-col overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-64px)] lg:h-screen min-h-[750px] bg-[#FAF8FC] flex flex-col overflow-hidden">
       {/* ───────────────────────────────────────────────────────────── */}
       {/* TOP HEADER CONTROLS BAR */}
       {/* ───────────────────────────────────────────────────────────── */}
@@ -963,7 +965,7 @@ function PedigreeFlowCanvas() {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* MAIN CANVAS & SLIDE-OVER DETAIL DRAWER */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <div className="relative flex-1 w-full h-full">
+      <div className="relative flex-1 w-full min-h-[600px] h-full">
         <ReactFlow
           nodes={nodes}
           edges={edges}

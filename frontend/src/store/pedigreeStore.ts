@@ -171,7 +171,8 @@ export const usePedigreeStore = create<PedigreeStore>((set, get) => ({
 
     // 2. Try fetching from FastAPI backend if online
     try {
-      const resDiab = await fetch("http://localhost:8000/api/v1/diabetes/predict-ml", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+      const resDiab = await fetch(`${API_URL}/api/v1/diabetes/predict-ml`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,7 +195,7 @@ export const usePedigreeStore = create<PedigreeStore>((set, get) => ({
         mlDiab = dataDiab.probability;
       }
 
-      const resCvd = await fetch("http://localhost:8000/api/v1/cvd/predict-ml", {
+      const resCvd = await fetch(`${API_URL}/api/v1/cvd/predict-ml`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

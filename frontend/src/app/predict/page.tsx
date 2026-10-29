@@ -344,7 +344,8 @@ export default function PredictPage() {
 
     const startTime = performance.now();
     try {
-      const res = await fetch("http://localhost:8000/api/v1/diabetes/predict-ml", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/v1/diabetes/predict-ml`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -374,7 +375,7 @@ export default function PredictPage() {
       const message =
         err instanceof Error ? err.message : "Unknown error during prediction request.";
       setError(
-        `${message} - Please ensure FastAPI backend is running on http://localhost:8000.`
+        `${message} - Please ensure the backend API is reachable.`
       );
     } finally {
       setIsLoading(false);

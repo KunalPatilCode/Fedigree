@@ -40,10 +40,9 @@ function createSparkleTexture(): THREE.CanvasTexture {
     ctx.fillStyle = "rgba(0, 0, 0, 0)";
     ctx.fillRect(0, 0, 64, 64);
 
-    // Soft subtle radial aura
     const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 22);
     grad.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-    grad.addColorStop(0.2, "rgba(254, 243, 199, 0.75)"); // subtle warm champagne
+    grad.addColorStop(0.2, "rgba(254, 243, 199, 0.75)");
     grad.addColorStop(0.5, "rgba(234, 226, 245, 0.3)");
     grad.addColorStop(1, "rgba(69, 38, 83, 0)");
     ctx.fillStyle = grad;
@@ -51,23 +50,14 @@ function createSparkleTexture(): THREE.CanvasTexture {
     ctx.arc(32, 32, 22, 0, Math.PI * 2);
     ctx.fill();
 
-    // Fine, tapered needle star rays
     ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-    // Vertical ray
     ctx.beginPath();
-    ctx.moveTo(32, 12);
-    ctx.lineTo(33, 32);
-    ctx.lineTo(32, 52);
-    ctx.lineTo(31, 32);
+    ctx.moveTo(32, 12); ctx.lineTo(33, 32); ctx.lineTo(32, 52); ctx.lineTo(31, 32);
     ctx.closePath();
     ctx.fill();
 
-    // Horizontal ray
     ctx.beginPath();
-    ctx.moveTo(12, 32);
-    ctx.lineTo(32, 33);
-    ctx.lineTo(52, 32);
-    ctx.lineTo(32, 31);
+    ctx.moveTo(12, 32); ctx.lineTo(32, 33); ctx.lineTo(52, 32); ctx.lineTo(32, 31);
     ctx.closePath();
     ctx.fill();
   }
@@ -76,67 +66,15 @@ function createSparkleTexture(): THREE.CanvasTexture {
   return texture;
 }
 
-// ─── Responsive layout helpers ───────────────────────────────────────────────
-
-/**
- * Sidebar width on desktop (matches Navbar lg:w-64).
- * On mobile/tablet there is no persistent sidebar.
- */
-function getSidebarWidth(): number {
-  return window.innerWidth >= 1024 ? 256 : 0;
-}
-
-/**
- * The usable canvas width (full viewport minus sidebar).
- */
-function getContentWidth(): number {
-  return window.innerWidth - getSidebarWidth();
-}
-
-/**
- * Returns responsive layout values that keep the DNA helix consistently
- * positioned in the right half of the *content* area across all viewports.
- *
- * We map from CSS viewport coords into Three.js world coords using the camera
- * frustum width at z = 0 so the positioning is exact regardless of aspect ratio.
- */
-function getResponsiveLayout(camera: THREE.PerspectiveCamera): {
-  posX: number;
-  posY: number;
-  scale: number;
-} {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const contentW = getContentWidth();
-
-  // Half-width of the camera frustum in world units at z = 0 (camera is at z=18, fov=45)
-  const aspect = vw / vh;
-  const fovRad = (45 * Math.PI) / 180;
-  const frustumH = 2 * Math.tan(fovRad / 2) * 18; // world height visible
-  const frustumW = frustumH * aspect;              // world width visible
-
-  // The content area occupies (contentW / vw) fraction of the frustum width.
-  // Place the DNA centred at 75% across the content area (right-side hero visual).
-  const contentFraction = contentW / vw;
-  const contentFrustumW = frustumW * contentFraction;
-
-  // Left edge of content in world coords (origin = screen centre)
-  const contentLeftX = -frustumW / 2 + frustumW * (getSidebarWidth() / vw);
-  const targetX = contentLeftX + contentFrustumW * 0.75;
-
-  // Clamp so it never goes off-screen on very wide or very narrow viewports
-  const posX = Math.max(-frustumW * 0.3, Math.min(frustumW * 0.45, targetX));
-
-  // Scale: make it fill roughly 45% of the viewport height, capped for tiny screens
-  const desiredWorldH = frustumH * 0.45;
-  const dnaWorldH = 22; // approximate world-unit height of the helix geometry
-  let scale = desiredWorldH / dnaWorldH;
-  if (vw < 480) scale *= 0.70;       // small phones: shrink a bit more
-  scale = Math.max(0.55, Math.min(1.2, scale));
-
-  const posY = vw < 768 ? 0.5 : 0.0;
-
-  return { posX, posY, scale };
+// ─── Responsive layout: 4 breakpoints that match what looks correct on each device ──
+// On desktop (≥1024px) the left sidebar is 256px, so DNA must be pushed right enough
+// to sit in the content area's right half without overlapping hero text.
+function getLayout(width: number): { posX: number; posY: number; scale: number } {
+  if (width < 480)  return { posX: 0.6,  posY: 0.5, scale: 0.65 }; // small phones
+  if (width < 768)  return { posX: 1.2,  posY: 0.4, scale: 0.75 }; // phones
+  if (width < 1024) return { posX: 2.2,  posY: 0.0, scale: 0.88 }; // tablets (no sidebar)
+  if (width < 1440) return { posX: 3.2,  posY: 0.0, scale: 0.95 }; // laptops (256px sidebar)
+  return                    { posX: 3.6,  posY: 0.0, scale: 1.05 }; // large desktops
 }
 
 export function DnaBackground() {
@@ -146,13 +84,12 @@ export function DnaBackground() {
     const container = containerRef.current;
     if (!container) return;
 
-    // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     // ─────────────────────────────────────────────────────────────
-    // SCENE, CAMERA & RENDERER SETUP
+    // SCENE, CAMERA & RENDERER
     // ─────────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
 
@@ -169,48 +106,44 @@ export function DnaBackground() {
       antialias: true,
       powerPreference: "high-performance",
     });
-
-    // FIX 1: Cap DPR at 2 for perf, but compensate particle sizes by DPR
-    // so they look the same physical size on every screen.
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    renderer.setPixelRatio(dpr);
+    // Cap DPR at 2 for performance — sizeAttenuation:true handles visual consistency
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0); // Completely transparent background
+    renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
-    // Root group for all DNA objects
     const dnaGroup = new THREE.Group();
     dnaGroup.rotation.set(-0.2, -0.45, 0.25);
     scene.add(dnaGroup);
 
-    // Apply initial responsive layout
-    const initialLayout = getResponsiveLayout(camera);
-    dnaGroup.position.set(initialLayout.posX, initialLayout.posY, 0);
-    dnaGroup.scale.setScalar(initialLayout.scale);
+    // Apply initial layout
+    const initLayout = getLayout(window.innerWidth);
+    dnaGroup.position.set(initLayout.posX, initLayout.posY, 0);
+    dnaGroup.scale.setScalar(initLayout.scale);
 
     // ─────────────────────────────────────────────────────────────
-    // COLOR PALETTE (Fedigree Rich Bioluminescent Tokens)
+    // COLOR PALETTE
     // ─────────────────────────────────────────────────────────────
     const colors = {
-      plum: new THREE.Color("#452653"),
-      deepPurple: new THREE.Color("#573068"),
-      purple: new THREE.Color("#8064A9"),
+      plum:         new THREE.Color("#452653"),
+      deepPurple:   new THREE.Color("#573068"),
+      purple:       new THREE.Color("#8064A9"),
       softLavender: new THREE.Color("#B49AD7"),
       paleLavender: new THREE.Color("#EAE2F5"),
-      goldAmber: new THREE.Color("#F59E0B"), // Genetic risk marker highlight
-      cyanGlow: new THREE.Color("#38BDF8"),  // Active biomarker pulse
-      white: new THREE.Color("#FFFFFF"),
+      goldAmber:    new THREE.Color("#F59E0B"),
+      cyanGlow:     new THREE.Color("#38BDF8"),
+      white:        new THREE.Color("#FFFFFF"),
     };
 
     // ─────────────────────────────────────────────────────────────
-    // PARAMETRIC DOUBLE HELIX WITH DYNAMIC ENERGY PULSES
+    // PARAMETRIC DOUBLE HELIX
     // ─────────────────────────────────────────────────────────────
     const splinePoints = [
       new THREE.Vector3(1.6, -11.0, -3.5),
-      new THREE.Vector3(3.2, -5.5, -1.0),
-      new THREE.Vector3(3.0, 0.0, 1.2),
-      new THREE.Vector3(1.8, 5.5, 1.8),
-      new THREE.Vector3(0.5, 11.0, -0.5),
+      new THREE.Vector3(3.2,  -5.5, -1.0),
+      new THREE.Vector3(3.0,   0.0,  1.2),
+      new THREE.Vector3(1.8,   5.5,  1.8),
+      new THREE.Vector3(0.5,  11.0, -0.5),
     ];
     const spineCurve = new THREE.CatmullRomCurve3(splinePoints, false, "centripetal");
 
@@ -222,246 +155,182 @@ export function DnaBackground() {
 
     const linePositions: number[] = [];
     const lineColors: number[] = [];
-
     const particlePositions: number[] = [];
     const particleColors: number[] = [];
     const particleBaseColors: THREE.Color[] = [];
-    const particleTValues: number[] = []; // Distance along helix for pulse waves
-    const particleSizes: number[] = [];
-    const baseParticleSizes: number[] = [];
+    const particleTValues: number[] = [];
 
-    const addParticle = (pos: THREE.Vector3, color: THREE.Color, size: number, tVal: number) => {
+    const addParticle = (pos: THREE.Vector3, color: THREE.Color, tVal: number) => {
       particlePositions.push(pos.x, pos.y, pos.z);
       particleColors.push(color.r, color.g, color.b);
       particleBaseColors.push(color.clone());
       particleTValues.push(tVal);
-      particleSizes.push(size);
-      baseParticleSizes.push(size);
     };
 
-    const addLineSegment = (
-      p1: THREE.Vector3,
-      p2: THREE.Vector3,
-      c1: THREE.Color,
-      c2: THREE.Color
-    ) => {
+    const addLine = (p1: THREE.Vector3, p2: THREE.Vector3, c1: THREE.Color, c2: THREE.Color) => {
       linePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
       lineColors.push(c1.r, c1.g, c1.b, c2.r, c2.g, c2.b);
     };
 
     interface HelixNode {
-      t: number;
-      center: THREE.Vector3;
-      strandA: THREE.Vector3;
-      strandB: THREE.Vector3;
-      subA: THREE.Vector3[];
-      subB: THREE.Vector3[];
+      t: number; center: THREE.Vector3;
+      strandA: THREE.Vector3; strandB: THREE.Vector3;
+      subA: THREE.Vector3[];  subB: THREE.Vector3[];
     }
     const nodes: HelixNode[] = [];
     const upVector = new THREE.Vector3(0, 1, 0);
 
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
-      const center = spineCurve.getPointAt(t);
+      const center  = spineCurve.getPointAt(t);
       const tangent = spineCurve.getTangentAt(t);
 
       let normal = new THREE.Vector3().crossVectors(tangent, upVector).normalize();
       if (normal.lengthSq() < 0.001) normal = new THREE.Vector3(1, 0, 0);
       const binormal = new THREE.Vector3().crossVectors(tangent, normal).normalize();
 
-      const theta = t * turns * Math.PI * 2;
+      const theta     = t * turns * Math.PI * 2;
       const offsetDir = new THREE.Vector3()
-        .addScaledVector(normal, Math.cos(theta))
+        .addScaledVector(normal,   Math.cos(theta))
         .addScaledVector(binormal, Math.sin(theta));
 
-      const strandA = center.clone().addScaledVector(offsetDir, helixRadius);
+      const strandA = center.clone().addScaledVector(offsetDir,  helixRadius);
       const strandB = center.clone().addScaledVector(offsetDir, -helixRadius);
 
       const subA: THREE.Vector3[] = [];
       const subB: THREE.Vector3[] = [];
-
       for (let s = 0; s < subStrandCount; s++) {
         const phi = theta * 1.5 + (s * Math.PI * 2) / subStrandCount;
-        const subOffset = new THREE.Vector3()
-          .addScaledVector(normal, Math.cos(phi))
+        const sub = new THREE.Vector3()
+          .addScaledVector(normal,   Math.cos(phi))
           .addScaledVector(binormal, Math.sin(phi))
           .multiplyScalar(subRadius * (0.8 + 0.2 * Math.sin(i * 0.35 + s)));
-
-        subA.push(strandA.clone().add(subOffset));
-        subB.push(strandB.clone().sub(subOffset));
+        subA.push(strandA.clone().add(sub));
+        subB.push(strandB.clone().sub(sub));
       }
-
       nodes.push({ t, center, strandA, strandB, subA, subB });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // ASSEMBLE PARTICLES & LADDER RUNGS
-    // ─────────────────────────────────────────────────────────────
     for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
-      const t = node.t;
-
-      // 1. Primary Strand Backbone Particles
+      const node    = nodes[i];
+      const { t }   = node;
       const isLocus = i % 14 === 0;
-      const strandAColor = isLocus ? colors.goldAmber : colors.plum;
-      const strandBColor = isLocus ? colors.cyanGlow : colors.deepPurple;
-      const strandSize = isLocus ? 6.2 : 4.4;
 
-      addParticle(node.strandA, strandAColor, strandSize, t);
-      addParticle(node.strandB, strandBColor, strandSize, t);
+      addParticle(node.strandA, isLocus ? colors.goldAmber  : colors.plum,       t);
+      addParticle(node.strandB, isLocus ? colors.cyanGlow   : colors.deepPurple, t);
 
-      // Periodic crystalline glints
       if (i % 3 === 0) {
-        addParticle(node.strandA, colors.white, 3.4, t);
-        addParticle(node.strandB, colors.white, 3.4, t);
+        addParticle(node.strandA, colors.white, t);
+        addParticle(node.strandB, colors.white, t);
       }
 
-      // 2. Auxiliary Sub-Strands (forming braided DNA sheath)
       for (let s = 0; s < subStrandCount; s++) {
-        const cA = s % 2 === 0 ? colors.purple : colors.softLavender;
-        const cB = s % 2 === 0 ? colors.softLavender : colors.purple;
-        addParticle(node.subA[s], cA, 2.6, t);
-        addParticle(node.subB[s], cB, 2.6, t);
-
-        // Organic micro-dust
+        addParticle(node.subA[s], s % 2 === 0 ? colors.purple : colors.softLavender, t);
+        addParticle(node.subB[s], s % 2 === 0 ? colors.softLavender : colors.purple, t);
         if (i % 2 === 0) {
-          const jitter = new THREE.Vector3(
-            (Math.random() - 0.5) * 0.18,
-            (Math.random() - 0.5) * 0.18,
-            (Math.random() - 0.5) * 0.18
-          );
-          addParticle(node.subA[s].clone().add(jitter), colors.paleLavender, 1.9, t);
-          addParticle(node.subB[s].clone().add(jitter), colors.paleLavender, 1.9, t);
+          const j = new THREE.Vector3((Math.random()-0.5)*0.18, (Math.random()-0.5)*0.18, (Math.random()-0.5)*0.18);
+          addParticle(node.subA[s].clone().add(j), colors.paleLavender, t);
+          addParticle(node.subB[s].clone().add(j), colors.paleLavender, t);
         }
       }
 
-      // 3. Base Pair Hydrogen Bonds (every 2 steps)
       if (i % 2 === 0) {
-        addLineSegment(node.strandA, node.strandB, colors.plum, colors.deepPurple);
-        addLineSegment(node.subA[0], node.subB[1], colors.softLavender, colors.paleLavender);
-        addLineSegment(node.subA[2], node.subB[3], colors.paleLavender, colors.softLavender);
-
-        // Base pair nucleotide dots across rungs
-        const rungDots = 5;
-        for (let p = 1; p < rungDots; p++) {
-          const alpha = p / rungDots;
+        addLine(node.strandA, node.strandB, colors.plum, colors.deepPurple);
+        addLine(node.subA[0], node.subB[1], colors.softLavender, colors.paleLavender);
+        addLine(node.subA[2], node.subB[3], colors.paleLavender, colors.softLavender);
+        for (let p = 1; p < 5; p++) {
+          const alpha  = p / 5;
           const rungPos = new THREE.Vector3().lerpVectors(node.strandA, node.strandB, alpha);
           rungPos.y += Math.sin(alpha * Math.PI) * 0.1;
-
-          const dotColor =
-            p % 2 === 0
-              ? colors.purple
-              : isLocus
-              ? colors.goldAmber
-              : colors.softLavender;
-          addParticle(rungPos, dotColor, 2.4, t);
+          addParticle(rungPos, p % 2 === 0 ? colors.purple : isLocus ? colors.goldAmber : colors.softLavender, t);
         }
       }
 
-      // 4. Longitudinal Connectors
       if (i > 0) {
         const prev = nodes[i - 1];
-        addLineSegment(prev.strandA, node.strandA, colors.plum, colors.plum);
-        addLineSegment(prev.strandB, node.strandB, colors.deepPurple, colors.deepPurple);
-
+        addLine(prev.strandA, node.strandA, colors.plum, colors.plum);
+        addLine(prev.strandB, node.strandB, colors.deepPurple, colors.deepPurple);
         for (let s = 0; s < subStrandCount; s++) {
-          addLineSegment(prev.subA[s], node.subA[s], colors.purple, colors.purple);
-          addLineSegment(prev.subB[s], node.subB[s], colors.purple, colors.purple);
-
-          const nextS = (s + 1) % subStrandCount;
-          addLineSegment(prev.subA[s], node.subA[nextS], colors.softLavender, colors.paleLavender);
-          addLineSegment(prev.subB[s], node.subB[nextS], colors.softLavender, colors.paleLavender);
-
+          addLine(prev.subA[s], node.subA[s], colors.purple, colors.purple);
+          addLine(prev.subB[s], node.subB[s], colors.purple, colors.purple);
+          const ns = (s + 1) % subStrandCount;
+          addLine(prev.subA[s], node.subA[ns], colors.softLavender, colors.paleLavender);
+          addLine(prev.subB[s], node.subB[ns], colors.softLavender, colors.paleLavender);
           if (i % 3 === 0) {
-            addLineSegment(node.subA[s], node.strandA, colors.softLavender, colors.plum);
-            addLineSegment(node.subB[s], node.strandB, colors.softLavender, colors.deepPurple);
+            addLine(node.subA[s], node.strandA, colors.softLavender, colors.plum);
+            addLine(node.subB[s], node.strandB, colors.softLavender, colors.deepPurple);
           }
         }
       }
     }
 
     // ─────────────────────────────────────────────────────────────
-    // AMBIENT COSMIC DEPTH CLOUD (FLOATING CHROMOSOMAL PARTICLES)
+    // AMBIENT CLOUD — kept tightly near the DNA group centre so
+    // it never drifts over the hero text on the left.
+    // x is clamped to [0, 8] in local space (right side only).
     // ─────────────────────────────────────────────────────────────
-    const ambientCount = 380;
+    const ambientCount = 280;
     const ambientPositions = new Float32Array(ambientCount * 3);
-    const ambientColors = new Float32Array(ambientCount * 3);
-    const ambientSpeeds = new Float32Array(ambientCount);
+    const ambientColors    = new Float32Array(ambientCount * 3);
+    const ambientSpeeds    = new Float32Array(ambientCount);
 
-    const paletteList = [
-      colors.plum,
-      colors.purple,
-      colors.softLavender,
-      colors.paleLavender,
-      colors.goldAmber,
-      colors.cyanGlow,
-      colors.white,
+    const palette = [
+      colors.plum, colors.purple, colors.softLavender,
+      colors.paleLavender, colors.goldAmber, colors.cyanGlow, colors.white,
     ];
 
     for (let a = 0; a < ambientCount; a++) {
-      ambientPositions[a * 3] = 1.0 + (Math.random() - 0.4) * 14.0;
-      const yVal = (Math.random() - 0.5) * 24.0;
-      ambientPositions[a * 3 + 1] = yVal;
-      // Strictly positioned in the background behind the DNA double helix
-      ambientPositions[a * 3 + 2] = -6.0 - Math.random() * 9.0;
-
-      const pick = paletteList[Math.floor(Math.random() * paletteList.length)];
-      ambientColors[a * 3] = pick.r;
+      // x: 0 → +8 only (right half of local space, won't bleed left)
+      ambientPositions[a * 3]     = Math.random() * 8.0;
+      ambientPositions[a * 3 + 1] = (Math.random() - 0.5) * 22.0;
+      ambientPositions[a * 3 + 2] = -6.0 - Math.random() * 9.0; // behind helix
+      const pick = palette[Math.floor(Math.random() * palette.length)];
+      ambientColors[a * 3]     = pick.r;
       ambientColors[a * 3 + 1] = pick.g;
       ambientColors[a * 3 + 2] = pick.b;
-
       ambientSpeeds[a] = 0.2 + Math.random() * 0.9;
     }
 
     const ambientGeometry = new THREE.BufferGeometry();
     ambientGeometry.setAttribute("position", new THREE.BufferAttribute(ambientPositions, 3));
-    ambientGeometry.setAttribute("color", new THREE.BufferAttribute(ambientColors, 3));
+    ambientGeometry.setAttribute("color",    new THREE.BufferAttribute(ambientColors,    3));
 
-    const glowTexture = createGlowTexture();
+    const glowTexture    = createGlowTexture();
     const sparkleTexture = createSparkleTexture();
 
-    // FIX 2: Divide all PointsMaterial sizes by DPR so particles appear the
-    // same physical CSS-pixel size on every screen (1×, 2× Retina, 3× mobile).
-    const pxScale = 1 / dpr;
-
     const ambientMaterial = new THREE.PointsMaterial({
-      size: 4.2 * pxScale,
+      size: 3.8,
       map: glowTexture,
       vertexColors: true,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.45,           // subtler — background only
       blending: THREE.NormalBlending,
       depthWrite: false,
     });
     const ambientPoints = new THREE.Points(ambientGeometry, ambientMaterial);
-    ambientPoints.renderOrder = -1; // Guaranteed to render behind DNA strands and particles
+    ambientPoints.renderOrder = -1;
     dnaGroup.add(ambientPoints);
 
     // ─────────────────────────────────────────────────────────────
-    // MESH BUFFERS FOR DNA DOUBLE HELIX
+    // DNA LINE MESH
     // ─────────────────────────────────────────────────────────────
-    // 1. Line segments
     const lineGeometry = new THREE.BufferGeometry();
     lineGeometry.setAttribute("position", new THREE.Float32BufferAttribute(linePositions, 3));
-    lineGeometry.setAttribute("color", new THREE.Float32BufferAttribute(lineColors, 3));
-
+    lineGeometry.setAttribute("color",    new THREE.Float32BufferAttribute(lineColors,    3));
     const lineMaterial = new THREE.LineBasicMaterial({
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.72,
-      blending: THREE.NormalBlending,
-      depthWrite: false,
+      vertexColors: true, transparent: true, opacity: 0.72,
+      blending: THREE.NormalBlending, depthWrite: false,
     });
-    const lineMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
-    dnaGroup.add(lineMesh);
+    dnaGroup.add(new THREE.LineSegments(lineGeometry, lineMaterial));
 
-    // 2. Glowing DNA Particles
+    // ─────────────────────────────────────────────────────────────
+    // DNA PARTICLE MESH
+    // ─────────────────────────────────────────────────────────────
     const particleGeometry = new THREE.BufferGeometry();
     particleGeometry.setAttribute("position", new THREE.Float32BufferAttribute(particlePositions, 3));
-    particleGeometry.setAttribute("color", new THREE.Float32BufferAttribute(particleColors, 3));
-
+    particleGeometry.setAttribute("color",    new THREE.Float32BufferAttribute(particleColors,    3));
     const particleMaterial = new THREE.PointsMaterial({
-      size: 4.4 * pxScale,       // FIX 2: DPR-normalised
+      size: 4.4,
       map: glowTexture,
       vertexColors: true,
       transparent: true,
@@ -472,21 +341,20 @@ export function DnaBackground() {
     const particleMesh = new THREE.Points(particleGeometry, particleMaterial);
     dnaGroup.add(particleMesh);
 
-    // 3. Floating Sparkle Highlights on Key Risk Loci
-    const sparklePointsCount = 20;
-    const sparklePositions = new Float32Array(sparklePointsCount * 3);
-    for (let sp = 0; sp < sparklePointsCount; sp++) {
-      const nodeIndex = Math.floor((sp / sparklePointsCount) * (nodes.length - 1));
-      const targetStrand = sp % 2 === 0 ? nodes[nodeIndex].strandA : nodes[nodeIndex].strandB;
-      sparklePositions[sp * 3] = targetStrand.x;
-      sparklePositions[sp * 3 + 1] = targetStrand.y;
-      sparklePositions[sp * 3 + 2] = targetStrand.z;
+    // ─────────────────────────────────────────────────────────────
+    // SPARKLE HIGHLIGHTS
+    // ─────────────────────────────────────────────────────────────
+    const sparkleCount = 20;
+    const sparklePos   = new Float32Array(sparkleCount * 3);
+    for (let sp = 0; sp < sparkleCount; sp++) {
+      const ni  = Math.floor((sp / sparkleCount) * (nodes.length - 1));
+      const src = sp % 2 === 0 ? nodes[ni].strandA : nodes[ni].strandB;
+      sparklePos[sp * 3] = src.x; sparklePos[sp * 3 + 1] = src.y; sparklePos[sp * 3 + 2] = src.z;
     }
     const sparkleGeometry = new THREE.BufferGeometry();
-    sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePositions, 3));
-
+    sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePos, 3));
     const sparkleMaterial = new THREE.PointsMaterial({
-      size: 2.6 * pxScale,       // FIX 2: DPR-normalised
+      size: 2.6,
       map: sparkleTexture,
       transparent: true,
       opacity: 0.85,
@@ -498,181 +366,108 @@ export function DnaBackground() {
     dnaGroup.add(sparkleMesh);
 
     // ─────────────────────────────────────────────────────────────
-    // INTERACTION & ANIMATION PHYSICS (MOUSE, SCROLL, CLICK PULSE)
+    // INTERACTION STATE
     // ─────────────────────────────────────────────────────────────
-    const mouse = {
-      targetX: 0,
-      targetY: 0,
-      currentX: 0,
-      currentY: 0,
-    };
-
-    const scroll = {
-      target: 0,
-      current: 0,
-    };
-
-    // Click impulse shockwave
+    const mouse  = { targetX: 0, targetY: 0, currentX: 0, currentY: 0 };
+    const scroll = { target: 0, current: 0 };
     let clickEnergy = 0.0;
 
     const onPointerMove = (e: MouseEvent) => {
-      mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+      mouse.targetX = (e.clientX / window.innerWidth)  *  2 - 1;
+      mouse.targetY = (e.clientY / window.innerHeight) * -2 + 1;
     };
-
-    const onPointerDown = () => {
-      // Trigger sudden bioluminescent excitation ripple
-      clickEnergy = 1.0;
-    };
-
+    const onPointerDown = () => { clickEnergy = 1.0; };
     const onScroll = () => {
-      const maxScroll = Math.max(
-        1,
-        document.documentElement.scrollHeight - window.innerHeight
-      );
-      scroll.target = window.scrollY / maxScroll;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scroll.target = window.scrollY / max;
     };
-
-    // FIX 3: Smooth, sidebar-aware resize using the frustum-based layout helper
     const onResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      camera.aspect = width / height;
+      const w = window.innerWidth, h = window.innerHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-
-      // FIX 2b: Re-read DPR on resize (user may plug into external monitor)
-      const newDpr = Math.min(window.devicePixelRatio, 2);
-      renderer.setPixelRatio(newDpr);
-      renderer.setSize(width, height);
-
-      // Recompute DPR-normalised particle sizes if DPR changed
-      const newPxScale = 1 / newDpr;
-      particleMaterial.size = 4.4 * newPxScale;
-      ambientMaterial.size = 4.2 * newPxScale;
-      sparkleMaterial.size = 2.6 * newPxScale;
-
-      // Recompute layout
-      const layout = getResponsiveLayout(camera);
-      dnaGroup.position.x = layout.posX;
-      dnaGroup.position.y = layout.posY;
-      dnaGroup.scale.setScalar(layout.scale);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(w, h);
+      const lay = getLayout(w);
+      dnaGroup.position.x = lay.posX;
+      dnaGroup.position.y = lay.posY;
+      dnaGroup.scale.setScalar(lay.scale);
     };
 
     onResize();
-
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("scroll",      onScroll,      { passive: true });
+    window.addEventListener("resize",      onResize,      { passive: true });
     onScroll();
 
     // ─────────────────────────────────────────────────────────────
-    // RENDER LOOP — DELTA-TIME BASED (FIX 4: frame-rate independent)
+    // RENDER LOOP — fully delta-time based (frame-rate independent)
     // ─────────────────────────────────────────────────────────────
-    let lastTime = performance.now();
-    let elapsedTime = 0;
-    let animationFrameId: number;
-
-    const baseRotX = -0.2;
-    const baseRotY = -0.45;
-    const baseRotZ = 0.25;
-
-    const colorAttr = particleGeometry.attributes.color as THREE.BufferAttribute;
+    const baseRotX = -0.2, baseRotY = -0.45, baseRotZ = 0.25;
+    const colorAttr  = particleGeometry.attributes.color as THREE.BufferAttribute;
     const colorArray = colorAttr.array as Float32Array;
 
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+    let lastTime    = performance.now();
+    let elapsedTime = 0;
+    let animId: number;
 
-      // FIX 4: delta-time so animation runs at the same speed on 30/60/120 fps
-      const now = performance.now();
-      const delta = Math.min((now - lastTime) * 0.001, 0.05); // cap at 50ms to avoid jumps after tab switch
-      lastTime = now;
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+
+      const now   = performance.now();
+      const delta = Math.min((now - lastTime) * 0.001, 0.05); // cap at 50 ms
+      lastTime     = now;
       elapsedTime += delta;
 
-      // FIX 4: lerp speed scaled by delta so it's identical at any frame rate
-      const lerpFactor = 1 - Math.pow(0.05, delta);   // ~same feel as 0.045/frame at 60fps
-      mouse.currentX += (mouse.targetX - mouse.currentX) * lerpFactor;
-      mouse.currentY += (mouse.targetY - mouse.currentY) * lerpFactor;
-
-      const scrollLerpFactor = 1 - Math.pow(0.04, delta);
-      scroll.current += (scroll.target - scroll.current) * scrollLerpFactor;
-
-      // Click energy decay (frame-rate independent)
-      clickEnergy *= Math.pow(0.94, delta * 60);
+      // Exponential lerp — identical feel at any frame rate
+      const mLerp = 1 - Math.pow(0.05, delta);
+      const sLerp = 1 - Math.pow(0.04, delta);
+      mouse.currentX  += (mouse.targetX  - mouse.currentX)  * mLerp;
+      mouse.currentY  += (mouse.targetY  - mouse.currentY)  * mLerp;
+      scroll.current  += (scroll.target  - scroll.current)  * sLerp;
+      clickEnergy     *= Math.pow(0.94, delta * 60);
 
       if (!prefersReducedMotion) {
-        // Dynamic continuous rotation + mouse parallax + click kick
-        const idleSpin = elapsedTime * 0.14 + clickEnergy * 0.25;
+        const lay        = getLayout(window.innerWidth);
+        const idleSpin   = elapsedTime * 0.14 + clickEnergy * 0.25;
         const scrollTwist = scroll.current * Math.PI * 1.4;
 
         dnaGroup.rotation.y = baseRotY + idleSpin + mouse.currentX * 0.38 + scrollTwist;
-        dnaGroup.rotation.x =
-          baseRotX +
-          Math.sin(elapsedTime * 0.4) * 0.04 -
-          mouse.currentY * 0.28 +
-          scroll.current * 0.25;
-        dnaGroup.rotation.z =
-          baseRotZ +
-          Math.cos(elapsedTime * 0.35) * 0.03 +
-          mouse.currentX * 0.1;
+        dnaGroup.rotation.x = baseRotX + Math.sin(elapsedTime * 0.4) * 0.04 - mouse.currentY * 0.28 + scroll.current * 0.25;
+        dnaGroup.rotation.z = baseRotZ + Math.cos(elapsedTime * 0.35) * 0.03 + mouse.currentX * 0.1;
 
-        // Floating parallax translation
-        const layout = getResponsiveLayout(camera);
-        dnaGroup.position.y =
-          layout.posY +
-          Math.sin(elapsedTime * 0.6) * 0.18 -
-          mouse.currentY * 0.35 -
-          scroll.current * 2.2;
-        dnaGroup.position.x = layout.posX + mouse.currentX * 0.45;
+        dnaGroup.position.x = lay.posX + mouse.currentX * 0.45;
+        dnaGroup.position.y = lay.posY + Math.sin(elapsedTime * 0.6) * 0.18 - mouse.currentY * 0.35 - scroll.current * 2.2;
 
-        // ─────────────────────────────────────────────────────────
-        // TRAVELING BIOLUMINESCENT PULSE WAVE ALONG DNA SPINAL T
-        // ─────────────────────────────────────────────────────────
-        const waveSpeed = 0.8;
-        const wavePos = (elapsedTime * waveSpeed) % 1.0;
+        // Bioluminescent pulse wave
+        const wavePos   = (elapsedTime * 0.8) % 1.0;
         const waveWidth = 0.14;
-
-        const particleCount = particleTValues.length;
-        for (let p = 0; p < particleCount; p++) {
-          const tVal = particleTValues[p];
-          const distToWave = Math.abs(tVal - wavePos);
-          const isNearWave = distToWave < waveWidth || Math.abs(tVal - (wavePos - 1.0)) < waveWidth;
-
-          const baseCol = particleBaseColors[p];
-          const idx = p * 3;
-
-          if (isNearWave || clickEnergy > 0.1) {
-            const waveIntensity = Math.max(
-              0,
-              1.0 - distToWave / waveWidth
-            ) * 0.75 + clickEnergy * 0.8;
-
-            colorArray[idx] = Math.min(1.0, baseCol.r + waveIntensity * 0.6);
-            colorArray[idx + 1] = Math.min(1.0, baseCol.g + waveIntensity * 0.7);
-            colorArray[idx + 2] = Math.min(1.0, baseCol.b + waveIntensity * 0.9);
+        const pCount    = particleTValues.length;
+        for (let p = 0; p < pCount; p++) {
+          const tVal      = particleTValues[p];
+          const dist      = Math.abs(tVal - wavePos);
+          const near      = dist < waveWidth || Math.abs(tVal - (wavePos - 1.0)) < waveWidth;
+          const base      = particleBaseColors[p];
+          const idx       = p * 3;
+          if (near || clickEnergy > 0.1) {
+            const wi = Math.max(0, 1.0 - dist / waveWidth) * 0.75 + clickEnergy * 0.8;
+            colorArray[idx]     = Math.min(1, base.r + wi * 0.6);
+            colorArray[idx + 1] = Math.min(1, base.g + wi * 0.7);
+            colorArray[idx + 2] = Math.min(1, base.b + wi * 0.9);
           } else {
-            colorArray[idx] = baseCol.r;
-            colorArray[idx + 1] = baseCol.g;
-            colorArray[idx + 2] = baseCol.b;
+            colorArray[idx] = base.r; colorArray[idx+1] = base.g; colorArray[idx+2] = base.b;
           }
         }
         colorAttr.needsUpdate = true;
 
-        // Modulate delicate sparkle highlights with gentle micro-shimmer
-        // FIX 2c: Keep sparkle size DPR-normalised during animation
-        const currentDpr = Math.min(window.devicePixelRatio, 2);
-        sparkleMaterial.size =
-          (2.2 + Math.sin(elapsedTime * 3.5) * 0.6 + clickEnergy * 1.4) / currentDpr;
+        sparkleMaterial.size = 2.2 + Math.sin(elapsedTime * 3.5) * 0.6 + clickEnergy * 1.4;
 
-        // Drift ambient background particles gently upward
-        const posAttr = ambientGeometry.attributes.position;
+        // Drift ambient cloud upward
+        const posAttr  = ambientGeometry.attributes.position;
         const posArray = posAttr.array as Float32Array;
         for (let a = 0; a < ambientCount; a++) {
-          const idx = a * 3 + 1; // Y axis
-          posArray[idx] += delta * 0.3 * ambientSpeeds[a]; // FIX 4: delta-scaled drift
-          if (posArray[idx] > 12.0) {
-            posArray[idx] = -12.0;
-          }
+          posArray[a * 3 + 1] += delta * 0.3 * ambientSpeeds[a];
+          if (posArray[a * 3 + 1] > 11.0) posArray[a * 3 + 1] = -11.0;
         }
         posAttr.needsUpdate = true;
       }
@@ -686,27 +481,19 @@ export function DnaBackground() {
     // CLEANUP
     // ─────────────────────────────────────────────────────────────
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll",      onScroll);
+      window.removeEventListener("resize",      onResize);
 
-      lineGeometry.dispose();
-      lineMaterial.dispose();
-      particleGeometry.dispose();
-      particleMaterial.dispose();
-      ambientGeometry.dispose();
-      ambientMaterial.dispose();
-      sparkleGeometry.dispose();
-      sparkleMaterial.dispose();
-      glowTexture.dispose();
-      sparkleTexture.dispose();
+      lineGeometry.dispose();     lineMaterial.dispose();
+      particleGeometry.dispose(); particleMaterial.dispose();
+      ambientGeometry.dispose();  ambientMaterial.dispose();
+      sparkleGeometry.dispose();  sparkleMaterial.dispose();
+      glowTexture.dispose();      sparkleTexture.dispose();
       renderer.dispose();
-
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
+      if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
     };
   }, []);
 

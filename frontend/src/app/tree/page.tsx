@@ -1023,7 +1023,7 @@ function PedigreeFlowCanvas() {
   );
 
   return (
-    <div className="relative w-full h-[calc(100vh-64px)] lg:h-screen min-h-[750px] bg-[#FAF8FC] flex flex-col overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-64px)] lg:h-screen min-h-[750px] bg-[#FAF8FC]/60 backdrop-blur-2xs flex flex-col overflow-hidden">
       {/* ───────────────────────────────────────────────────────────── */}
       {/* TOP HEADER CONTROLS BAR */}
       {/* ───────────────────────────────────────────────────────────── */}
@@ -1248,7 +1248,7 @@ function PedigreeFlowCanvas() {
             type: "smoothstep",
             animated: false,
           }}
-          className="bg-[#FAF8FC]"
+          className="bg-transparent"
         >
           {/* Subtle Dot Grid Background */}
           <Background variant={BackgroundVariant.Dots} gap={24} size={1.5} color="#ded3eb" />

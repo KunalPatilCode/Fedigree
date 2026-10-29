@@ -331,7 +331,7 @@ function calculateHeredityBurden(relatives: Relative[]): HeredityBurden {
     if (r.relation === "self") continue;
     const weight = (r.relation === "father" || r.relation === "mother") ? 2.0
       : (r.relation === "grandfather" || r.relation === "grandmother") ? 1.5
-      : 1.2; // siblings, children
+        : 1.2; // siblings, children
     const conditions = [r.hasDiabetes, r.hasHypertension, r.hasHeartDisease, r.hasStroke, r.hasAsthma]
       .filter(Boolean).length;
     score += conditions * weight * 10;
@@ -646,12 +646,11 @@ export default function ProfilePage() {
       <div ref={printRef} className="space-y-6">
 
         {/* ═══ Section 1: Overall Risk Summary Banner ═══ */}
-        <div className={`p-6 sm:p-8 rounded-3xl border-2 shadow-lg ${
-          composite.level === "Very High" ? "bg-rose-50/60 border-rose-300"
-          : composite.level === "High" ? "bg-orange-50/60 border-orange-300"
-          : composite.level === "Moderate" ? "bg-amber-50/60 border-amber-300"
-          : "bg-[#EAE2F5]/40 border-[#ded3eb]"
-        }`}>
+        <div className={`p-6 sm:p-8 rounded-3xl border-2 shadow-lg ${composite.level === "Very High" ? "bg-rose-50/60 border-rose-300"
+            : composite.level === "High" ? "bg-orange-50/60 border-orange-300"
+              : composite.level === "Moderate" ? "bg-amber-50/60 border-amber-300"
+                : "bg-[#EAE2F5]/40 border-[#ded3eb]"
+          }`}>
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <RiskGauge
               value={composite.score}
@@ -664,9 +663,9 @@ export default function ProfilePage() {
               <div className="flex items-center gap-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-bold border ${getRiskBadge(composite.level)}`}>
                   {composite.level === "Very High" ? (language === "mr" ? "अत्यंत उच्च जोखीम" : language === "hi" ? "बहुत उच्च जोखिम" : "Very High Risk")
-                  : composite.level === "High" ? navT.riskHigh
-                  : composite.level === "Moderate" ? navT.riskModerate
-                  : navT.riskLow}
+                    : composite.level === "High" ? navT.riskHigh
+                      : composite.level === "Moderate" ? navT.riskModerate
+                        : navT.riskLow}
                 </span>
                 <span className="text-xs text-slate-400 flex items-center gap-1">
                   <Clock className="w-3 h-3" />
@@ -809,7 +808,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2">
               {heredity.level === "Low" ? <CheckCircle2 className="w-5 h-5 text-[#8064A9]" />
                 : heredity.level === "Moderate" ? <AlertTriangle className="w-5 h-5 text-amber-600" />
-                : <XCircle className="w-5 h-5 text-rose-600" />}
+                  : <XCircle className="w-5 h-5 text-rose-600" />}
               <span className="text-sm font-semibold">{getHeredityMessage(heredity.level)}</span>
             </div>
           </div>
@@ -889,13 +888,13 @@ export default function ProfilePage() {
                 const Icon = rec.icon;
                 const priorityColor = rec.priority === "critical" ? "border-l-rose-500 bg-rose-50/30"
                   : rec.priority === "important" ? "border-l-amber-500 bg-amber-50/30"
-                  : "border-l-[#8064A9] bg-[#EAE2F5]/30";
+                    : "border-l-[#8064A9] bg-[#EAE2F5]/30";
                 const priorityBadge = rec.priority === "critical" ? "bg-rose-100 text-rose-700"
                   : rec.priority === "important" ? "bg-amber-100 text-amber-700"
-                  : "bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]";
+                    : "bg-[#EAE2F5] text-[#452653] border border-[#ded3eb]";
                 const priorityLabel = rec.priority === "critical" ? (language === "mr" ? "तातडीचे" : language === "hi" ? "अत्यावश्यक" : "Critical")
                   : rec.priority === "important" ? (language === "mr" ? "महत्त्वाचे" : language === "hi" ? "महत्वपूर्ण" : "Important")
-                  : (language === "mr" ? "सल्ला" : language === "hi" ? "सलाह" : "Advisory");
+                    : (language === "mr" ? "सल्ला" : language === "hi" ? "सलाह" : "Advisory");
 
                 return (
                   <div key={i} className={`p-4 rounded-2xl border-l-4 border border-slate-100 ${priorityColor}`}>
@@ -952,7 +951,7 @@ export default function ProfilePage() {
                   label: language === "mr" ? "कौटुंबिक इतिहास" : language === "hi" ? "पारिवारिक इतिहास" : "Family History",
                   value: idrsResult.breakdown.familyHistory.value === "none" ? (language === "mr" ? "नाही" : language === "hi" ? "नहीं" : "None")
                     : idrsResult.breakdown.familyHistory.value === "one_parent" ? (language === "mr" ? "एक पालक" : language === "hi" ? "एक माता/पिता" : "One Parent")
-                    : (language === "mr" ? "दोन्ही पालक" : language === "hi" ? "दोनों माता/पिता" : "Both Parents"),
+                      : (language === "mr" ? "दोन्ही पालक" : language === "hi" ? "दोनों माता/पिता" : "Both Parents"),
                   points: idrsResult.breakdown.familyHistory.points,
                   max: idrsResult.breakdown.familyHistory.max,
                 },
@@ -982,7 +981,7 @@ export default function ProfilePage() {
         {/* ═══ Footer Disclaimer ═══ */}
         <div className="text-center text-[11px] text-slate-400 py-4 border-t border-slate-200 mt-4">
           <p>{t.disclaimer}</p>
-          <p className="mt-1 font-medium text-slate-500">Fedigree • SEVA Innovation Challenge 2026 • Category 4: NCDs</p>
+          {/* <p className="mt-1 font-medium text-slate-500">Fedigree • SEVA Innovation Challenge 2026 • Category 4: NCDs</p> */}
         </div>
       </div>
     </div>

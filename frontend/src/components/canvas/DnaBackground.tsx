@@ -76,6 +76,69 @@ function createSparkleTexture(): THREE.CanvasTexture {
   return texture;
 }
 
+// ─── Responsive layout helpers ───────────────────────────────────────────────
+
+/**
+ * Sidebar width on desktop (matches Navbar lg:w-64).
+ * On mobile/tablet there is no persistent sidebar.
+ */
+function getSidebarWidth(): number {
+  return window.innerWidth >= 1024 ? 256 : 0;
+}
+
+/**
+ * The usable canvas width (full viewport minus sidebar).
+ */
+function getContentWidth(): number {
+  return window.innerWidth - getSidebarWidth();
+}
+
+/**
+ * Returns responsive layout values that keep the DNA helix consistently
+ * positioned in the right half of the *content* area across all viewports.
+ *
+ * We map from CSS viewport coords into Three.js world coords using the camera
+ * frustum width at z = 0 so the positioning is exact regardless of aspect ratio.
+ */
+function getResponsiveLayout(camera: THREE.PerspectiveCamera): {
+  posX: number;
+  posY: number;
+  scale: number;
+} {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const contentW = getContentWidth();
+
+  // Half-width of the camera frustum in world units at z = 0 (camera is at z=18, fov=45)
+  const aspect = vw / vh;
+  const fovRad = (45 * Math.PI) / 180;
+  const frustumH = 2 * Math.tan(fovRad / 2) * 18; // world height visible
+  const frustumW = frustumH * aspect;              // world width visible
+
+  // The content area occupies (contentW / vw) fraction of the frustum width.
+  // Place the DNA centred at 75% across the content area (right-side hero visual).
+  const contentFraction = contentW / vw;
+  const contentFrustumW = frustumW * contentFraction;
+
+  // Left edge of content in world coords (origin = screen centre)
+  const contentLeftX = -frustumW / 2 + frustumW * (getSidebarWidth() / vw);
+  const targetX = contentLeftX + contentFrustumW * 0.75;
+
+  // Clamp so it never goes off-screen on very wide or very narrow viewports
+  const posX = Math.max(-frustumW * 0.3, Math.min(frustumW * 0.45, targetX));
+
+  // Scale: make it fill roughly 45% of the viewport height, capped for tiny screens
+  const desiredWorldH = frustumH * 0.45;
+  const dnaWorldH = 22; // approximate world-unit height of the helix geometry
+  let scale = desiredWorldH / dnaWorldH;
+  if (vw < 480) scale *= 0.70;       // small phones: shrink a bit more
+  scale = Math.max(0.55, Math.min(1.2, scale));
+
+  const posY = vw < 768 ? 0.5 : 0.0;
+
+  return { posX, posY, scale };
+}
+
 export function DnaBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -106,16 +169,24 @@ export function DnaBackground() {
       antialias: true,
       powerPreference: "high-performance",
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // FIX 1: Cap DPR at 2 for perf, but compensate particle sizes by DPR
+    // so they look the same physical size on every screen.
+    const dpr = Math.min(window.devicePixelRatio, 2);
+    renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x000000, 0); // Completely transparent background
     container.appendChild(renderer.domElement);
 
     // Root group for all DNA objects
     const dnaGroup = new THREE.Group();
-    dnaGroup.position.set(3.4, 0.0, 0);
     dnaGroup.rotation.set(-0.2, -0.45, 0.25);
     scene.add(dnaGroup);
+
+    // Apply initial responsive layout
+    const initialLayout = getResponsiveLayout(camera);
+    dnaGroup.position.set(initialLayout.posX, initialLayout.posY, 0);
+    dnaGroup.scale.setScalar(initialLayout.scale);
 
     // ─────────────────────────────────────────────────────────────
     // COLOR PALETTE (Fedigree Rich Bioluminescent Tokens)
@@ -316,7 +387,6 @@ export function DnaBackground() {
     const ambientPositions = new Float32Array(ambientCount * 3);
     const ambientColors = new Float32Array(ambientCount * 3);
     const ambientSpeeds = new Float32Array(ambientCount);
-    const ambientOriginalY = new Float32Array(ambientCount);
 
     const paletteList = [
       colors.plum,
@@ -332,7 +402,6 @@ export function DnaBackground() {
       ambientPositions[a * 3] = 1.0 + (Math.random() - 0.4) * 14.0;
       const yVal = (Math.random() - 0.5) * 24.0;
       ambientPositions[a * 3 + 1] = yVal;
-      ambientOriginalY[a] = yVal;
       // Strictly positioned in the background behind the DNA double helix
       ambientPositions[a * 3 + 2] = -6.0 - Math.random() * 9.0;
 
@@ -351,8 +420,12 @@ export function DnaBackground() {
     const glowTexture = createGlowTexture();
     const sparkleTexture = createSparkleTexture();
 
+    // FIX 2: Divide all PointsMaterial sizes by DPR so particles appear the
+    // same physical CSS-pixel size on every screen (1×, 2× Retina, 3× mobile).
+    const pxScale = 1 / dpr;
+
     const ambientMaterial = new THREE.PointsMaterial({
-      size: 4.2,
+      size: 4.2 * pxScale,
       map: glowTexture,
       vertexColors: true,
       transparent: true,
@@ -388,7 +461,7 @@ export function DnaBackground() {
     particleGeometry.setAttribute("color", new THREE.Float32BufferAttribute(particleColors, 3));
 
     const particleMaterial = new THREE.PointsMaterial({
-      size: 4.4,
+      size: 4.4 * pxScale,       // FIX 2: DPR-normalised
       map: glowTexture,
       vertexColors: true,
       transparent: true,
@@ -413,7 +486,7 @@ export function DnaBackground() {
     sparkleGeometry.setAttribute("position", new THREE.BufferAttribute(sparklePositions, 3));
 
     const sparkleMaterial = new THREE.PointsMaterial({
-      size: 2.6,
+      size: 2.6 * pxScale,       // FIX 2: DPR-normalised
       map: sparkleTexture,
       transparent: true,
       opacity: 0.85,
@@ -460,24 +533,29 @@ export function DnaBackground() {
       scroll.target = window.scrollY / maxScroll;
     };
 
+    // FIX 3: Smooth, sidebar-aware resize using the frustum-based layout helper
     const onResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      if (width < 768) {
-        dnaGroup.position.x = 1.2;
-        dnaGroup.scale.setScalar(0.75);
-      } else if (width < 1200) {
-        dnaGroup.position.x = 2.4;
-        dnaGroup.scale.setScalar(0.9);
-      } else {
-        dnaGroup.position.x = 3.4;
-        dnaGroup.scale.setScalar(1.05);
-      }
+      // FIX 2b: Re-read DPR on resize (user may plug into external monitor)
+      const newDpr = Math.min(window.devicePixelRatio, 2);
+      renderer.setPixelRatio(newDpr);
+      renderer.setSize(width, height);
+
+      // Recompute DPR-normalised particle sizes if DPR changed
+      const newPxScale = 1 / newDpr;
+      particleMaterial.size = 4.4 * newPxScale;
+      ambientMaterial.size = 4.2 * newPxScale;
+      sparkleMaterial.size = 2.6 * newPxScale;
+
+      // Recompute layout
+      const layout = getResponsiveLayout(camera);
+      dnaGroup.position.x = layout.posX;
+      dnaGroup.position.y = layout.posY;
+      dnaGroup.scale.setScalar(layout.scale);
     };
 
     onResize();
@@ -489,9 +567,10 @@ export function DnaBackground() {
     onScroll();
 
     // ─────────────────────────────────────────────────────────────
-    // RENDER LOOP WITH TRAVELING BIOLUMINESCENT WAVE
+    // RENDER LOOP — DELTA-TIME BASED (FIX 4: frame-rate independent)
     // ─────────────────────────────────────────────────────────────
-    const startTime = performance.now();
+    let lastTime = performance.now();
+    let elapsedTime = 0;
     let animationFrameId: number;
 
     const baseRotX = -0.2;
@@ -504,18 +583,22 @@ export function DnaBackground() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      const elapsedTime = (performance.now() - startTime) * 0.001;
+      // FIX 4: delta-time so animation runs at the same speed on 30/60/120 fps
+      const now = performance.now();
+      const delta = Math.min((now - lastTime) * 0.001, 0.05); // cap at 50ms to avoid jumps after tab switch
+      lastTime = now;
+      elapsedTime += delta;
 
-      // Smooth interpolation for mouse and scroll
-      const lerpSpeed = 0.045;
-      mouse.currentX += (mouse.targetX - mouse.currentX) * lerpSpeed;
-      mouse.currentY += (mouse.targetY - mouse.currentY) * lerpSpeed;
+      // FIX 4: lerp speed scaled by delta so it's identical at any frame rate
+      const lerpFactor = 1 - Math.pow(0.05, delta);   // ~same feel as 0.045/frame at 60fps
+      mouse.currentX += (mouse.targetX - mouse.currentX) * lerpFactor;
+      mouse.currentY += (mouse.targetY - mouse.currentY) * lerpFactor;
 
-      const scrollLerp = 0.055;
-      scroll.current += (scroll.target - scroll.current) * scrollLerp;
+      const scrollLerpFactor = 1 - Math.pow(0.04, delta);
+      scroll.current += (scroll.target - scroll.current) * scrollLerpFactor;
 
-      // Click energy decay
-      clickEnergy *= 0.94;
+      // Click energy decay (frame-rate independent)
+      clickEnergy *= Math.pow(0.94, delta * 60);
 
       if (!prefersReducedMotion) {
         // Dynamic continuous rotation + mouse parallax + click kick
@@ -534,15 +617,13 @@ export function DnaBackground() {
           mouse.currentX * 0.1;
 
         // Floating parallax translation
-        const baseY = onResizeBaseY(window.innerWidth);
+        const layout = getResponsiveLayout(camera);
         dnaGroup.position.y =
-          baseY +
+          layout.posY +
           Math.sin(elapsedTime * 0.6) * 0.18 -
           mouse.currentY * 0.35 -
           scroll.current * 2.2;
-
-        const baseX = onResizeBaseX(window.innerWidth);
-        dnaGroup.position.x = baseX + mouse.currentX * 0.45;
+        dnaGroup.position.x = layout.posX + mouse.currentX * 0.45;
 
         // ─────────────────────────────────────────────────────────
         // TRAVELING BIOLUMINESCENT PULSE WAVE ALONG DNA SPINAL T
@@ -561,7 +642,6 @@ export function DnaBackground() {
           const idx = p * 3;
 
           if (isNearWave || clickEnergy > 0.1) {
-            // Flash brighter with radiant cyan/white energy
             const waveIntensity = Math.max(
               0,
               1.0 - distToWave / waveWidth
@@ -571,7 +651,6 @@ export function DnaBackground() {
             colorArray[idx + 1] = Math.min(1.0, baseCol.g + waveIntensity * 0.7);
             colorArray[idx + 2] = Math.min(1.0, baseCol.b + waveIntensity * 0.9);
           } else {
-            // Restore base color
             colorArray[idx] = baseCol.r;
             colorArray[idx + 1] = baseCol.g;
             colorArray[idx + 2] = baseCol.b;
@@ -580,14 +659,17 @@ export function DnaBackground() {
         colorAttr.needsUpdate = true;
 
         // Modulate delicate sparkle highlights with gentle micro-shimmer
-        sparkleMaterial.size = 2.2 + Math.sin(elapsedTime * 3.5) * 0.6 + clickEnergy * 1.4;
+        // FIX 2c: Keep sparkle size DPR-normalised during animation
+        const currentDpr = Math.min(window.devicePixelRatio, 2);
+        sparkleMaterial.size =
+          (2.2 + Math.sin(elapsedTime * 3.5) * 0.6 + clickEnergy * 1.4) / currentDpr;
 
         // Drift ambient background particles gently upward
         const posAttr = ambientGeometry.attributes.position;
         const posArray = posAttr.array as Float32Array;
         for (let a = 0; a < ambientCount; a++) {
           const idx = a * 3 + 1; // Y axis
-          posArray[idx] += 0.005 * ambientSpeeds[a];
+          posArray[idx] += delta * 0.3 * ambientSpeeds[a]; // FIX 4: delta-scaled drift
           if (posArray[idx] > 12.0) {
             posArray[idx] = -12.0;
           }
@@ -597,16 +679,6 @@ export function DnaBackground() {
 
       renderer.render(scene, camera);
     };
-
-    function onResizeBaseX(w: number) {
-      if (w < 768) return 1.2;
-      if (w < 1200) return 2.4;
-      return 3.4;
-    }
-
-    function onResizeBaseY(w: number) {
-      return w < 768 ? 0.3 : 0.0;
-    }
 
     animate();
 

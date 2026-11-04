@@ -13,20 +13,19 @@ app = FastAPI(
     description="Backend API serving LASI ML models, validated IDRS calculation, and environmental exposure metrics for Fedigree."
 )
 
-# Enable CORS for Frontend communication
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origin_regex=settings.CORS_ORIGIN_REGEX,   # covers all *.vercel.app previews
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount endpoints
-app.include_router(health.router, prefix=settings.API_V1_STR, tags=["Health"])
-app.include_router(diabetes.router, prefix=f"{settings.API_V1_STR}/diabetes", tags=["Diabetes"])
-app.include_router(cvd.router, prefix=f"{settings.API_V1_STR}/cvd", tags=["CVD"])
-app.include_router(aqi.router, prefix=f"{settings.API_V1_STR}/aqi", tags=["Environment & AQI"])
+app.include_router(health.router,   prefix=settings.API_V1_STR,                    tags=["Health"])
+app.include_router(diabetes.router, prefix=f"{settings.API_V1_STR}/diabetes",       tags=["Diabetes"])
+app.include_router(cvd.router,      prefix=f"{settings.API_V1_STR}/cvd",            tags=["CVD"])
+app.include_router(aqi.router,      prefix=f"{settings.API_V1_STR}/aqi",            tags=["Environment & AQI"])
 
 @app.get("/")
 def root():
